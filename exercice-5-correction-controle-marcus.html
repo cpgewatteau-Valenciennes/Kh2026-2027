@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Corriger le contrôle de Marcus</title>
+<style>
+
+  :root{
+    --burgundy:#6B1E23; --burgundy-dark:#4a1319; --burgundy-light:#8a3138;
+    --parchment:#F1E6CE; --parchment-dark:#e5d6b3; --ink:#2b1810;
+    --ochre:#B9812A; --ochre-light:#D9A94F;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+  html, body{ margin:0; padding:0; }
+  body{
+    font-family:'Iowan Old Style','Palatino Linotype','Palatino',Georgia,serif;
+    background: var(--parchment); color: var(--ink);
+  }
+
+  .app-header{ text-align:center; padding: 56px 16px 10px; max-width:640px; margin:0 auto; }
+  .app-title{ font-family:'Iowan Old Style','Palatino Linotype','Palatino',Georgia,serif; font-size: clamp(1.35rem, 4.5vw, 1.9rem); color: var(--burgundy-dark); margin:0; }
+  .app-note{
+    font-family:'Iowan Old Style','Palatino Linotype','Palatino',Georgia,serif;
+    font-size: 0.85rem; color: var(--burgundy-dark); background:#FBF4E3;
+    border-left: 3px solid var(--burgundy); padding: 10px 14px; border-radius: 4px;
+    text-align:left; margin: 16px auto 0; max-width: 560px; line-height:1.5;
+  }
+  .app-note .order-note{ display:block; margin-top:10px; }
+  .app-meander{
+    height: 12px; max-width: 560px; margin: 18px auto 0;
+    background-image: repeating-linear-gradient(90deg, var(--burgundy) 0 4px, transparent 4px 8px);
+    background-size: 32px 12px; opacity:0.55;
+  }
+
+  .menu-screen{ max-width: 640px; margin: 22px auto 40px; padding: 0 16px; display:grid; gap:14px; }
+  .menu-card{
+    font-family:'Iowan Old Style','Palatino Linotype','Palatino',Georgia,serif;
+    background: linear-gradient(180deg, #FBF4E3, var(--parchment-dark));
+    border: 1.5px solid var(--ochre-light); border-radius: 10px;
+    padding: 18px 20px; display:flex; align-items:center; gap:16px;
+    cursor:pointer; text-align:left;
+  }
+  .menu-card:hover{ border-color: var(--burgundy); }
+  .menu-card:active{ transform: scale(0.99); }
+  .menu-num{
+    flex-shrink:0; width:40px; height:40px; border-radius:50%;
+    border: 1.5px solid var(--burgundy); color: var(--burgundy);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.2rem; font-weight:bold; background:white;
+  }
+  .menu-label{ font-size:1rem; color: var(--burgundy-dark); font-weight:600; }
+
+  .sec{ display:none; }
+  .sec.active{ display:block; }
+  .sec-topbar{
+    max-width: 640px; margin: 18px auto 0; padding: 0 16px;
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  }
+  .back-btn{
+    font-family:'Iowan Old Style','Palatino Linotype','Palatino',Georgia,serif;
+    background: var(--burgundy); border: 1.5px solid var(--burgundy); color: white;
+    font-weight: 700;
+    border-radius: 20px; padding: 8px 16px; font-size:0.85rem; cursor:pointer;
+    flex-shrink:0;
+    box-shadow: 0 3px 10px rgba(74,20,24,0.3);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .back-btn:hover{ transform: translateY(-2px); box-shadow: 0 5px 14px rgba(74,20,24,0.4); }
+  .sec-title{
+    font-family:'Iowan Old Style','Palatino Linotype','Palatino',Georgia,serif;
+    font-size: 1.5rem; color: var(--burgundy-dark); margin:0; font-weight:bold;
+  }
+
+#part1-inner{
+    --parchment: #F1E6CC;
+    --parchment-dark: #E7D8B0;
+    --ink: #2B2016;
+    --ink-soft: #59493A;
+    --burgundy: #7A2430;
+    --burgundy-dark: #5B1B24;
+    --gold: #A9782F;
+    --gold-light: #D9B96A;
+    --green: #2E6B4E;
+    --green-bg: #E4EFE6;
+    --red: #B0342D;
+    --red-bg: #F7E5E3;
+    --blue: #2C4A7C;
+    --blue-bg: #E6ECF5;
+    --card: #FBF6E9;
+    --shadow: 0 4px 14px rgba(43,32,22,0.12);
+  }
+#part1-inner *{ box-sizing: border-box; }
+#part1-inner{
+    margin:0;
+    background: var(--parchment);
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(169,120,47,0.08), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(122,36,48,0.06), transparent 45%);
+    color: var(--ink);
+    font-family: "EB Garamond", Georgia, serif;
+    font-size: 18px;
+    line-height: 1.5;
+    padding: 40px 18px 80px;
+  }
+#part1-inner h1, #part1-inner h2, #part1-inner h3, #part1-inner .display{
+    font-family: "Cormorant Garamond", Georgia, serif;
+  }
+#part1-inner .wrap{ max-width: 880px; margin: 0 auto; }
+#part1-inner header.page-head{
+    text-align:center;
+    margin-bottom: 42px;
+  }
+#part1-inner header.page-head .eyebrow{
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 13px;
+    color: var(--gold);
+    font-weight: 600;
+  }
+#part1-inner header.page-head h1{
+    font-size: 44px;
+    font-weight: 700;
+    margin: 6px 0 8px;
+    color: var(--burgundy-dark);
+  }
+#part1-inner header.page-head p{
+    color: var(--ink-soft);
+    font-style: italic;
+    margin: 0;
+  }
+#part1-inner .rule{
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 36px 0;
+    border:0;
+  }
+#part1-inner section.block{ margin-bottom: 54px; }
+#part1-inner .block-head{
+    display:flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+#part1-inner .block-head .num{
+    font-family:"Cormorant Garamond", serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gold);
+    border: 1.5px solid var(--gold);
+    border-radius: 50%;
+    width: 30px; height: 30px;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+    background: var(--card);
+  }
+#part1-inner .block-head h2{
+    font-size: 1.05rem;
+    margin:0;
+    color: var(--burgundy-dark);
+    font-weight: 700;
+  }
+#part1-inner .block-sub{
+    color: var(--ink-soft);
+    font-style: italic;
+    margin: -6px 0 22px 56px;
+    font-size: 16px;
+  }
+#part1-inner .instr-verify{
+    color: var(--burgundy-dark);
+    font-style: italic;
+    font-size: 14px;
+    margin: -14px 0 22px 56px;
+  }
+#part1-inner .legend{
+    background: var(--card);
+    border: 1px solid var(--parchment-dark);
+    border-radius: 14px;
+    padding: 26px 28px;
+    box-shadow: var(--shadow);
+    margin-bottom: 26px;
+  }
+#part1-inner .legend h3{
+    margin: 0 0 4px;
+    font-size: 22px;
+    color: var(--burgundy);
+  }
+#part1-inner .legend .note{
+    font-size: 15px;
+    color: var(--ink-soft);
+    font-style: italic;
+    margin-bottom: 18px;
+  }
+#part1-inner .legend-grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+#part1-inner .legend-row{
+    display:flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 22px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: rgba(169,120,47,0.05);
+  }
+#part1-inner .legend-row .label{
+    font-weight: 600;
+    width: 118px;
+    flex-shrink: 0;
+    color: var(--ink);
+  }
+#part1-inner .mark{
+    font-style: italic;
+    padding: 1px 6px;
+  }
+#part1-inner .mark.circle{
+    border: 2px solid var(--red);
+    border-radius: 999px;
+    color: var(--red);
+  }
+#part1-inner .mark.box{
+    border: 2px solid var(--green);
+    border-radius: 6px;
+    color: var(--green);
+  }
+#part1-inner .mark.blue{ color: var(--blue); }
+#part1-inner .arrow-hint{
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-style: italic;
+    margin-left: auto;
+  }
+#part1-inner .legend-caption{
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--parchment-dark);
+    font-size: 15px;
+    color: var(--ink-soft);
+  }
+#part1-inner .legend-caption b{ color: var(--burgundy); font-style: normal; }
+#part1-inner .item{
+    background: var(--card);
+    border: 1px solid var(--parchment-dark);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+#part1-inner .item-head{
+    display:flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+#part1-inner .item-word{
+    font-family:"Cormorant Garamond", serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--burgundy-dark);
+    font-style: italic;
+  }
+#part1-inner .item-word .gender{
+    font-style: normal;
+    font-size: 15px;
+    color: var(--gold);
+    font-weight: 600;
+    margin-left: 6px;
+  }
+#part1-inner .row{
+    display:flex;
+    align-items:center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 10px 0;
+  }
+#part1-inner .row label.rowlabel{
+    font-size: 15px;
+    color: var(--ink-soft);
+    width: 190px;
+    flex-shrink: 0;
+  }
+#part1-inner select.marcus-select{
+    font-family:"EB Garamond", serif;
+    font-size: 16px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    border: 1.5px solid var(--parchment-dark);
+    background: #fff;
+    color: var(--ink);
+    cursor: pointer;
+  }
+#part1-inner select.marcus-select:focus{ outline: 2px solid var(--gold-light); }
+#part1-inner .toggle-group{ display:flex; gap: 8px; }
+#part1-inner .toggle-btn{
+    font-family:"EB Garamond", serif;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 7px 18px;
+    border-radius: 999px;
+    border: 1.5px solid var(--parchment-dark);
+    background: #fff;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+#part1-inner .toggle-btn:hover{ border-color: var(--gold); }
+#part1-inner .toggle-btn.true.active{
+    background: var(--gold); border-color: var(--gold); color: #fff;
+  }
+#part1-inner .toggle-btn.false.active{
+    background: var(--ink-soft); border-color: var(--ink-soft); color: #fff;
+  }
+#part1-inner .options-group{
+    display:flex; gap: 8px; flex-wrap: wrap;
+  }
+#part1-inner .opt-btn{
+    font-family:"EB Garamond", serif;
+    font-size: 14px;
+    padding: 6px 13px;
+    border-radius: 8px;
+    border: 1.5px solid var(--parchment-dark);
+    background:#fff;
+    color: var(--ink-soft);
+    cursor:pointer;
+  }
+#part1-inner .opt-btn:hover{ border-color: var(--gold); }
+#part1-inner .opt-btn.active{
+    background: var(--gold-light);
+    border-color: var(--gold);
+    color: var(--ink);
+    font-weight: 600;
+  }
+#part1-inner .correction-row{ display:none; }
+#part1-inner .correction-row.visible{ display:flex; }
+#part1-inner .verify-btn{
+    font-family:"Cormorant Garamond", serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    padding: 8px 20px;
+    border-radius: 8px;
+    border: none;
+    background: var(--burgundy);
+    color: #fff;
+    cursor: pointer;
+    margin-top: 6px;
+  }
+#part1-inner .verify-btn:hover{ background: var(--burgundy-dark); }
+#part1-inner .verify-btn:disabled{ background: #C9BFA9; cursor: not-allowed; }
+#part1-inner .result{
+    display:none;
+    margin-top: 14px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+#part1-inner .result.visible{ display:block; }
+#part1-inner .result .line{ margin-bottom: 6px; }
+#part1-inner .result .line:last-child{ margin-bottom: 0; }
+#part1-inner .badge{
+    display:inline-block;
+    font-weight: 700;
+    padding: 1px 9px;
+    border-radius: 999px;
+    font-size: 13px;
+    margin-right: 6px;
+  }
+#part1-inner .badge.ok{ background: var(--green-bg); color: var(--green); }
+#part1-inner .badge.ko{ background: var(--red-bg); color: var(--red); }
+#part1-inner .result .key{ color: var(--burgundy); font-weight: 700; }
+#part1-inner .result .hint{ color: var(--ink-soft); font-style: italic; }
+#part1-inner .result .extra{
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: var(--blue-bg);
+    border-left: 3px solid var(--blue);
+    border-radius: 6px;
+    color: var(--ink);
+    font-size: 14.5px;
+  }
+#part1-inner .marcus-answer{
+    font-weight: 600;
+    color: var(--burgundy-dark);
+    background: rgba(122,36,48,0.08);
+    padding: 4px 12px;
+    border-radius: 8px;
+  }
+#part1-inner footer{
+    text-align:center;
+    margin-top: 50px;
+    color: var(--ink-soft);
+    font-style: italic;
+    font-size: 14px;
+  }
+@media  (max-width: 560px){#part1-inner .row label.rowlabel{ width: 100%; }#part1-inner .block-sub{ margin-left: 0; }}
+#part2-inner *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+#part2-inner{ margin:0; font-family:"Iowan Old Style","Palatino Linotype","Palatino",Georgia,serif;
+  background: var(--parchment); color: var(--ink); padding: 0 0 30px 0; }
+#part2-inner{
+    --burgundy:#6B1E23; --burgundy-dark:#4a1319; --burgundy-light:#8a3138;
+    --parchment:#F1E6CE; --parchment-dark:#e5d6b3; --ink:#2b1810;
+    --green:#1e6b45; --green-bg:#e3efe6;
+    --red:#8a2318; --red-bg:#f3e2df;
+    --amber:#8a5a18; --amber-bg:#f1e6cc;
+    --indigo:#2f4d78; --indigo-dark:#20375a; --indigo-light:#5871a3; --indigo-bg:#e6ecf6;
+  }
+#part2-inner header{ padding: 22px 16px 14px 16px; text-align:center; }
+#part2-inner .pictogram{ width:52px; height:52px; margin:0 auto 8px auto; display:block; }
+#part2-inner h1{ margin:0; font-size:1.3em; color: var(--burgundy); }
+#part2-inner .subtitle{ margin:4px 0 0 0; font-style:italic; color:var(--burgundy-dark); font-size:0.85em; }
+#part2-inner .meander{ height:10px; max-width:420px; margin:14px auto 0 auto;
+    background-image: repeating-linear-gradient(90deg, var(--burgundy) 0px, var(--burgundy) 5px, transparent 5px, transparent 10px);
+    background-size:20px 100%; opacity:0.55; }
+#part2-inner .intro{ max-width:480px; margin:14px auto 0 auto; padding:12px 16px; background:white;
+    border-left:4px solid var(--burgundy); border-radius:4px; font-size:0.85em; line-height:1.45; }
+#part2-inner .intro strong{ color:var(--burgundy); }
+#part2-inner .scorebar{ position:sticky; top:0; z-index:5; background:var(--burgundy); color:var(--parchment);
+    text-align:center; font-size:0.8em; letter-spacing:0.5px; padding:7px 10px; pointer-events:none; }
+#part2-inner main{ max-width:480px; margin:18px auto 0 auto; padding:0 14px; }
+#part2-inner .partie-title{ font-weight:700; color:var(--burgundy); font-size:1em; margin: 22px 0 4px 0; text-align:center; border-bottom: 1.5px solid var(--burgundy-light); padding-bottom:6px; }
+#part2-inner .partie-title.pft{ color:var(--indigo); border-bottom-color:var(--indigo-light); }
+#part2-inner .partie-sub{ text-align:center; font-size:0.72em; font-style:italic; color:var(--burgundy-light); margin:2px 0 12px 0; }
+#part2-inner .partie-sub.pft{ color:var(--indigo-light); }
+#part2-inner .bank{ background:white; border-radius:8px; padding:12px 14px; margin-bottom:6px; box-shadow:0 2px 6px rgba(43,24,16,0.1); }
+#part2-inner .bank-label{ font-size:0.72em; text-transform:uppercase; letter-spacing:0.5px; color:var(--burgundy-dark); font-weight:bold; margin-bottom:8px; }
+#part2-inner .bank-chips{ display:flex; flex-wrap:wrap; gap:7px; }
+#part2-inner .chip{ background:var(--parchment); border:1.5px solid var(--burgundy-light); color:var(--ink);
+    font-family:inherit; font-size:0.88em; padding:6px 11px; border-radius:16px; cursor:pointer; opacity:0.4; pointer-events:none; }
+#part2-inner .chip.active{ opacity:1; pointer-events:auto; }
+#part2-inner .chip.active:active{ transform:scale(0.95); }
+#part2-inner .chip.used{ opacity:0.3; text-decoration:line-through; pointer-events:none; }
+#part2-inner .grid{ display:grid; grid-template-columns: 52px 1fr 1fr; gap:6px; margin-bottom: 8px;}
+#part2-inner .grid.parfait{ grid-template-columns: 52px 1fr; }
+#part2-inner .ghead{ font-size:0.72em; text-align:center; color:var(--burgundy-dark); font-weight:bold; padding-bottom:4px; }
+#part2-inner .ghead.pft{ color:var(--indigo); }
+#part2-inner .plabel{ font-size:0.78em; display:flex; align-items:center; color:var(--burgundy-dark); font-weight:bold; }
+#part2-inner .plabel.pft{ color:var(--indigo); }
+#part2-inner .cell{ background:white; border-radius:6px; padding:10px 6px; text-align:center; font-size:1em;
+    box-shadow:0 1px 4px rgba(43,24,16,0.1); cursor:pointer; border:2px solid transparent; min-height:44px;
+    display:flex; align-items:center; justify-content:center; }
+#part2-inner .cell.pft{ background:var(--indigo-bg); }
+#part2-inner .cell:active{ transform:scale(0.97); }
+#part2-inner .cell.selecting{ border-color:var(--burgundy); background:var(--parchment-dark); }
+#part2-inner .cell.pft.selecting{ border-color:var(--indigo); background:#d3ddef; }
+#part2-inner .cell.fixed{ border-color:var(--green); background:var(--green-bg); color:var(--green); font-weight:bold; }
+#part2-inner .cell.wrong{ border-color:var(--red); background:var(--red-bg); color:var(--red); }
+#part2-inner .cell.false-alarm{ border-color:var(--amber); background:var(--amber-bg); color:var(--amber); }
+#part2-inner .cell .fa-check{ display:block; font-size:0.68em; font-style:italic; margin-top:2px; letter-spacing:0.2px; }
+#part2-inner .cell.old-wrong{ text-decoration:line-through; opacity:0.6; font-size:0.85em; display:block; }
+#part2-inner .cell .new-val{ display:block; font-size:1em; }
+#part2-inner .cell .new-val em{ font-style:italic; }
+#part2-inner .cell.done{ cursor:default; }
+#part2-inner .cell.done:active{ transform:none; }
+#part2-inner .hint{ position:sticky; top:29px; z-index:4; text-align:center; font-size:0.78em; color:var(--burgundy-light);
+    font-style:italic; margin:0; min-height:1.2em; padding:5px 10px; background:var(--parchment); pointer-events:none; }
+#part2-inner .hint.error-msg{ color:var(--red); font-weight:bold; font-style:normal; }
+#part2-inner .table-status{ text-align:center; font-size:0.82em; color:var(--burgundy-dark); background:white;
+    border-radius:6px; padding:8px 12px; margin: 4px 0 24px 0; display:none; }
+#part2-inner .table-status.visible{ display:block; }
+#part2-inner .final-score{ text-align:center; font-size:1em; font-weight:bold; color:var(--parchment);
+    background:var(--burgundy); border-radius:8px; padding:14px 12px; margin: 4px 0 20px 0; display:none;
+    box-shadow:0 2px 6px rgba(43,24,16,0.18); }
+#part2-inner .final-score.visible{ display:block; }
+#part2-inner #btnRestartAll{ display:block; width:100%; background:white; color:var(--burgundy); border:1.5px solid var(--burgundy);
+  font-family:inherit; font-size:0.92em; padding:12px; border-radius:8px; margin: 10px 0 10px 0; }
+#part3-inner{
+    --burgundy:#6B1E23; --burgundy-dark:#4a1319; --burgundy-light:#8a3138;
+    --parchment:#F1E6CE; --parchment-dark:#e5d6b3; --ink:#2b1810;
+    --green:#1e6b45; --green-bg:#e3efe6;
+    --red:#8a2318; --red-bg:#f3e2df;
+    --amber:#8a5a18; --amber-bg:#f1e6cc;
+  }
+#part3-inner *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+#part3-inner{ margin:0; font-family:"Iowan Old Style","Palatino Linotype","Palatino",Georgia,serif;
+    background: var(--parchment); color: var(--ink); padding: 0 0 30px 0; }
+#part3-inner header{ padding: 22px 16px 14px 16px; text-align:center; }
+#part3-inner .pictogram{ width:52px; height:52px; margin:0 auto 8px auto; display:block; }
+#part3-inner h1{ margin:0; font-size:1.2em; color: var(--burgundy); line-height:1.3; }
+#part3-inner .subtitle{ margin:6px 0 0 0; font-style:italic; color:var(--burgundy-dark); font-size:0.85em; }
+#part3-inner .meander{ height:10px; max-width:420px; margin:14px auto 0 auto;
+    background-image: repeating-linear-gradient(90deg, var(--burgundy) 0px, var(--burgundy) 5px, transparent 5px, transparent 10px);
+    background-size:20px 100%; opacity:0.55; }
+#part3-inner .intro{ max-width:480px; margin:14px auto 0 auto; padding:12px 16px; background:white;
+    border-left:4px solid var(--burgundy); border-radius:4px; font-size:0.85em; line-height:1.45; }
+#part3-inner .intro strong{ color:var(--burgundy); }
+#part3-inner .scorebar{ position:sticky; top:0; z-index:5; background:var(--burgundy); color:var(--parchment);
+    text-align:center; font-size:0.8em; letter-spacing:0.5px; padding:7px 10px; pointer-events:none; }
+#part3-inner main{ max-width:480px; margin:18px auto 0 auto; padding:0 14px; }
+#part3-inner .card{ background:white; border-radius:8px; margin-bottom:18px; box-shadow:0 2px 6px rgba(43,24,16,0.12); overflow:hidden; }
+#part3-inner .cnum{ background:var(--burgundy); color:var(--parchment); font-size:0.72em; font-weight:bold; letter-spacing:1px; padding:6px 14px; }
+#part3-inner .word{ text-align:center; font-size:1.6em; padding: 14px 10px 2px 10px; color:var(--burgundy-dark); font-weight:bold; font-style:italic; }
+#part3-inner .wordref{ text-align:center; font-size:0.8em; color:var(--burgundy-light); font-style:italic; padding-bottom:10px; }
+#part3-inner .marcus-recap{ margin: 0 14px 12px 14px; padding:10px 12px; background:var(--parchment-dark); border-radius:6px; font-size:0.85em; line-height:1.4; }
+#part3-inner .marcus-recap .marcus-label{ display:block; font-size:0.68em; text-transform:uppercase; letter-spacing:0.5px; color:var(--burgundy-dark); font-weight:bold; margin-bottom:3px; }
+#part3-inner .diagrow{ display:flex; gap:8px; padding: 0 14px 14px 14px; }
+#part3-inner .diagbtn{ flex:1; background:var(--parchment); border:1.5px solid var(--burgundy-light); color:var(--ink);
+    font-family:inherit; font-size:0.85em; padding:11px 8px; border-radius:8px; cursor:pointer; line-height:1.3; }
+#part3-inner .diagbtn:active{ transform:scale(0.97); }
+#part3-inner .diagbtn.chosen-ok{ background:var(--green); color:white; border-color:var(--green); }
+#part3-inner .diagbtn.chosen-errors{ background:var(--burgundy); color:var(--parchment); border-color:var(--burgundy); }
+#part3-inner .diagbtn:disabled{ opacity:0.35; pointer-events:none; }
+#part3-inner .gridzone{ display:none; }
+#part3-inner .gridzone.visible{ display:block; }
+#part3-inner .rowwrap{ padding: 0 14px 12px 14px; }
+#part3-inner .rlabel{ font-size:0.7em; text-transform:uppercase; letter-spacing:0.5px; color:var(--burgundy-dark); font-weight:bold; margin-bottom:6px; }
+#part3-inner .chiprow{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+#part3-inner .xchip{ background:var(--parchment); border:1.5px solid var(--burgundy-light); color:var(--ink);
+    font-family:inherit; font-size:0.85em; padding:7px 10px; border-radius:6px; cursor:pointer; min-width:40px; text-align:center; }
+#part3-inner .xchip.selected{ background:var(--burgundy); color:var(--parchment); border-color:var(--burgundy); }
+#part3-inner .xchip.correct{ border-color:var(--green); box-shadow: inset 0 0 0 1.5px var(--green); }
+#part3-inner .xchip.correct.selected{ background:var(--green); border-color:var(--green); }
+#part3-inner .xchip.incorrect.selected{ background:var(--red); border-color:var(--red); }
+#part3-inner .xchip.missed{ border-color:var(--amber); box-shadow: inset 0 0 0 1.5px var(--amber); }
+#part3-inner .xchip.locked{ cursor:default; }
+#part3-inner .xchip.locked:active{ transform:none; }
+#part3-inner .xchip:active{ transform: scale(0.95); }
+#part3-inner .btnverif{ display:none; width: calc(100% - 28px); margin: 4px 14px 6px 14px; background:var(--burgundy);
+    color:var(--parchment); border:none; font-family:inherit; font-size:0.92em; padding:11px; border-radius:8px; }
+#part3-inner .btnverif.visible{ display:block; }
+#part3-inner .btnverif:disabled{ opacity:0.35; }
+#part3-inner .result{ margin: 8px 14px 16px 14px; padding:10px 12px; border-radius:6px; font-size:0.85em; line-height:1.45; display:none; }
+#part3-inner .result.visible{ display:block; }
+#part3-inner .result.ok{ background:var(--green-bg); color:var(--green); }
+#part3-inner .result.partial{ background:#fbf1de; color:var(--burgundy-dark); }
+#part3-inner .result strong{ display:block; margin-top:4px; }
+#part3-inner .final-score{ max-width:480px; margin: 10px auto 30px auto; padding: 0 14px; display:none; }
+#part3-inner .final-score.visible{ display:block; }
+#part3-inner .final-score-inner{ background:white; border-radius:8px; padding:20px; text-align:center; box-shadow:0 2px 6px rgba(43,24,16,0.12); }
+#part3-inner .final-score-inner .big{ font-size:2.2em; color:var(--burgundy); font-weight:bold; }
+
+.home-fab{
+  position:fixed; top:14px; left:14px; z-index:999;
+  display:flex; align-items:center; gap:6px;
+  background: linear-gradient(135deg, var(--ochre), var(--burgundy));
+  color:#fff; font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;
+  font-size:0.82rem; font-weight:700; text-decoration:none;
+  padding:8px 14px; border-radius:20px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.25);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.home-fab:hover{ transform: translateY(-2px); box-shadow:0 5px 14px rgba(0,0,0,0.3); }
+@media (max-width:480px){ .home-fab{ font-size:0.72rem; padding:6px 10px; top:8px; left:8px; } }
+</style>
+</head>
+<body>
+<a class="home-fab" href="index.html">🏠 Accueil du site</a>
+
+<div class="app-header">
+  <h1 class="app-title">Corriger le contrôle de Marcus</h1>
+  <p class="app-note" id="app-note">Tu dois corriger la copie de Marcus, qui a encore quelques points à revoir... Le contrôle est composé de trois parties : <strong>A)</strong> Identification des modèles de déclinaison et de conjugaison. <strong>B)</strong> Les terminaisons verbales. <strong>C)</strong> Les deux premières déclinaisons.<span class="order-note">Tu peux traiter A, B et C dans l'ordre que tu veux, et revenir ici à tout moment en cliquant sur « ← Retour au menu ».</span></p>
+</div>
+<div class="app-meander"></div>
+
+<div class="menu-screen" id="menu-screen">
+  <div class="menu-card" data-target="part1">
+    <div class="menu-num">A</div>
+    <div class="menu-label">Identifier les modèles de conjugaisons et de déclinaisons</div>
+  </div>
+  <div class="menu-card" data-target="part2">
+    <div class="menu-num">B</div>
+    <div class="menu-label">Les terminaisons verbales</div>
+  </div>
+  <div class="menu-card" data-target="part3">
+    <div class="menu-num">C</div>
+    <div class="menu-label">Les terminaisons des deux premières déclinaisons</div>
+  </div>
+</div>
+
+<div class="sec" id="part1">
+  <div class="sec-topbar">
+    <button class="back-btn" type="button">← Retour au menu</button>
+    <h2 class="sec-title">A) Identifier les modèles de conjugaisons et de déclinaisons</h2>
+  </div>
+  <div id="part1-inner">
+  
+<div class="wrap">
+
+<!-- ============ SECTION 1 : DÉCLINAISONS ============ -->
+<section class="block">
+<div class="block-head"><div class="num">1</div><h2>Modèles de déclinaison</h2></div>
+<div class="block-sub">Pour chaque nom : indique la réponse donnée par Marcus, juge-la (VRAI / FAUX), puis propose la bonne réponse si besoin.</div>
+<div class="instr-verify">Clique sur « Vérifier » pour afficher la correction et les éventuelles remarques.</div>
+<div id="nouns-container"></div>
+</section>
+<hr class="rule"/>
+<!-- ============ SECTION 2 : CONJUGAISONS ============ -->
+<section class="block">
+<div class="block-head"><div class="num">2</div><h2>Modèles de conjugaison</h2></div>
+<div class="block-sub">Pour chaque verbe : indique la réponse donnée par Marcus, juge-la (VRAI / FAUX), puis propose la bonne réponse si besoin.</div>
+<div id="verbs-container"></div>
+</section>
+</div>
+<script>(function(){
+
+const DECL_OPTIONS = [
+  {key:'d1', label:'1ʳᵉ décl.'},
+  {key:'d2', label:'2ᵉ décl.'},
+  {key:'d3', label:'3ᵉ décl.'},
+  {key:'d4', label:'4ᵉ décl.'},
+  {key:'d5', label:'5ᵉ décl.'},
+];
+const CONJ_OPTIONS = [
+  {key:'c1', label:'1ʳᵉ conj.'},
+  {key:'c2', label:'2ᵉ conj.'},
+  {key:'c3', label:'3ᵉ conj.'},
+  {key:'c3m', label:'3ᵉ mixte'},
+  {key:'c4', label:'4ᵉ conj.'},
+];
+
+const NOUNS = [
+  {word:'agricola, ae', gender:'m', correct:'d1', marcus:'d2',
+    hint:"génitif en <i>-ae</i> → 1ʳᵉ déclinaison (nom masculin, mais de forme 1ʳᵉ déclinaison, comme <i>nauta</i> ou <i>poeta</i>).",
+    extra:"Attention : il existe quelques noms masculins dans la 1re déclinaison (comme <i>incola</i>, l'habitant), alors que la 1re déclinaison est presque toujours féminine."},
+  {word:'folium, ii', gender:'n', correct:'d2', marcus:'d2',
+    hint:"génitif en <i>-i</i> → 2ᵉ déclinaison, neutre (nom./voc./acc. sg identiques donc en <i>-um</i>). Il faut donc penser aux 3 possibilités.",
+    extra:"Pour les neutres dont le nominatif singulier est en <i>-ium</i>, la forme après la virgule est en <i>-ii</i> : il y a le <i>i</i> du radical et le <i>i</i> du génitif sg de la 2ᵉ."},
+  {word:'senatus, us', gender:'m', correct:'d4', marcus:'d2',
+    hint:"génitif en <i>-us</i> → 4ᵉ déclinaison.",
+    extra:"Attention à ne pas confondre avec la 2e déclinaison : le nominatif en <i>-us</i> fait penser aux noms masculins de la 2e déclinaison comme <i>dominus</i> — mais c'est le génitif qui tranche."},
+  {word:'silva, ae', gender:'f', correct:'d1', marcus:'d1',
+    hint:"génitif en <i>-ae</i> → 1ʳᵉ déclinaison."},
+  {word:'frater, tris', gender:'m', correct:'d3', marcus:'d2',
+    hint:"génitif en <i>-is</i> → 3ᵉ déclinaison.",
+    extra:"Attention à ne pas confondre avec les quelques noms masculins de la 2e déclinaison en <i>-er</i> (type <i>puer, magister</i>) : <i>venter</i> se termine en <i>-er</i> mais appartient bien à la 3e déclinaison (génitif <i>ventris</i>)."},
+  {word:'puer, eri', gender:'m', correct:'d2', marcus:'d3',
+    hint:"génitif <i>pueri</i>, en <i>-i</i> → 2ᵉ déclinaison (nominatif sans -us, type <i>puer</i>).",
+    extra:"La plupart des noms masculins de la 2e déclinaison sont en <i>-us</i>, mais il existe aussi quelques noms en <i>-er</i> (<i>magister, puer...</i>) et un très fréquent en <i>-ir</i> : <i>vir, viri</i> (l'homme)."},
+  {word:'pater, tris', gender:'m', correct:'d3', marcus:'d2',
+    hint:"génitif en <i>-is</i> → 3ᵉ déclinaison.",
+    extra:"Attention à ne pas confondre avec les quelques noms masculins de la 2e déclinaison en <i>-er</i> (type <i>puer, magister</i>) : <i>venter</i> se termine en <i>-er</i> mais appartient bien à la 3e déclinaison (génitif <i>ventris</i>)."},
+  {word:'oppidum, i', gender:'n', correct:'d2', marcus:'d2',
+    hint:"génitif en <i>-i</i> → 2ᵉ déclinaison, neutre (nom./voc./acc. sg identiques donc en <i>-um</i>). Il faut donc penser aux 3 possibilités."},
+  {word:'acies, ei', gender:'f', correct:'d5', marcus:'d3',
+    hint:"génitif en <i>-ei</i> → 5ᵉ déclinaison."},
+  {word:'incus, udis', gender:'f', correct:'d3', marcus:'d2',
+    hint:"génitif en <i>-is</i> (udis) → 3ᵉ déclinaison.",
+    extra:"Attention à ne pas confondre avec la 2e déclinaison : le nominatif en <i>-us</i> fait penser aux noms masculins de la 2e déclinaison comme <i>dominus</i> — mais c'est le génitif qui tranche."},
+  {word:'res, rei', gender:'f', correct:'d5', marcus:'d5',
+    hint:"génitif en <i>-ei</i> → 5ᵉ déclinaison."},
+];
+
+const VERBS = [
+  {word:'rapio, is, ere, rapui, raptum', correct:'c3m', marcus:'c4',
+    hint:"1sg en <i>-io</i> + infinitif en <i>-ere</i> → 3ᵉ conjugaison mixte."},
+  {word:'dico, as, are, avi, atum', correct:'c1', marcus:'c3',
+    hint:"1sg en <i>-o</i>, infinitif en <i>-are</i> → 1ʳᵉ conjugaison."},
+  {word:'ago, is, ere, egi, actum', correct:'c3', marcus:'c3',
+    hint:"1sg en <i>-o</i>, infinitif en <i>-ere</i> → 3ᵉ conjugaison."},
+  {word:'jubeo, es, ere, jussi, jussum', correct:'c2', marcus:'c2',
+    hint:"1sg en <i>-eo</i>, infinitif en <i>-ere</i> → 2ᵉ conjugaison."},
+  {word:'gero, is, ere, gessi, gestum', correct:'c3', marcus:'c3',
+    hint:"1sg en <i>-o</i>, infinitif en <i>-ere</i> → 3ᵉ conjugaison."},
+];
+
+function label(options, key){
+  const o = options.find(o=>o.key===key);
+  return o ? o.label : '—';
+}
+
+function buildSection(containerId, items, options){
+  const container = document.getElementById(containerId);
+  items.forEach((item, idx) => {
+    const id = containerId + '-' + idx;
+    const card = document.createElement('div');
+    card.className = 'item';
+
+    const optButtonsHtml = options.map(o =>
+      `<button type="button" class="opt-btn" data-key="${o.key}">${o.label}</button>`
+    ).join('');
+
+    card.innerHTML = `
+      <div class="item-head">
+        <div class="item-word">${item.word}${item.gender ? `<span class="gender">, ${item.gender}</span>` : ''}</div>
+      </div>
+
+      <div class="row">
+        <label class="rowlabel">Réponse de Marcus :</label>
+        <span class="marcus-answer">${label(options, item.marcus)}</span>
+      </div>
+
+      <div class="row">
+        <label class="rowlabel">Cette réponse est :</label>
+        <div class="toggle-group">
+          <button type="button" class="toggle-btn true" data-val="true">VRAI</button>
+          <button type="button" class="toggle-btn false" data-val="false">FAUX</button>
+        </div>
+      </div>
+
+      <div class="row correction-row" id="${id}-correction-row">
+        <label class="rowlabel">Selon toi, la bonne réponse est :</label>
+        <div class="options-group" id="${id}-options">${optButtonsHtml}</div>
+      </div>
+
+      <button type="button" class="verify-btn" id="${id}-verify">Vérifier</button>
+      <div class="result" id="${id}-result"></div>
+    `;
+    container.appendChild(card);
+
+    let judgment = null;
+    let proposal = null;
+
+    const correctionRow = card.querySelector(`#${id}-correction-row`);
+    const verifyBtn = card.querySelector(`#${id}-verify`);
+    const resultBox = card.querySelector(`#${id}-result`);
+
+    card.querySelectorAll('.toggle-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        card.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        judgment = btn.dataset.val === 'true';
+        if(judgment){
+          correctionRow.classList.remove('visible');
+          proposal = null;
+          card.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+        } else {
+          correctionRow.classList.add('visible');
+        }
+        resultBox.classList.remove('visible');
+      });
+    });
+
+    card.querySelectorAll('.opt-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        card.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        proposal = btn.dataset.key;
+        resultBox.classList.remove('visible');
+      });
+    });
+
+    verifyBtn.addEventListener('click', () => {
+      const marcusAnswer = item.marcus;
+      const correctKey = item.correct;
+      const marcusIsRight = marcusAnswer === correctKey;
+
+      let lines = [];
+
+      lines.push(`<div class="line">Bonne réponse : <span class="key">${label(options, correctKey)}</span></div>`);
+      lines.push(`<div class="line hint">${item.hint}</div>`);
+
+      if(judgment === null){
+        lines.push(`<div class="line">Indique si tu juges la réponse de Marcus VRAIE ou FAUSSE.</div>`);
+      } else {
+        const judgeOk = judgment === marcusIsRight;
+        lines.push(`<div class="line"><span class="badge ${judgeOk ? 'ok' : 'ko'}">${judgeOk ? '✓' : '✗'}</span>Votre correction est ${judgeOk ? 'juste' : 'erronée'} — en réalité, la réponse de Marcus (${label(options, marcusAnswer)}) est ${marcusIsRight ? 'juste' : 'fausse'}.</div>`);
+
+        if(judgment === false){
+          if(proposal === null){
+            lines.push(`<div class="line">Propose la bonne réponse pour voir si ta correction est exacte.</div>`);
+          } else {
+            const propOk = proposal === correctKey;
+            lines.push(`<div class="line"><span class="badge ${propOk ? 'ok' : 'ko'}">${propOk ? '✓' : '✗'}</span>Votre proposition (${label(options, proposal)}) est ${propOk ? 'exacte' : 'inexacte'}.</div>`);
+          }
+        }
+      }
+
+      if(item.extra){
+        lines.push(`<div class="extra">⚠️ ${item.extra}</div>`);
+      }
+
+      resultBox.innerHTML = lines.join('');
+      resultBox.classList.add('visible');
+    });
+  });
+}
+
+buildSection('nouns-container', NOUNS, DECL_OPTIONS);
+buildSection('verbs-container', VERBS, CONJ_OPTIONS);
+
+})();</script>
+
+  </div>
+</div>
+
+<div class="sec" id="part2">
+  <div class="sec-topbar">
+    <button class="back-btn" type="button">← Retour au menu</button>
+    <h2 class="sec-title">B) Les terminaisons verbales</h2>
+  </div>
+  <div id="part2-inner">
+  
+
+<svg class="pictogram" viewBox="0 0 100 100">
+<rect fill="#c0293b" height="18" width="18" x="20" y="40"></rect>
+<rect fill="#c0293b" height="18" opacity="0.5" width="18" x="41" y="40"></rect>
+<rect fill="#c0293b" height="18" width="18" x="62" y="40"></rect>
+<text fill="white" font-size="8" text-anchor="middle" x="29" y="53">ama</text>
+<text fill="white" font-size="9" text-anchor="middle" x="50" y="53">ba</text>
+<text fill="white" font-size="9" text-anchor="middle" x="71" y="53">t</text>
+</svg>
+
+
+<div class="meander"></div>
+<div class="intro">
+    Marcus a rempli deux tableaux de terminaisons (présent actif/passif, et
+    parfait actif), mais il a fait plusieurs erreurs. Toutes les terminaisons
+    possibles sont regroupées pêle-mêle dans la banque rappelée au-dessus de
+    chaque tableau. Repère les erreurs, case après case : touche une case
+    fausse, puis touche la bonne terminaison dans la banque juste au-dessus.
+    Si ton choix est le bon, la case devient <strong>verte</strong>. Sinon,
+    elle devient <strong>rouge</strong> et affiche la bonne réponse en
+    italique — tu ne peux tenter chaque case qu'une seule fois.
+  </div>
+
+<div class="scorebar" id="scorebar">0 / 0 cases corrigées</div>
+<div class="hint" id="globalHint">touche une case fausse, puis la bonne terminaison dans la banque juste au-dessus</div>
+<div class="content-main">
+<div class="partie-title">1 — présent actif / passif</div>
+<div class="partie-sub">terminaisons, voix active et passive</div>
+<div class="bank" id="bankAll-wrap">
+<div class="bank-label">Banque de toutes les terminaisons — en vrac</div>
+<div class="bank-chips" id="bankAll"></div>
+</div>
+<div class="grid">
+<div class="ghead"></div><div class="ghead">Actif</div><div class="ghead">Passif</div>
+</div>
+<div id="tableA"></div>
+<div class="table-status" id="statusA"></div>
+<div class="partie-title pft">2 — parfait actif</div>
+<div class="partie-sub pft">terminaisons du parfait, voix active uniquement</div>
+<div class="bank" id="bankAllPft-wrap">
+<div class="bank-label">Banque (rappel) — mêmes terminaisons en vrac</div>
+<div class="bank-chips" id="bankAllPft"></div>
+</div>
+<div class="grid parfait">
+<div class="ghead pft"></div><div class="ghead pft">Parfait actif</div>
+</div>
+<div id="tableB"></div>
+<div class="table-status" id="statusB"></div>
+<div class="final-score" id="finalScoreB"></div>
+<button id="btnRestartAll">Recommencer</button>
+</div>
+<script>
+(function(){
+
+  const persons = ['1re sg','2e sg','3e sg','1re pl','2e pl','3e pl'];
+
+  const cellsA = [
+    {p:0, voice:'actif', marcus:'tis', correct:'o / m'},
+    {p:1, voice:'actif', marcus:'s', correct:'s'},
+    {p:2, voice:'actif', marcus:'t', correct:'t'},
+    {p:3, voice:'actif', marcus:'mus', correct:'mus'},
+    {p:4, voice:'actif', marcus:'o / m', correct:'tis'},
+    {p:5, voice:'actif', marcus:'nt', correct:'nt'},
+    {p:0, voice:'passif', marcus:'or / r', correct:'or / r'},
+    {p:1, voice:'passif', marcus:'ris (re)', correct:'ris (re)'},
+    {p:2, voice:'passif', marcus:'mur', correct:'tur'},
+    {p:3, voice:'passif', marcus:'tur', correct:'mur'},
+    {p:4, voice:'passif', marcus:'mini', correct:'mini'},
+    {p:5, voice:'passif', marcus:'ntur', correct:'ntur'}
+  ];
+
+  const cellsB = [
+    {p:0, marcus:'i', correct:'i'},
+    {p:1, marcus:'it', correct:'isti'},
+    {p:2, marcus:'isti', correct:'it'},
+    {p:3, marcus:'imus', correct:'imus'},
+    {p:4, marcus:'istis', correct:'istis'},
+    {p:5, marcus:'erunt', correct:'erunt'}
+  ];
+
+  // une seule banque combinée, avec toutes les terminaisons des deux parties (aucun doublon)
+  const bankAllValues = [
+    'o / m','s','t','mus','tis','nt','or / r','ris (re)','tur','mur','mini','ntur',
+    'i','isti','it','imus','istis','erunt'
+  ];
+
+  let pending = null; // {tableName, index}
+  let resolvedCount = 0;
+  const totalToResolve = cellsA.filter(c => c.marcus !== c.correct).length
+                        + cellsB.filter(c => c.marcus !== c.correct).length;
+
+  const stateA = cellsA.map(c => ({ status: 'idle', marcus:c.marcus, correct:c.correct }));
+  const stateB = cellsB.map(c => ({ status: 'idle', marcus:c.marcus, correct:c.correct }));
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i = a.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function buildBank(containerId, values){
+    const wrap = document.getElementById(containerId);
+    values.forEach(v => {
+      const chip = document.createElement('button');
+      chip.className = 'chip';
+      chip.textContent = v;
+      chip.dataset.value = v;
+      chip.addEventListener('click', () => onChipPick(v));
+      wrap.appendChild(chip);
+    });
+  }
+  const shuffledBank = shuffle(bankAllValues);
+  buildBank('bankAll', shuffledBank);
+  buildBank('bankAllPft', shuffledBank);
+
+  function renderTable(containerId, cells, tableName){
+    const container = document.getElementById(containerId);
+    const rows = {};
+    persons.forEach((label, pi) => {
+      const row = document.createElement('div');
+      row.className = tableName === 'A' ? 'grid' : 'grid parfait';
+      const plabel = document.createElement('div');
+      plabel.className = tableName === 'A' ? 'plabel' : 'plabel pft';
+      plabel.textContent = label;
+      row.appendChild(plabel);
+      rows[pi] = row;
+      container.appendChild(row);
+    });
+    cells.forEach((c, i) => {
+      const div = document.createElement('div');
+      div.className = tableName === 'A' ? 'cell' : 'cell pft';
+      div.id = `${tableName}-${i}`;
+      div.innerHTML = `<span class="new-val">${c.marcus}</span>`;
+      div.addEventListener('click', () => onCellClick(tableName, i));
+      rows[c.p].appendChild(div);
+    });
+  }
+  renderTable('tableA', cellsA, 'A');
+  renderTable('tableB', cellsB, 'B');
+
+  function setBankActive(on){
+    document.querySelectorAll('#bankAll .chip, #bankAllPft .chip').forEach(c => {
+      if(!c.classList.contains('used')) c.classList.toggle('active', on);
+    });
+  }
+
+  function setHint(text, isError){
+    const el = document.getElementById('globalHint');
+    el.textContent = text;
+    el.classList.toggle('error-msg', !!isError);
+  }
+
+  function updateScorebar(){
+    document.getElementById('scorebar').textContent = `${resolvedCount} / ${totalToResolve} cases corrigées`;
+  }
+
+  function checkTableStatus(cells, state, tableName, statusId, label){
+    const targets = cells.filter(c => c.marcus !== c.correct);
+    const done = cells.every((c, i) => (c.marcus === c.correct) || state[i].status === 'fixed' || state[i].status === 'wrong');
+    if(!done) return;
+    const success = cells.filter((c, i) => c.marcus !== c.correct && state[i].status === 'fixed').length;
+    const el = document.getElementById(statusId);
+    el.classList.add('visible');
+    el.textContent = `✅ ${label} terminé : ${success} / ${targets.length} corrections exactes du premier coup.`;
+  }
+
+  function checkFinalScore(){
+    const doneA = cellsA.every((c, i) => (c.marcus === c.correct) || stateA[i].status === 'fixed' || stateA[i].status === 'wrong');
+    const doneB = cellsB.every((c, i) => (c.marcus === c.correct) || stateB[i].status === 'fixed' || stateB[i].status === 'wrong');
+    if(!doneA || !doneB) return;
+    const successTotal = cellsA.filter((c, i) => c.marcus !== c.correct && stateA[i].status === 'fixed').length
+                        + cellsB.filter((c, i) => c.marcus !== c.correct && stateB[i].status === 'fixed').length;
+    const el = document.getElementById('finalScoreB');
+    el.classList.add('visible');
+    el.textContent = `🏆 Score final de cette partie : ${successTotal} / ${totalToResolve} corrections exactes du premier coup.`;
+  }
+
+  function clearPending(){
+    if(pending){
+      const prevEl = document.getElementById(`${pending.tableName}-${pending.index}`);
+      if(prevEl) prevEl.classList.remove('selecting');
+    }
+    pending = null;
+    setBankActive(false);
+  }
+
+  function onCellClick(tableName, i){
+    const state = tableName === 'A' ? stateA : stateB;
+    const s = state[i];
+    if(s.status !== 'idle') return;
+
+    if(s.marcus === s.correct){
+      clearPending();
+      s.status = 'false-alarm';
+      const el = document.getElementById(`${tableName}-${i}`);
+      el.classList.add('false-alarm', 'done');
+      el.innerHTML = `<span class="new-val">${s.marcus}</span><span class="fa-check">✓ déjà correct</span>`;
+      setHint('⚠ En fait, cette terminaison était correcte.');
+      return;
+    }
+
+    // re-touching the cell that is already pending is a no-op (avoids accidental
+    // double-tap on touchscreens cancelling the selection)
+    if(pending && pending.tableName === tableName && pending.index === i){
+      return;
+    }
+
+    clearPending();
+    pending = { tableName, index: i };
+    const el = document.getElementById(`${tableName}-${i}`);
+    el.classList.add('selecting');
+    setBankActive(true);
+    setHint('touche la bonne terminaison dans la banque juste au-dessus');
+  }
+
+  function onChipPick(value){
+    if(!pending){
+      setHint('touche d\'abord une case que tu penses fausse, avant de choisir une terminaison', true);
+      return;
+    }
+    const tableName = pending.tableName;
+    const state = tableName === 'A' ? stateA : stateB;
+    const i = pending.index;
+    const s = state[i];
+    if(s.status !== 'idle'){
+      // safety net: pending pointed at a cell that is no longer awaiting a choice
+      clearPending();
+      setHint('touche d\'abord une case que tu penses fausse, avant de choisir une terminaison', true);
+      return;
+    }
+    const el = document.getElementById(`${tableName}-${i}`);
+
+    if(value === s.correct){
+      s.status = 'fixed';
+      el.classList.remove('selecting');
+      el.classList.add('fixed', 'done');
+      el.innerHTML = `<span class="new-val">${s.correct}</span>`;
+      document.querySelectorAll('#bankAll .chip, #bankAllPft .chip').forEach(c => {
+        if(c.dataset.value === value) c.classList.add('used');
+      });
+      setHint('✅ Corrigé ! Touche une autre case fausse.');
+    } else {
+      s.status = 'wrong';
+      el.classList.remove('selecting');
+      el.classList.add('wrong', 'done');
+      el.innerHTML = `<span><span class="cell old-wrong" style="display:inline;">${s.marcus}</span><span class="new-val"><em>${s.correct}</em></span></span>`;
+      setHint('ta correction est erronée.', true);
+    }
+
+    resolvedCount++;
+    updateScorebar();
+    pending = null;
+    setBankActive(false);
+
+    checkTableStatus(cellsA, stateA, 'A', 'statusA', 'Tableau 1 (présent actif/passif)');
+    checkTableStatus(cellsB, stateB, 'B', 'statusB', 'Tableau 2 (parfait actif)');
+    checkFinalScore();
+  }
+
+  document.getElementById('btnRestartAll').addEventListener('click', () => location.reload());
+
+  updateScorebar();
+
+})();
+</script>
+
+  </div>
+</div>
+
+<div class="sec" id="part3">
+  <div class="sec-topbar">
+    <button class="back-btn" type="button">← Retour au menu</button>
+    <h2 class="sec-title">C) Les terminaisons des deux premières déclinaisons</h2>
+  </div>
+  <div id="part3-inner">
+  
+
+<svg class="pictogram" viewBox="0 0 100 100">
+<rect fill="#1c4e9c" height="60" rx="4" width="60" x="20" y="20"></rect>
+<path d="M20 40 L80 40 M20 60 L80 60 M40 20 L40 80" stroke="white" stroke-width="3"></path>
+<text fill="white" font-size="11" x="30" y="34">N</text>
+<text fill="white" font-size="11" x="30" y="54">A</text>
+<text fill="white" font-size="11" x="30" y="74">G</text>
+</svg>
+
+
+<div class="meander"></div>
+<div class="intro">
+    Pour chaque forme, commence par dire si tu penses que Marcus a <strong>tout juste</strong>,
+    ou s'il y a <strong>une ou plusieurs erreurs</strong> à corriger (croix en trop, croix
+    manquante, déclinaison oubliée...). Si tu signales une erreur, touche alors
+    la/les bonne(s) case(s) correspondant à l'analyse complète — même si Marcus en
+    avait déjà une partie — puis touche « Vérifier ». Attention : il peut parfois y
+    avoir plusieurs possibilités pour une même forme !
+  </div>
+
+<div class="scorebar" id="scorebar3">0 / 0 points</div>
+<div class="content-main" id="cards"></div>
+<div class="final-score" id="finalScore">
+<div class="final-score-inner">
+<div class="big" id="finalBig">0 / 0</div>
+<div>points sur l'ensemble des formes</div>
+</div>
+</div>
+<script>(function(){
+
+const cases = ['N','V','Acc','G','D','Abl'];
+const allKeys = ['decl1','decl2','sgN','sgV','sgAcc','sgG','sgD','sgAbl','plN','plV','plAcc','plG','plD','plAbl'];
+
+function keyLabel(k){
+  if(k === 'decl1') return 'décl. 1';
+  if(k === 'decl2') return 'décl. 2';
+  const num = k.startsWith('sg') ? 'sg.' : 'pl.';
+  const c = k.slice(2);
+  return `${c} ${num}`;
+}
+
+const rows = [
+  {
+    word: 'capsae', ref: 'cāpsa, ae, f.',
+    marcus:  ['decl1','sgG','sgD','plN','sgAcc'],
+    correct: ['decl1','sgG','sgD','plN','plV']
+  },
+  {
+    word: 'verbum', ref: 'vērbum, i, n.',
+    marcus:  ['decl2','sgN','sgAcc'],
+    correct: ['decl2','sgN','sgV','sgAcc'],
+    note: "pour les neutres, même forme pour le N., le voc. et l'Acc. : -UM ici peut donc correspondre à ces 3 cas."
+  },
+  {
+    word: 'verbis', ref: 'vērbum, i, n.',
+    marcus:  ['decl2','plD','plAbl'],
+    correct: ['decl2','plD','plAbl']
+  },
+  {
+    word: 'amicam', ref: 'ămīca, ae, f.',
+    marcus:  ['decl1','plAcc'],
+    correct: ['decl1','sgAcc']
+  },
+  {
+    word: 'corollas', ref: 'cŏrōlla, ae, f.',
+    marcus:  ['decl1','plAcc'],
+    correct: ['decl1','plAcc']
+  },
+  {
+    word: 'amici', ref: 'ămīcus, i, m.',
+    marcus:  ['decl2','sgG'],
+    correct: ['decl2','sgG','plN','plV']
+  },
+  {
+    word: 'ludum', ref: 'lūdus, i, m.',
+    marcus:  ['decl2','sgN','sgAcc'],
+    correct: ['decl2','sgAcc'],
+    note: "comme ludus est masculin et non neutre, -UM ne peut être qu'un acc. sg. (en revanche, pour les neutres, même forme pour le N., le voc. et l'Acc., donc -UM peut correspondre à ces 3 cas)."
+  }
+];
+
+function arraysEqualAsSets(a, b){
+  if(a.length !== b.length) return false;
+  const sb = new Set(b);
+  return a.every(x => sb.has(x));
+}
+
+// 1 point de diagnostic + points d'analyse (nb de bonnes cases) par forme
+const totalMax = rows.reduce((s, r) => s + r.correct.length + 1, 0);
+let totalPoints = 0;
+let rowsDone = 0;
+
+const state = rows.map(() => ({ selected: new Set(), phase: 'diagnostic', done: false }));
+const cardsEl = document.getElementById('cards');
+
+function updateScorebar(){ document.getElementById('scorebar3').textContent = `${totalPoints} / ${totalMax} points`; }
+
+function marcusRecap(row){
+  const decls = row.marcus.filter(k => k.startsWith('decl')).map(keyLabel);
+  const cs = row.marcus.filter(k => !k.startsWith('decl')).map(keyLabel);
+  const parts = [];
+  if(decls.length) parts.push(decls.join(', '));
+  if(cs.length) parts.push(cs.join(', '));
+  return parts.length ? parts.join(' ; ') : 'aucune case cochée';
+}
+
+rows.forEach((row, ri) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="cnum">Forme ${ri+1}</div>
+    <div class="word">${row.word}</div>
+    <div class="wordref">${row.ref}</div>
+    <div class="marcus-recap">
+      <span class="marcus-label">Formes cochées sur la copie de Marcus</span>
+      ${marcusRecap(row)}
+    </div>
+    <div class="diagrow">
+      <button class="diagbtn" id="diag-ok-${ri}">✅ Tout est juste</button>
+      <button class="diagbtn" id="diag-err-${ri}">✏️ Il y a une erreur</button>
+    </div>
+    <div class="gridzone" id="gridzone-${ri}">
+      <div class="rowwrap">
+        <div class="rlabel">Déclinaison</div>
+        <div class="chiprow" id="decl-${ri}"></div>
+        <div class="rlabel">Singulier</div>
+        <div class="chiprow" id="sg-${ri}"></div>
+        <div class="rlabel">Pluriel</div>
+        <div class="chiprow" id="pl-${ri}"></div>
+      </div>
+      <button class="btnverif" id="verif-${ri}">Vérifier</button>
+    </div>
+    <div class="result" id="result-${ri}"></div>
+  `;
+  cardsEl.appendChild(card);
+
+  function makeChip(key){
+    const chip = document.createElement('button');
+    chip.className = 'xchip';
+    chip.id = `chip-${ri}-${key}`;
+    chip.textContent = keyLabel(key);
+    chip.addEventListener('click', () => toggleChip(ri, key));
+    return chip;
+  }
+  const declWrap = document.getElementById(`decl-${ri}`);
+  declWrap.appendChild(makeChip('decl1'));
+  declWrap.appendChild(makeChip('decl2'));
+  const sgWrap = document.getElementById(`sg-${ri}`);
+  cases.forEach(c => sgWrap.appendChild(makeChip('sg' + c)));
+  const plWrap = document.getElementById(`pl-${ri}`);
+  cases.forEach(c => plWrap.appendChild(makeChip('pl' + c)));
+
+  document.getElementById(`diag-ok-${ri}`).addEventListener('click', () => chooseDiagnostic(ri, 'ok'));
+  document.getElementById(`diag-err-${ri}`).addEventListener('click', () => chooseDiagnostic(ri, 'errors'));
+  document.getElementById(`verif-${ri}`).addEventListener('click', () => {
+    finalizeRow(ri, Array.from(state[ri].selected), state[ri].diagnosisChoice);
+  });
+});
+
+function chooseDiagnostic(ri, choice){
+  const s = state[ri];
+  if(s.phase !== 'diagnostic') return;
+  s.diagnosisChoice = choice;
+  document.getElementById(`diag-ok-${ri}`).disabled = true;
+  document.getElementById(`diag-err-${ri}`).disabled = true;
+  document.getElementById(`diag-${choice === 'ok' ? 'ok' : 'err'}-${ri}`).classList.add(choice === 'ok' ? 'chosen-ok' : 'chosen-errors');
+
+  if(choice === 'ok'){
+    s.phase = 'done';
+    finalizeRow(ri, rows[ri].marcus, 'ok');
+  } else {
+    s.phase = 'grid';
+    document.getElementById(`gridzone-${ri}`).classList.add('visible');
+    document.getElementById(`verif-${ri}`).classList.add('visible');
+  }
+}
+
+function toggleChip(ri, key){
+  if(state[ri].phase !== 'grid') return;
+  const s = state[ri];
+  const chip = document.getElementById(`chip-${ri}-${key}`);
+  if(s.selected.has(key)){
+    s.selected.delete(key);
+    chip.classList.remove('selected');
+  } else {
+    s.selected.add(key);
+    chip.classList.add('selected');
+  }
+}
+
+function finalizeRow(ri, selectionArray, diagnosisChoice){
+  const s = state[ri];
+  if(s.done) return;
+  s.done = true;
+  s.phase = 'done';
+  const row = rows[ri];
+  const selectedSet = new Set(selectionArray);
+
+  let truePos = 0, falsePos = 0;
+  allKeys.forEach(key => {
+    const chip = document.getElementById(`chip-${ri}-${key}`);
+    chip.classList.add('locked');
+    const isCorrect = row.correct.includes(key);
+    const isSelected = selectedSet.has(key);
+    if(isSelected){ chip.classList.add('selected'); }
+    if(isSelected && isCorrect){ chip.classList.add('correct'); truePos++; }
+    else if(isSelected && !isCorrect){ chip.classList.add('incorrect'); falsePos++; }
+    else if(!isSelected && isCorrect){ chip.classList.add('missed'); }
+  });
+  document.getElementById(`gridzone-${ri}`).classList.add('visible');
+  document.getElementById(`verif-${ri}`).classList.remove('visible');
+
+  const wasActuallyOk = arraysEqualAsSets(row.marcus, row.correct);
+  const diagnosisCorrect = (diagnosisChoice === 'ok') === wasActuallyOk;
+  const analysisPoints = Math.max(0, truePos - falsePos);
+  const points = analysisPoints + (diagnosisCorrect ? 1 : 0);
+  totalPoints += points;
+  rowsDone++;
+  updateScorebar();
+
+  const result = document.getElementById(`result-${ri}`);
+  const allGood = diagnosisCorrect && truePos === row.correct.length && falsePos === 0;
+  result.className = 'result visible ' + (allGood ? 'ok' : 'partial');
+  const correctLabel = row.correct.map(keyLabel).join(', ');
+  const diagLine = diagnosisCorrect
+    ? '✅ Bon diagnostic.'
+    : `❌ Diagnostic incorrect : ${wasActuallyOk ? 'Marcus avait en fait tout juste.' : 'Marcus avait bien fait une ou des erreur(s).'}`;
+  const noteHtml = row.note ? `<div style="margin-top:6px; font-style:italic;">🔎 ${row.note}</div>` : '';
+  result.innerHTML = `${diagLine} ${points} / ${row.correct.length + 1} points.`
+    + (allGood ? '' : `<strong>Analyse complète attendue : ${correctLabel}</strong>`)
+    + noteHtml;
+
+  if(rowsDone === rows.length){
+    document.getElementById('finalBig').textContent = `${totalPoints} / ${totalMax}`;
+    document.getElementById('finalScore').classList.add('visible');
+  }
+}
+
+updateScorebar();
+
+})();</script>
+
+  </div>
+</div>
+
+<script>
+  (function(){
+    var menuScreen = document.getElementById('menu-screen');
+    var sections = {
+      part1: document.getElementById('part1'),
+      part2: document.getElementById('part2'),
+      part3: document.getElementById('part3')
+    };
+    var appHeader = document.querySelector('.app-header');
+    var appMeander = document.querySelector('.app-meander');
+    function showMenu(){
+      menuScreen.style.display = 'grid';
+      if(appHeader) appHeader.style.display = '';
+      if(appMeander) appMeander.style.display = '';
+      Object.keys(sections).forEach(function(k){ sections[k].classList.remove('active'); });
+      window.scrollTo(0,0);
+    }
+    function showSection(id){
+      menuScreen.style.display = 'none';
+      if(appHeader) appHeader.style.display = 'none';
+      if(appMeander) appMeander.style.display = 'none';
+      Object.keys(sections).forEach(function(k){ sections[k].classList.remove('active'); });
+      sections[id].classList.add('active');
+      window.scrollTo(0,0);
+    }
+    document.querySelectorAll('.menu-card').forEach(function(card){
+      card.addEventListener('click', function(){ showSection(card.dataset.target); });
+    });
+    document.querySelectorAll('.back-btn').forEach(function(btn){
+      btn.addEventListener('click', showMenu);
+    });
+    showMenu();
+  })();
+</script>
+
+</body>
+</html>
