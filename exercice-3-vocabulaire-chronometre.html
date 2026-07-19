@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exercice chronométré de vocabulaire</title>
+<style>
+  :root{
+    --parchment:#F1E6CE;
+    --parchment-dark:#E6D6B0;
+    --burgundy:#6B1E23;
+    --burgundy-dark:#4A1418;
+    --ochre:#B9812A;
+    --ochre-light:#D9A94F;
+    --ink:#2C1810;
+    --green:#4A6B2A;
+    --green-bg:#E4EBD8;
+    --orange:#B9601A;
+    --orange-bg:#F3E3D0;
+    --red:#A01D1D;
+    --red-bg:#F3D9D9;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(185,129,42,0.08), transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(107,30,35,0.08), transparent 40%),
+      var(--parchment);
+    font-family: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+    color: var(--ink);
+    padding: 56px 16px 60px;
+  }
+  .meander{
+    height: 14px;
+    background-image: repeating-linear-gradient(90deg, var(--burgundy) 0 4px, transparent 4px 8px);
+    background-size: 32px 14px;
+    opacity:0.55;
+    margin: 0 auto 20px;
+    max-width: 640px;
+  }
+  header{ text-align:center; max-width: 640px; margin: 0 auto 8px; }
+  .title-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 10px;
+  }
+  .title-icon{ width: 36px; height: 36px; flex-shrink:0; }
+  h1{
+    font-size: clamp(1.3rem, 4vw, 1.9rem);
+    color: var(--burgundy-dark);
+    margin: 0;
+  }
+  .subtitle{ font-style: italic; color: var(--ochre); font-size: 0.9rem; margin: 6px 0 0; }
+
+  .wrap{ max-width: 640px; margin: 0 auto; }
+
+  /* ---- Écran de démarrage ---- */
+  .start-card{
+    background: linear-gradient(180deg, #FBF4E3, var(--parchment-dark));
+    border: 1.5px solid var(--ochre-light);
+    border-radius: 10px;
+    padding: 26px 22px;
+    margin-top: 20px;
+    text-align:center;
+  }
+  .start-card p{ font-size: 0.95rem; line-height:1.5; }
+  .speed-row{
+    display:flex;
+    gap: 12px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin: 20px 0 6px;
+  }
+  .speed-btn{
+    flex: 1 1 150px;
+    max-width: 180px;
+    background: white;
+    border: 2px solid var(--ochre-light);
+    border-radius: 8px;
+    padding: 14px 10px;
+    font-family: inherit;
+    cursor:pointer;
+    color: var(--ink);
+    transition: transform 0.12s ease, border-color 0.12s ease;
+  }
+  .speed-btn:hover{ border-color: var(--burgundy); transform: translateY(-2px); }
+  .speed-btn.selected{ border-color: var(--burgundy); background: linear-gradient(180deg,#F6E3C8,#EFCFA0); }
+  .speed-btn .emoji{ font-size: 1.6rem; display:block; margin-bottom: 4px; }
+  .speed-btn .label{ font-weight:700; display:block; }
+  .speed-btn .time{ font-size: 0.78rem; color:#5a4735; }
+
+  .start-btn{
+    margin-top: 18px;
+    background: var(--burgundy);
+    color: var(--parchment);
+    border: none;
+    border-radius: 7px;
+    padding: 13px 30px;
+    font-family: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+  }
+  .start-btn:hover{ background: var(--burgundy-dark); }
+  .start-btn:disabled{ opacity:0.5; cursor:not-allowed; }
+
+  /* ---- Barre de progression / score ---- */
+  .status-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    max-width: 640px;
+    margin: 18px auto 14px;
+    font-size: 0.85rem;
+    color: var(--burgundy-dark);
+  }
+  .status-bar strong{ font-size: 1rem; }
+  .progress-track{
+    height: 6px;
+    background: var(--parchment-dark);
+    border-radius: 3px;
+    overflow:hidden;
+    margin: 0 auto 18px;
+    max-width: 640px;
+  }
+  .progress-fill{
+    height: 100%;
+    background: var(--ochre);
+    width: 0%;
+    transition: width 0.25s ease;
+  }
+
+  /* ---- Carte question ---- */
+  .quiz-card{
+    background: linear-gradient(180deg, #FBF4E3, var(--parchment-dark));
+    border: 1.5px solid var(--ochre-light);
+    border-radius: 10px;
+    padding: 26px 24px;
+    text-align:center;
+  }
+  .quiz-badge{
+    display:inline-block;
+    background: var(--ochre);
+    color:white;
+    font-size: 0.68rem;
+    text-transform:uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 11px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+  }
+  .quiz-word{
+    font-style: italic;
+    font-weight: 700;
+    font-size: 2.1rem;
+    color: var(--burgundy-dark);
+    margin: 4px 0 8px;
+  }
+  .quiz-word.long-word{
+    font-size: 1.3rem;
+    line-height: 1.4;
+  }
+  .quiz-prompt{
+    font-size: 0.92rem;
+    color: #5a4735;
+    margin-bottom: 20px;
+  }
+
+  .timer-wrap{
+    max-width: 260px;
+    margin: 0 auto 22px;
+  }
+  .timer-track{
+    height: 8px;
+    background: var(--parchment-dark);
+    border-radius: 4px;
+    overflow:hidden;
+    border: 1px solid var(--ochre-light);
+  }
+  .timer-fill{
+    height:100%;
+    width:100%;
+    background: var(--green);
+    transition: width 1s linear, background-color 0.4s ease;
+  }
+  .timer-num{
+    font-size: 0.8rem;
+    color: var(--burgundy-dark);
+    margin-top: 4px;
+  }
+
+  .reveal-btn{
+    background: var(--burgundy);
+    color: var(--parchment);
+    border:none;
+    border-radius: 7px;
+    padding: 12px 28px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    cursor:pointer;
+  }
+  .reveal-btn:hover{ background: var(--burgundy-dark); }
+
+  .answer-box{
+    display:none;
+    margin-top: 6px;
+    padding: 16px 18px;
+    background: var(--parchment-dark);
+    border-left: 4px solid var(--ochre);
+    border-radius: 4px;
+    text-align:left;
+    font-size: 0.95rem;
+    line-height:1.6;
+  }
+  .answer-box.show{ display:block; }
+  .answer-box .line{ margin: 2px 0; }
+  .answer-box .line b{ color: var(--burgundy-dark); }
+  .answer-box .note{ font-size: 0.8rem; color:#5a4735; margin-top:6px; font-style:italic; }
+
+  .assess-row{
+    display:none;
+    gap: 10px;
+    margin-top: 18px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .assess-row.show{ display:flex; }
+  .assess-btn{
+    flex: 1 1 150px;
+    max-width: 190px;
+    border: none;
+    border-radius: 7px;
+    padding: 12px 10px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    cursor:pointer;
+    color:white;
+    font-weight:600;
+    transition: transform 0.1s ease, opacity 0.1s ease;
+  }
+  .assess-btn:hover{ transform: translateY(-2px); }
+  .assess-btn.red{ background: var(--red); }
+  .assess-btn.orange{ background: var(--orange); }
+  .assess-btn.green{ background: var(--green); }
+  .assess-btn:disabled{ opacity:0.45; cursor:default; transform:none; }
+  .assess-row.locked .assess-btn:not(.chosen){ opacity:0.35; }
+
+  .next-btn{
+    display:none;
+    margin: 20px auto 0;
+    background: var(--ochre);
+    color:white;
+    border:none;
+    border-radius: 7px;
+    padding: 11px 26px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    cursor:pointer;
+  }
+  .next-btn.show{ display:inline-block; }
+  .next-btn:hover{ background: var(--ochre-light); }
+
+  /* ---- Écran final ---- */
+  .final-card{
+    display:none;
+    background: var(--burgundy);
+    color: var(--parchment);
+    border-radius: 10px;
+    padding: 30px 24px;
+    text-align:center;
+  }
+  .final-card.show{ display:block; }
+  .final-score{ font-size: 2.4rem; font-weight:700; margin: 6px 0; }
+  .final-detail{ font-size: 0.9rem; opacity:0.9; margin-bottom: 18px; }
+  .restart-btn{
+    background: var(--ochre);
+    color:white;
+    border:none;
+    border-radius: 7px;
+    padding: 12px 26px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    cursor:pointer;
+  }
+  .restart-btn:hover{ background: var(--ochre-light); }
+
+  .hidden{ display:none !important; }
+
+.home-fab{
+  position:fixed; top:14px; left:14px; z-index:999;
+  display:flex; align-items:center; gap:6px;
+  background: linear-gradient(135deg, var(--ochre), var(--burgundy));
+  color:#fff; font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;
+  font-size:0.82rem; font-weight:700; text-decoration:none;
+  padding:8px 14px; border-radius:20px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.25);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.home-fab:hover{ transform: translateY(-2px); box-shadow:0 5px 14px rgba(0,0,0,0.3); }
+@media (max-width:480px){ .home-fab{ font-size:0.72rem; padding:6px 10px; top:8px; left:8px; } }
+</style>
+</head>
+<body>
+<a class="home-fab" href="../../index.html">🏠 Accueil du site</a>
+
+<svg style="display:none" aria-hidden="true">
+  <symbol id="pic-vocab" viewBox="0 0 100 100">
+    <rect x="25" y="20" width="50" height="60" rx="6" fill="#1e8f5f"/>
+    <text x="50" y="38" font-size="14" text-anchor="middle" fill="white" font-family="Georgia, serif">a</text>
+    <text x="50" y="55" font-size="14" text-anchor="middle" fill="white" font-family="Georgia, serif">b</text>
+    <text x="50" y="72" font-size="14" text-anchor="middle" fill="white" font-family="Georgia, serif">c</text>
+  </symbol>
+</svg>
+
+<div class="meander"></div>
+<header>
+  <div class="title-row">
+    <svg class="title-icon"><use href="#pic-vocab"></use></svg>
+    <h1>Exercice chronométré de vocabulaire</h1>
+  </div>
+  <p class="subtitle">25 mots tirés au hasard · prépositions, conjonctions, verbes, mots invariables</p>
+</header>
+
+<div class="wrap">
+
+  <!-- ÉCRAN DE DÉPART -->
+  <div class="start-card" id="start-screen">
+    <p>Choisis ta vitesse. Un mot latin s'affiche : réfléchis puis clique dès que tu penses avoir la réponse (cas/mode/temps primitifs + sens selon le mot). La bonne réponse s'affiche ensuite et tu t'auto-évalues.</p>
+    <div class="speed-row" id="speed-row">
+      <button class="speed-btn" data-seconds="25">
+        <span class="emoji">🐢</span>
+        <span class="label">Lente</span>
+        <span class="time">25 secondes / mot</span>
+      </button>
+      <button class="speed-btn" data-seconds="15">
+        <span class="emoji">🚶</span>
+        <span class="label">Moyenne</span>
+        <span class="time">15 secondes / mot</span>
+      </button>
+      <button class="speed-btn" data-seconds="8">
+        <span class="emoji">⚡</span>
+        <span class="label">Rapide</span>
+        <span class="time">8 secondes / mot</span>
+      </button>
+    </div>
+    <button class="start-btn" id="start-btn" disabled>Choisis une vitesse pour commencer</button>
+  </div>
+
+  <!-- BARRE DE STATUT -->
+  <div class="status-bar hidden" id="status-bar">
+    <span>Mot <strong><span id="idx">1</span></strong> / <span id="totalCount">25</span></span>
+    <span>Score : <strong><span id="score">0</span></strong> / <span id="totalCount2">25</span></span>
+  </div>
+  <div class="progress-track hidden" id="progress-track">
+    <div class="progress-fill" id="progress-fill"></div>
+  </div>
+
+  <!-- CARTE QUESTION -->
+  <div class="quiz-card hidden" id="quiz-screen">
+    <div class="quiz-badge" id="quiz-badge">Préposition</div>
+    <div class="quiz-word" id="quiz-word">ab</div>
+    <div class="quiz-prompt" id="quiz-prompt">Quel cas régit ce mot ? Quel est son sens ?</div>
+
+    <div class="timer-wrap" id="timer-wrap">
+      <div class="timer-track"><div class="timer-fill" id="timer-fill"></div></div>
+      <div class="timer-num"><span id="timer-num">25</span> s</div>
+    </div>
+
+    <button class="reveal-btn" id="reveal-btn">J'ai ma réponse — je vérifie</button>
+
+    <div class="answer-box" id="answer-box"></div>
+
+    <div class="assess-row" id="assess-row">
+      <button class="assess-btn red" data-val="0">Ma réponse est fausse</button>
+      <button class="assess-btn orange" data-val="0.5">Ma réponse est incomplète</button>
+      <button class="assess-btn green" data-val="1">Ma réponse est exacte</button>
+    </div>
+
+    <button class="next-btn" id="next-btn">Mot suivant →</button>
+  </div>
+
+  <!-- ÉCRAN FINAL -->
+  <div class="final-card" id="final-screen">
+    <div>Exercice terminé !</div>
+    <div class="final-score"><span id="final-score">0</span> / <span id="final-total">25</span></div>
+    <div class="final-detail" id="final-detail"></div>
+    <button class="restart-btn" id="restart-btn">Recommencer</button>
+  </div>
+
+</div>
+
+<div class="meander" style="margin-top:24px;"></div>
+
+<script>
+  // =========================================================
+  // DONNÉES — Liste estivale 2026-2027
+  // =========================================================
+  const preps = [
+    { latin: "ab", cas: "ablatif", sens: "loin de, de (origine, provenance), depuis ; par/de (complément d'agent)", note: "devient a devant une consonne" },
+    { latin: "ad", cas: "accusatif", sens: "vers" },
+    { latin: "ante", cas: "accusatif", sens: "devant ; avant" },
+    { latin: "cum (prép.)", cas: "ablatif", sens: "avec" },
+    { latin: "in", cas: "accusatif ou ablatif", sens: "dans, en, sur", note: "accusatif s'il y a mouvement, ablatif dans les autres cas" },
+    { latin: "post", cas: "accusatif", sens: "derrière ; après" }
+  ].map(p => ({ ...p, type: "prep" }));
+
+  const conjs = [
+    { latin: "antequam", mode: "indicatif", sens: "avant que, avant de", note: "peut aussi, plus rarement, être suivi du subjonctif" },
+    { latin: "cum (temporel)", mode: "indicatif", sens: "lorsque, quand" },
+    { latin: "cum (causal)", mode: "subjonctif", sens: "comme, puisque (cause)", note: "le plus souvent à l'imparfait ou au plus-que-parfait du subjonctif" },
+    { latin: "donec", mode: "indicatif", sens: "jusqu'à ce que, tant que" },
+    { latin: "etsi", mode: "indicatif", sens: "bien que, quoique" },
+    { latin: "postquam", mode: "indicatif", sens: "après que" },
+    { latin: "quamquam", mode: "indicatif", sens: "bien que, quoique" },
+    { latin: "quia", mode: "indicatif", sens: "parce que" },
+    { latin: "quoniam", mode: "indicatif", sens: "puisque" },
+    { latin: "tametsi", mode: "indicatif", sens: "bien que, quoique" },
+    { latin: "ubi primum", mode: "indicatif", sens: "dès que" },
+    { latin: "ut primum", mode: "indicatif", sens: "dès que" }
+  ].map(c => ({ ...c, type: "conj" }));
+
+  const verbs = [
+    { latin: "capio", primitifs: "capio, is, ere, cepi, captum", sens: "prendre" },
+    { latin: "credo", primitifs: "credo, is, ere, credidi, creditum", sens: "croire" },
+    { latin: "cupio", primitifs: "cupio, is, ere, cupivi (ou cupii), cupitum", sens: "désirer" },
+    { latin: "do", primitifs: "do, das, dare, dedi, datum", sens: "donner" },
+    { latin: "dico", primitifs: "dico, is, ere, dixi, dictum", sens: "dire" },
+    { latin: "duco", primitifs: "duco, is, ere, duxi, ductum", sens: "conduire, mener ; compter, estimer" },
+    { latin: "facio", primitifs: "facio, is, ere, feci, factum", sens: "faire" },
+    { latin: "fero", primitifs: "fero, fers, ferre, tuli, latum", sens: "porter, rapporter, supporter" },
+    { latin: "fugio", primitifs: "fugio, is, ere, fugi, —", sens: "s'enfuir, fuir" },
+    { latin: "interficio", primitifs: "interficio, is, ere, interfeci, interfectum", sens: "tuer" },
+    { latin: "mitto", primitifs: "mitto, is, ere, misi, missum", sens: "envoyer, lancer" },
+    { latin: "moneo", primitifs: "moneo, es, ere, monui, monitum", sens: "avertir, engager à" },
+    { latin: "nescio", primitifs: "nescio, is, ire, nescivi (ou nescii), nescitum", sens: "ne pas savoir, ignorer" },
+    { latin: "peto", primitifs: "peto, is, ere, petivi (ou petii), petitum", sens: "chercher à atteindre, demander" },
+    { latin: "quaero", primitifs: "quaero, is, ere, quaesivi (ou quaesii), quaesitum", sens: "chercher, rechercher, demander" },
+    { latin: "respondeo", primitifs: "respondeo, es, ere, respondi, responsum", sens: "répondre" },
+    { latin: "rogo", primitifs: "rogo, as, are, rogavi, rogatum", sens: "demander" },
+    { latin: "scio", primitifs: "scio, is, ire, scivi (ou scii), scitum", sens: "savoir" },
+    { latin: "scribo", primitifs: "scribo, is, ere, scripsi, scriptum", sens: "écrire" },
+    { latin: "sto", primitifs: "sto, as, are, steti, statum", sens: "se tenir debout" },
+    { latin: "sum", primitifs: "sum, es, esse, fui, —", sens: "être" },
+    { latin: "traho", primitifs: "traho, is, ere, traxi, tractum", sens: "tirer" },
+    { latin: "venio", primitifs: "venio, is, ire, veni, ventum", sens: "venir" },
+    { latin: "video", primitifs: "video, es, ere, vidi, visum", sens: "voir" },
+    { latin: "vinco", primitifs: "vinco, is, ere, vici, victum", sens: "vaincre" },
+    { latin: "volo", primitifs: "volo, vis, velle, volui, —", sens: "vouloir" }
+  ].map(v => ({ ...v, type: "verb" }));
+
+  const advs = [
+    { latin: "atque / ac", sens: "et" },
+    { latin: "aut", sens: "ou, ou bien" },
+    { latin: "autem", sens: "or, d'autre part, quant à, mais (souvent intraduisible)" },
+    { latin: "deinde", sens: "ensuite, puis" },
+    { latin: "denique", sens: "enfin, à la fin" },
+    { latin: "enim", sens: "en effet" },
+    { latin: "ergo", sens: "donc, en conséquence" },
+    { latin: "et", sens: "et (parfois adverbe : aussi)" },
+    { latin: "etiam", sens: "même, encore, aussi" },
+    { latin: "forte", sens: "par hasard" },
+    { latin: "igitur", sens: "donc" },
+    { latin: "itaque", sens: "c'est pourquoi" },
+    { latin: "jam", sens: "déjà, maintenant, désormais" },
+    { latin: "mox", sens: "bientôt (dans le passé : bientôt après, ensuite)" },
+    { latin: "nam", sens: "en effet" },
+    { latin: "neque / nec", sens: "et ne...pas, ni" },
+    { latin: "non", sens: "ne...pas" },
+    { latin: "non solum... sed etiam", sens: "non seulement... mais encore" },
+    { latin: "nondum", sens: "ne...pas encore" },
+    { latin: "nonnumquam", sens: "parfois" },
+    { latin: "numquam", sens: "jamais" },
+    { latin: "nunc", sens: "maintenant" },
+    { latin: "praeterea", sens: "en outre" },
+    { latin: "primum", sens: "d'abord" },
+    { latin: "que", sens: "et (enclitique)" },
+    { latin: "quoque", sens: "aussi, encore" },
+    { latin: "repente", sens: "soudain" },
+    { latin: "saepe", sens: "souvent" },
+    { latin: "semper", sens: "toujours" },
+    { latin: "solum", sens: "seulement" },
+    { latin: "statim", sens: "aussitôt" },
+    { latin: "tamen", sens: "cependant, pourtant" },
+    { latin: "tum", sens: "alors" },
+    { latin: "tunc", sens: "alors" }
+  ].map(a => ({ ...a, type: "adv" }));
+
+  const fullPool = [...preps, ...conjs, ...verbs, ...advs];
+
+  const promptText = {
+    prep: "Quel cas régit ce mot ? Quel est son sens ?",
+    conj: "Cette conjonction de subordination est suivie de quel mode en latin ? Quel est son sens ?",
+    verb: "Quel est le sens de ce verbe ?",
+    adv: "Quel est le sens de ce mot ?"
+  };
+  const badgeText = {
+    prep: "Préposition",
+    conj: "Conjonction",
+    verb: "Verbe",
+    adv: "Mot invariable"
+  };
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i = a.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // =========================================================
+  // ÉTAT
+  // =========================================================
+  const TOTAL = 25;
+  let quizWords = [];
+  let currentIndex = 0;
+  let score = 0;
+  let secondsPerWord = 15;
+  let timerRemaining = 0;
+  let timerInterval = null;
+
+  const startScreen = document.getElementById('start-screen');
+  const speedRow = document.getElementById('speed-row');
+  const startBtn = document.getElementById('start-btn');
+  const statusBar = document.getElementById('status-bar');
+  const progressTrack = document.getElementById('progress-track');
+  const progressFill = document.getElementById('progress-fill');
+  const quizScreen = document.getElementById('quiz-screen');
+  const finalScreen = document.getElementById('final-screen');
+  const idxEl = document.getElementById('idx');
+  const totalCountEl = document.getElementById('totalCount');
+  const totalCount2El = document.getElementById('totalCount2');
+  const scoreEl = document.getElementById('score');
+  const quizBadge = document.getElementById('quiz-badge');
+  const quizWord = document.getElementById('quiz-word');
+  const quizPrompt = document.getElementById('quiz-prompt');
+  const timerWrap = document.getElementById('timer-wrap');
+  const timerFill = document.getElementById('timer-fill');
+  const timerNum = document.getElementById('timer-num');
+  const revealBtn = document.getElementById('reveal-btn');
+  const answerBox = document.getElementById('answer-box');
+  const assessRow = document.getElementById('assess-row');
+  const nextBtn = document.getElementById('next-btn');
+  const finalScoreEl = document.getElementById('final-score');
+  const finalTotalEl = document.getElementById('final-total');
+  const finalDetail = document.getElementById('final-detail');
+  const restartBtn = document.getElementById('restart-btn');
+
+  totalCountEl.textContent = TOTAL;
+  totalCount2El.textContent = TOTAL;
+  finalTotalEl.textContent = TOTAL;
+
+  // ---- Sélection de vitesse ----
+  speedRow.querySelectorAll('.speed-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      speedRow.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      secondsPerWord = parseInt(btn.dataset.seconds, 10);
+      startBtn.disabled = false;
+      startBtn.textContent = 'Commencer l\'exercice';
+    });
+  });
+
+  startBtn.addEventListener('click', startQuiz);
+  restartBtn.addEventListener('click', () => {
+    finalScreen.classList.remove('show');
+    startScreen.classList.remove('hidden');
+    statusBar.classList.add('hidden');
+    progressTrack.classList.add('hidden');
+  });
+
+  function startQuiz(){
+    quizWords = shuffle(fullPool).slice(0, TOTAL);
+    currentIndex = 0;
+    score = 0;
+    scoreEl.textContent = '0';
+    startScreen.classList.add('hidden');
+    statusBar.classList.remove('hidden');
+    progressTrack.classList.remove('hidden');
+    quizScreen.classList.remove('hidden');
+    loadWord();
+  }
+
+  function loadWord(){
+    clearInterval(timerInterval);
+    const q = quizWords[currentIndex];
+    idxEl.textContent = currentIndex + 1;
+    progressFill.style.width = ((currentIndex) / TOTAL * 100) + '%';
+
+    quizBadge.textContent = badgeText[q.type];
+    quizWord.textContent = (q.type === 'verb') ? q.primitifs : q.latin;
+    quizWord.classList.toggle('long-word', q.type === 'verb');
+    quizPrompt.textContent = promptText[q.type];
+
+    answerBox.classList.remove('show');
+    answerBox.innerHTML = '';
+    assessRow.classList.remove('show', 'locked');
+    assessRow.querySelectorAll('.assess-btn').forEach(b => { b.disabled = false; b.classList.remove('chosen'); });
+    nextBtn.classList.remove('show');
+    revealBtn.classList.remove('hidden');
+    revealBtn.disabled = false;
+    timerWrap.classList.remove('hidden');
+
+    timerRemaining = secondsPerWord;
+    timerNum.textContent = timerRemaining;
+    timerFill.style.width = '100%';
+    timerFill.style.background = 'var(--green)';
+
+    timerInterval = setInterval(() => {
+      timerRemaining--;
+      timerNum.textContent = Math.max(timerRemaining, 0);
+      const pct = Math.max(timerRemaining, 0) / secondsPerWord * 100;
+      timerFill.style.width = pct + '%';
+      if(timerRemaining <= secondsPerWord * 0.3){
+        timerFill.style.background = 'var(--red)';
+      } else if(timerRemaining <= secondsPerWord * 0.6){
+        timerFill.style.background = 'var(--orange)';
+      }
+      if(timerRemaining <= 0){
+        clearInterval(timerInterval);
+        revealAnswer();
+      }
+    }, 1000);
+
+    revealBtn.onclick = () => {
+      clearInterval(timerInterval);
+      revealAnswer();
+    };
+  }
+
+  function revealAnswer(){
+    const q = quizWords[currentIndex];
+    revealBtn.classList.add('hidden');
+    timerWrap.classList.add('hidden');
+
+    let html = '';
+    if(q.type === 'prep'){
+      html += '<div class="line"><b>Cas :</b> ' + q.cas + '</div>';
+      html += '<div class="line"><b>Sens :</b> ' + q.sens + '</div>';
+    } else if(q.type === 'conj'){
+      html += '<div class="line"><b>Mode :</b> ' + q.mode + '</div>';
+      html += '<div class="line"><b>Sens :</b> ' + q.sens + '</div>';
+    } else if(q.type === 'verb'){
+      html += '<div class="line"><b>Sens :</b> ' + q.sens + '</div>';
+    } else {
+      html += '<div class="line"><b>Sens :</b> ' + q.sens + '</div>';
+    }
+    if(q.note){
+      html += '<div class="note">Remarque : ' + q.note + '</div>';
+    }
+    answerBox.innerHTML = html;
+    answerBox.classList.add('show');
+    assessRow.classList.add('show');
+  }
+
+  assessRow.querySelectorAll('.assess-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if(assessRow.classList.contains('locked')) return;
+      assessRow.classList.add('locked');
+      btn.classList.add('chosen');
+      assessRow.querySelectorAll('.assess-btn').forEach(b => b.disabled = true);
+      score += parseFloat(btn.dataset.val);
+      const displayScore = Number.isInteger(score) ? score : score.toFixed(1);
+      scoreEl.textContent = displayScore;
+      nextBtn.classList.add('show');
+    });
+  });
+
+  nextBtn.addEventListener('click', () => {
+    currentIndex++;
+    if(currentIndex >= TOTAL){
+      finishQuiz();
+    } else {
+      loadWord();
+    }
+  });
+
+  function finishQuiz(){
+    quizScreen.classList.add('hidden');
+    statusBar.classList.add('hidden');
+    progressTrack.classList.add('hidden');
+    const displayScore = Number.isInteger(score) ? score : score.toFixed(1);
+    finalScoreEl.textContent = displayScore;
+    const pct = Math.round(score / TOTAL * 100);
+    finalDetail.textContent = pct + ' % de réussite — clique sur "Recommencer" pour un nouveau tirage de 25 mots, avec la possibilité de changer de vitesse.';
+    finalScreen.classList.add('show');
+  }
+</script>
+
+</body>
+</html>
