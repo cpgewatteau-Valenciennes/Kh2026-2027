@@ -173,7 +173,24 @@
   @media (prefers-reduced-motion: reduce){
     .folder-tab, .folder-body, .chev{ transition:none; }
   }
-</style>
+.legend-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--chalk-dim);
+    margin:20px 0 8px;
+    opacity:.75;
+  }
+  .legend{
+    display:flex; flex-wrap:wrap; gap:10px 20px;
+    margin:0;
+  }
+  .legend-item{
+    display:flex; align-items:center; gap:7px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--chalk-dim);
+  }
+  .legend-item svg{ width:16px; height:16px; border-radius:3px; flex-shrink:0; }</style>
 </head>
 <body>
 <div class="wrap">
@@ -182,6 +199,7 @@
     <h1>Espace de révisions</h1>
     <p>Cliquez sur un dossier pour l'ouvrir. De nouveaux dossiers et documents seront ajoutés au fil de l'année sur ce même lien. Dans chaque exercice, le bouton 🏠 en haut à gauche vous ramène ici à tout moment, sans rien perdre.</p>
     <div class="header-rule"></div>
+    <p class="legend-label">Des pictogrammes indiquant la/les dominante(s) de chaque exercice :</p>
     <div class="legend">
       <span class="legend-item"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="20" width="60" height="60" rx="8" fill="#1c4e9c"/><path d="M20 40 L80 40 M20 60 L80 60 M40 20 L40 80" stroke="white" stroke-width="6"/></svg> Déclinaisons</span>
       <span class="legend-item"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="40" width="20" height="20" rx="3" fill="#c0293b"/><rect x="40" y="40" width="20" height="20" rx="3" fill="#c0293b" opacity="0.55"/><rect x="62" y="40" width="20" height="20" rx="3" fill="#c0293b"/></svg> Conjugaisons</span>
