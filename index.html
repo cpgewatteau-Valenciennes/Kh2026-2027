@@ -216,7 +216,9 @@
 
 <script src="data.js"></script>
 <script>
-  const treeRoot = document.getElementById('tree');
+  const treeRoot = document.getElementById('tree');function slugify(str){
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+  }
 
   const PICTOS = {
     decl: '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="20" width="60" height="60" rx="8" fill="#1c4e9c"/><path d="M20 40 L80 40 M20 60 L80 60 M40 20 L40 80" stroke="white" stroke-width="6"/></svg>',
@@ -238,6 +240,7 @@
     const btn = document.createElement('button');
     btn.className = 'folder-tab';
     btn.setAttribute('aria-expanded', 'false');
+    btn.id = 'folder-' + slugify(node.nom);
     btn.innerHTML = `<span>📁 ${node.nom}</span><span class="chev">›</span>`;
 
     const body = document.createElement('div');
@@ -292,9 +295,26 @@
 
   STRUCTURE.forEach(node => treeRoot.appendChild(renderFolder(node, 0)));
 
-  // Ouvre automatiquement le premier dossier de premier niveau
-  const firstTab = treeRoot.querySelector('.folder-tab');
-  if(firstTab) firstTab.click();
+  function expandToId(id){
+    const btn = document.getElementById(id);
+    if(!btn) return false;
+    let el = btn.closest('.folder');
+    const chain = [];
+    while(el){
+      const tab = el.querySelector(':scope > .folder-tab');
+      if(tab) chain.unshift(tab);
+      el = el.parentElement.closest('.folder');
+    }
+    chain.forEach(tab => { if(tab.getAttribute('aria-expanded') !== 'true') tab.click(); });
+    btn.scrollIntoView({behavior:'smooth', block:'start'});
+    return true;
+  }
+
+  const targetId = location.hash ? 'folder-' + location.hash.slice(1) : null;
+  if(!targetId || !expandToId(targetId)){
+    const firstTab = treeRoot.querySelector('.folder-tab');
+    if(firstTab) firstTab.click();
+  }
 </script>
 </body>
 </html>
