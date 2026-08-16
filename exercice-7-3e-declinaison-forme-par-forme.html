@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>3e déclinaison — forme par forme</title>
+<style>
+  :root{
+    --burgundy:#6B1E23; --burgundy-dark:#4a1319; --burgundy-light:#8a3138;
+    --parchment:#F1E6CE; --parchment-dark:#e5d6b3; --ink:#2b1810;
+    --green:#1e6b45; --green-bg:#c9e6d3;
+    --red:#8a2318; --red-bg:#f3c7c0;
+    --gold:#a8823a;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+  body{ margin:0; font-family:'Iowan Old Style','Palatino Linotype','Palatino',Georgia,serif;
+    background: var(--parchment); color: var(--ink); padding: 0 0 40px 0; }
+  header{ padding: 22px 16px 14px 16px; text-align:center; }
+  .pictogram{ width:52px; height:52px; margin:0 auto 8px auto; display:block; }
+  h1{ margin:0; font-size:1.3em; color: var(--burgundy); }
+  .subtitle{ margin:4px 0 0 0; font-style:italic; color:var(--burgundy-dark); font-size:0.85em; }
+  .meander{ height:10px; max-width:420px; margin:14px auto 0 auto;
+    background-image: repeating-linear-gradient(90deg, var(--burgundy) 0px, var(--burgundy) 5px, transparent 5px, transparent 10px);
+    background-size:20px 100%; opacity:0.55; }
+  .intro{ max-width:480px; margin:14px auto 0 auto; padding:12px 16px; background:white;
+    border-left:4px solid var(--burgundy); border-radius:4px; font-size:0.85em; line-height:1.45; }
+  .intro strong{ color:var(--burgundy); }
+  main{ max-width:560px; margin:18px auto 0 auto; padding:0 14px; }
+
+  .progress{ text-align:center; font-size:0.78em; text-transform:uppercase; letter-spacing:0.06em;
+    color:var(--gold); font-weight:bold; margin-bottom:10px; }
+
+  .word-card{ background:white; border-radius:10px; padding:16px; text-align:center;
+    box-shadow:0 2px 6px rgba(43,24,16,0.12); margin-bottom:16px; }
+  .word-form{ font-size:1.7em; font-style:italic; color:var(--burgundy); font-weight:bold; }
+  .word-id{ margin-top:6px; font-size:0.9em; font-style:italic; color:var(--burgundy-dark); }
+  .word-genre{ display:inline-block; margin-top:6px; font-size:0.7em; text-transform:uppercase;
+    letter-spacing:0.05em; background:var(--parchment-dark); color:var(--burgundy-dark);
+    padding:3px 10px; border-radius:10px; }
+
+  table.decl{ width:100%; border-collapse:collapse; background:white; border-radius:8px; overflow:hidden;
+    box-shadow:0 2px 6px rgba(43,24,16,0.12); margin-bottom:14px; }
+  table.decl th{ background:var(--burgundy); color:var(--parchment); font-size:0.75em; padding:8px 4px; text-align:center; }
+  table.decl td{ border:1px solid var(--parchment-dark); vertical-align:middle; padding:10px 5px;
+    text-align:center; min-height:40px; }
+  table.decl td.caselabel{ background:var(--parchment-dark); font-size:0.72em; font-weight:bold; color:var(--burgundy-dark);
+    text-align:center; vertical-align:middle; width:70px; }
+  td.cell{ cursor:pointer; font-size:1.3em; color:var(--parchment-dark); transition: background 0.12s; }
+  td.cell:active{ background:var(--parchment-dark); }
+  td.cell.selected{ background:var(--burgundy); color:var(--parchment); font-weight:bold; }
+  td.cell.selected::after{ content:"✓"; }
+  td.cell.correct{ background:var(--green-bg); color:var(--green); font-weight:bold; }
+  td.cell.correct::after{ content:"✓"; }
+  td.cell.wrong{ background:var(--red-bg); color:var(--red); font-weight:bold; }
+  td.cell.wrong::after{ content:"✕"; }
+  td.cell.missed{ background:white; color:var(--gold); font-weight:bold; outline:2.5px dashed var(--gold); outline-offset:-3px; }
+  td.cell.missed::after{ content:"?"; }
+
+  .actions{ display:flex; gap:10px; margin-top:6px; }
+  .btn{ flex:1; font-family:inherit; font-size:0.95em; padding:12px; border-radius:8px; border:none; cursor:pointer; }
+  .btn.primary{ background:var(--burgundy); color:var(--parchment); }
+  .btn.secondary{ background:white; color:var(--burgundy); border:1.5px solid var(--burgundy); }
+  .btn:disabled{ opacity:0.4; pointer-events:none; }
+
+  .remark{ display:none; margin-top:14px; padding:12px 14px; background:white; border-left:4px solid var(--gold);
+    border-radius:4px; font-size:0.88em; line-height:1.45; }
+  .remark.visible{ display:block; }
+  .remark .verdict{ font-weight:bold; margin-bottom:4px; }
+  .remark .verdict.ok{ color:var(--green); }
+  .remark .verdict.ko{ color:var(--red); }
+  .nb-note{ font-style:italic; font-weight:bold; font-size:0.8em; color:var(--red); margin-bottom:10px; padding-bottom:10px;
+    border-bottom:1px dashed var(--parchment-dark); }
+  .remark-bullets{ list-style:none; margin:0; padding:0; }
+  .remark-bullets li{ margin-bottom:6px; padding-left:14px; position:relative; }
+  .remark-bullets li::before{ content:"–"; position:absolute; left:0; color:var(--burgundy-light); }
+  .remark-bullets li:last-child{ margin-bottom:0; }
+
+  .final-summary{ display:none; background:white; border-radius:10px; padding:20px; text-align:center;
+    box-shadow:0 2px 6px rgba(43,24,16,0.12); }
+  .final-summary.visible{ display:block; }
+  .final-summary .big{ font-size:1.8em; color:var(--burgundy); font-weight:bold; margin-bottom:6px; }
+
+.home-fab{
+  position:fixed; top:14px; left:14px; z-index:999;
+  display:flex; align-items:center; gap:6px;
+  background: linear-gradient(135deg, #B9812A, #6B1E23);
+  color:#fff; font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;
+  font-size:0.82rem; font-weight:700; text-decoration:none;
+  padding:8px 14px; border-radius:20px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.25);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.home-fab:hover{ transform: translateY(-2px); box-shadow:0 5px 14px rgba(0,0,0,0.3); }
+@media (max-width:480px){ .home-fab{ font-size:0.72rem; padding:6px 10px; top:8px; left:8px; } }
+.next-fab{
+  position:fixed; top:14px; right:14px; z-index:999;
+  display:flex; align-items:center; gap:6px;
+  background: linear-gradient(135deg, #6B1E23, #B9812A);
+  color:#fff; font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;
+  font-size:0.82rem; font-weight:700; text-decoration:none;
+  padding:8px 14px; border-radius:20px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.25);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.next-fab:hover{ transform: translateY(-2px); box-shadow:0 5px 14px rgba(0,0,0,0.3); }
+@media (max-width:480px){ .next-fab{ font-size:0.72rem; padding:6px 10px; top:8px; right:8px; } }
+</style>
+</head>
+<body>
+<a class="home-fab" href="index.html#serie-estivale-2">🏠 Accueil du site</a>
+<a class="next-fab" href="exercice-8-identifier-formes-verbales.html">Exercice suivant →</a>
+
+
+<header>
+  <svg class="pictogram" viewBox="0 0 100 100">
+    <rect x="15" y="20" width="70" height="60" fill="none" stroke="#6B1E23" stroke-width="3"/>
+    <line x1="50" y1="20" x2="50" y2="80" stroke="#6B1E23" stroke-width="2"/>
+    <line x1="15" y1="45" x2="85" y2="45" stroke="#6B1E23" stroke-width="2"/>
+  </svg>
+  <h1>Revoir la 3e déclinaison en identifiant des formes</h1>
+  <p class="subtitle">3e déclinaison — forme par forme</p>
+  <div class="meander"></div>
+  <div class="intro">
+    Ici, tous les noms sont de la 3e déclinaison. Pour chacun d'eux, avant de répondre, vérifie bien, à l'aide des infos fournies juste en-dessous de celle-ci, son radical (trouvé en enlevant la terminaison -IS du génitif singulier) et son genre. Touche dans le tableau <strong>toutes les cases</strong> qui correspondent selon toi à cette forme (une forme peut être ambiguë et correspondre à plusieurs cases). Valide pour voir la correction et les remarques, puis passe à la forme suivante.
+  </div>
+</header>
+
+<main>
+  <div class="progress" id="progress"></div>
+
+  <div id="quizArea">
+    <div class="word-card">
+      <div class="word-form" id="wordForm"></div>
+      <div class="word-id" id="wordId"></div>
+    </div>
+
+    <table class="decl" id="declTable">
+      <thead>
+        <tr><th></th><th>Singulier</th><th>Pluriel</th></tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+
+    <div class="actions">
+      <button class="btn secondary" id="clearBtn">Effacer ma sélection</button>
+      <button class="btn primary" id="checkBtn">Valider cette forme</button>
+    </div>
+
+    <div class="remark" id="remark"></div>
+
+    <div class="actions" id="nextRow" style="display:none;">
+      <button class="btn primary" id="nextBtn">Forme suivante →</button>
+    </div>
+  </div>
+
+  <div class="final-summary" id="finalSummary">
+    <div class="big" id="finalBig">0 / 14</div>
+    <div>formes correctement identifiées (dans toutes leurs cases)</div>
+    <div class="actions" style="margin-top:16px;">
+      <button class="btn primary" id="restartBtn">Recommencer</button>
+    </div>
+  </div>
+</main>
+
+<script>
+const cases = ['Nominatif','Vocatif','Accusatif','Génitif','Datif','Ablatif'];
+const nombres = ['Singulier','Pluriel'];
+
+const NB_NOTE = "Pour chacun d'eux, avant de répondre, vérifie bien, à l'aide des infos fournies juste en-dessous de celle-ci, son radical (trouvé en enlevant la terminaison -IS du génitif singulier) et son genre.";
+
+const words = [
+  { form:'crimina', dictEntry:'crīmĕn, ĭnis, n.',
+    accepted:[['Nominatif','Pluriel'],['Vocatif','Pluriel'],['Accusatif','Pluriel']],
+    comment:[
+      "Rappel valable dans toutes les déclinaisons : un neutre a toujours nom. = voc. = acc., au singulier comme au pluriel.",
+      "Ici c'est la terminaison -A du nominatif/vocatif/accusatif pluriel qui a été ajoutée au radical du génitif : <i>crimin-</i> (<i>crimen</i>, <i>criminis</i>).",
+      "⚠️ Puisqu'il s'agit d'un nom de la 3e déclinaison, ce -A final n'est pas le -A du nom./voc./abl. sg. de la 1ère déclinaison (<i>rosa</i>), mais la marque du neutre pluriel (nom./voc./acc.), qu'on retrouve aussi pour les neutres de la 2e déclinaison (<i>templum, i</i>)."
+    ] },
+  { form:'litus', dictEntry:'lītŭs, ŏris, n.',
+    accepted:[['Nominatif','Singulier'],['Vocatif','Singulier'],['Accusatif','Singulier']],
+    comment:[
+      "Rappel valable dans toutes les déclinaisons : un neutre a toujours nom. = voc. = acc., au singulier comme au pluriel.",
+      "⚠️ La finale -US fait penser à un nominatif singulier de 2e déclinaison masculin (<i>dominus</i>) — mais <i>litus</i> est un nom (neutre) de la 3e déclinaison, puisque son génitif est en -IS et non en -I. On trouve pas mal de noms neutres fréquents en -US, -ORIS (<i>corpus, oris</i> par exemple) ou en -US, -ERIS (<i>genus, eris</i> par exemple)."
+    ] },
+  { form:'arte', dictEntry:'ārs, artis, f.',
+    accepted:[['Ablatif','Singulier']],
+    comment:[
+      "Ici c'est la terminaison -E de l'ablatif singulier qui a été ajoutée au radical du génitif : <i>art-</i>.",
+      "⚠️ Ne pas confondre le -E final, qui est ici un ablatif singulier de 3e déclinaison puisque le nom est un féminin (serait valable aussi si c'était un masculin), avec le -E qu'on trouve pour le nominatif/vocatif/accusatif singulier des neutres parisyllabiques comme <i>mare, is</i> (n.)."
+    ] },
+  { form:'capitibus', dictEntry:'căpŭt, ĭtis, n.',
+    accepted:[['Datif','Pluriel'],['Ablatif','Pluriel']],
+    comment:[
+      "Ici c'est la terminaison -IBUS du datif/ablatif pluriel qui a été ajoutée au radical du génitif : <i>capit-</i>.",
+      "⚠️ La terminaison -IBUS en 3e déclinaison ne doit poser aucun problème : c'est forcément un datif ou un ablatif pluriel."
+    ] },
+  { form:'pulchritudinum', dictEntry:'pūlchrĭtūdō, dĭnis, f.',
+    accepted:[['Génitif','Pluriel']],
+    comment:[
+      "Ici c'est la terminaison -UM du génitif pluriel qui a été ajoutée au radical du génitif : <i>pulchritudin-</i>.",
+      "⚠️ Ce -UM final n'est ni l'accusatif singulier masculin/neutre de 2e déclinaison (<i>dominum</i>, <i>templum</i>), ni le génitif pluriel de la 1ère ou 2e déclinaison qui est en -ARUM (<i>rosarum</i>) / -ORUM (<i>dominorum</i>) — ici -UM seul est bien le génitif pluriel de 3e déclinaison."
+    ] },
+  { form:'sacerdos', dictEntry:'săcērdōs, dōtis, m.',
+    accepted:[['Nominatif','Singulier'],['Vocatif','Singulier']],
+    comment:[
+      "Nominatif singulier (fourni par le dictionnaire) et vocatif singulier identiques.",
+      "⚠️ Ce n'est pas ici le -OS d'un accusatif pluriel d'un nom de la 2e déclinaison (ex. <i>dominos</i>, de <i>dominus, i</i>) mais bien un nominatif (et vocatif) singulier de la 3e déclinaison — comme le prouve son génitif en -IS !"
+    ] },
+  { form:'peditis', dictEntry:'pĕdĕs, ĭtis, m.',
+    accepted:[['Génitif','Singulier']],
+    comment:[
+      "Ici c'est la terminaison -IS du génitif singulier qui a été ajoutée au radical du génitif : <i>pedit-</i>.",
+      "⚠️ La finale -IS pourrait faire croire à un datif/ablatif pluriel de la 1ère déclinaison (<i>rosis</i>) ou de la 2e (<i>dominis</i>, <i>templis</i>), mais c'est ici un nom de la 3e déclinaison, et le dictionnaire indique qu'il s'agit du génitif singulier.",
+      "Attention aussi à avoir en tête que pour certains noms masculins ou féminins (des parisyllabiques pour la plupart) de la 3e déclinaison, le nominatif singulier est lui-même en -IS (comme <i>civis, is</i>, m.)."
+    ] },
+  { form:'praetore', dictEntry:'prāetŏr, ōris, m.',
+    accepted:[['Ablatif','Singulier']],
+    comment:[
+      "Ici c'est la terminaison -E de l'ablatif singulier qui a été ajoutée au radical du génitif : <i>praetor-</i>.",
+      "⚠️ Ne pas confondre le -E final, qui est ici un ablatif singulier de 3e déclinaison puisque le nom est un imparisyllabique masculin, avec le -E qu'on trouve pour le nominatif/vocatif/accusatif singulier des neutres parisyllabiques comme <i>mare, is</i> (n.)."
+    ] },
+  { form:'capitum', dictEntry:'căpŭt, ĭtis, n.',
+    accepted:[['Génitif','Pluriel']],
+    comment:[
+      "Ici c'est la terminaison -UM du génitif pluriel qui a été ajoutée au radical du génitif : <i>capit-</i>.",
+      "⚠️ Ce -UM final n'est ni l'accusatif singulier masculin/neutre de 2e déclinaison (<i>dominum</i>, <i>templum</i>), ni le génitif pluriel de la 1ère ou 2e déclinaison qui est en -ARUM (<i>rosarum</i>) / -ORUM (<i>dominorum</i>) — ici -UM seul est bien le génitif pluriel de 3e déclinaison."
+    ] },
+  { form:'navium', dictEntry:'nāvĭs, is, f.',
+    accepted:[['Génitif','Pluriel']],
+    comment:[
+      "Nom parisyllabique : le génitif pluriel est donc en -IUM (comme <i>civium</i>), pas en -UM simple. Ici c'est la terminaison -IUM du génitif pluriel qui a été ajoutée au radical du génitif : <i>nav-</i>.",
+      "⚠️ Ne pas confondre avec la terminaison -IUM qu'on peut trouver pour les nom./voc./abl. sg. de noms neutres de la 2e déclinaison dont le radical se termine par -I comme <i>sācrĭfĭcĭŭm, ĭi, n.</i>"
+    ] },
+  { form:'panem', dictEntry:'pānĭs, is, m.',
+    accepted:[['Accusatif','Singulier']],
+    comment:[
+      "Ici c'est la terminaison -EM de l'accusatif singulier qui a été ajoutée au radical du génitif : <i>pan-</i>."
+    ] },
+  { form:'caedes', dictEntry:'cāedēs, is, f.',
+    accepted:[['Nominatif','Singulier'],['Vocatif','Singulier'],['Accusatif','Singulier'],
+              ['Nominatif','Pluriel'],['Vocatif','Pluriel'],['Accusatif','Pluriel']],
+    comment:[
+      "Ici cela peut être le nominatif singulier (et vocatif singulier) donné par le dictionnaire, ou bien la terminaison -ES du nominatif/vocatif/accusatif pluriel qui a été ajoutée au radical du génitif : <i>caed-</i>."
+    ] },
+  { form:'retia', dictEntry:'rēte, is, n.',
+    accepted:[['Nominatif','Pluriel'],['Vocatif','Pluriel'],['Accusatif','Pluriel']],
+    comment:[
+      "Rappel valable dans toutes les déclinaisons : un neutre a toujours nom. = voc. = acc., au singulier comme au pluriel.",
+      "Neutre parisyllabique : le pluriel nom./voc./acc. est donc en -IA (comme <i>animalia</i>), pas en -A simple. Ici c'est la terminaison -IA du nominatif/vocatif/accusatif pluriel qui a été ajoutée au radical du génitif : <i>ret-</i>.",
+      "⚠️ Ne pas confondre avec la terminaison -IA qu'on peut trouver pour les nom./voc./abl. sg. de noms de la 1ère déclinaison dont le radical se termine par -I comme <i>sententia, ae, f.</i>, ou pour les nom./voc./acc. pl. de noms neutres de la 2e déclinaison dont le radical se termine par -I comme <i>sācrĭfĭcĭŭm, ĭi, n.</i>"
+    ] },
+  { form:'judices', dictEntry:'jūdēx, ĭcis, m.',
+    accepted:[['Nominatif','Pluriel'],['Vocatif','Pluriel'],['Accusatif','Pluriel']],
+    comment:[
+      "Ici c'est la terminaison -ES du nominatif/vocatif/accusatif pluriel qui a été ajoutée au radical du génitif : <i>iudic-</i>."
+    ] }
+];
+
+let currentIndex = 0;
+let selectedCells = new Set(); // "Cas|Nombre"
+let validated = false;
+let score = 0;
+
+const progressEl = document.getElementById('progress');
+const wordForm = document.getElementById('wordForm');
+const wordId = document.getElementById('wordId');
+const tableBody = document.getElementById('tableBody');
+const checkBtn = document.getElementById('checkBtn');
+const clearBtn = document.getElementById('clearBtn');
+const remarkEl = document.getElementById('remark');
+const nextRow = document.getElementById('nextRow');
+const nextBtn = document.getElementById('nextBtn');
+const quizArea = document.getElementById('quizArea');
+const finalSummary = document.getElementById('finalSummary');
+const finalBig = document.getElementById('finalBig');
+const restartBtn = document.getElementById('restartBtn');
+
+function buildTable(){
+  tableBody.innerHTML = '';
+  cases.forEach(c => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="caselabel">${c}</td>`;
+    nombres.forEach(n => {
+      const td = document.createElement('td');
+      td.className = 'cell';
+      td.dataset.cas = c;
+      td.dataset.nombre = n;
+      td.addEventListener('click', () => onCellClick(c, n));
+      tr.appendChild(td);
+    });
+    tableBody.appendChild(tr);
+  });
+}
+
+function key(c, n){ return c + '|' + n; }
+
+function onCellClick(c, n){
+  if(validated) return;
+  const k = key(c, n);
+  if(selectedCells.has(k)) selectedCells.delete(k);
+  else selectedCells.add(k);
+  renderSelection();
+}
+
+function renderSelection(){
+  document.querySelectorAll('td.cell').forEach(td => {
+    const k = key(td.dataset.cas, td.dataset.nombre);
+    td.classList.remove('correct','wrong','missed');
+    td.classList.toggle('selected', selectedCells.has(k) && !validated);
+  });
+}
+
+function loadWord(){
+  const w = words[currentIndex];
+  progressEl.textContent = `Forme ${currentIndex + 1} / ${words.length}   —   Score : ${score}`;
+  wordForm.textContent = w.form;
+  wordId.textContent = w.dictEntry;
+  selectedCells = new Set();
+  validated = false;
+  checkBtn.disabled = false;
+  checkBtn.style.display = '';
+  clearBtn.style.display = '';
+  remarkEl.classList.remove('visible');
+  nextRow.style.display = 'none';
+  renderSelection();
+}
+
+clearBtn.addEventListener('click', () => {
+  if(validated) return;
+  selectedCells = new Set();
+  renderSelection();
+});
+
+checkBtn.addEventListener('click', () => {
+  validated = true;
+  const w = words[currentIndex];
+  const acceptedKeys = new Set(w.accepted.map(([c,n]) => key(c,n)));
+
+  let allCorrect = true;
+  let correctSelectedCount = 0;
+  document.querySelectorAll('td.cell').forEach(td => {
+    const k = key(td.dataset.cas, td.dataset.nombre);
+    const wasSelected = selectedCells.has(k);
+    const shouldBeSelected = acceptedKeys.has(k);
+    td.classList.remove('selected');
+    if(wasSelected && shouldBeSelected){ td.classList.add('correct'); correctSelectedCount++; }
+    else if(wasSelected && !shouldBeSelected){ td.classList.add('wrong'); allCorrect = false; }
+    else if(!wasSelected && shouldBeSelected){ td.classList.add('missed'); allCorrect = false; }
+  });
+
+  if(allCorrect) score++;
+
+  const attendu = w.accepted.map(([c,n]) => `${c} ${n.toLowerCase()}`).join(' ou ');
+  let verdictHtml;
+  if(allCorrect){
+    verdictHtml = '✓ Exact !';
+  } else if(correctSelectedCount === 0){
+    verdictHtml = '✕ Faux — réponse attendue : ' + attendu;
+  } else {
+    verdictHtml = '~ Pas tout à fait — réponse attendue : ' + attendu;
+  }
+  remarkEl.innerHTML = `<div class="nb-note">${NB_NOTE}</div><div class="verdict ${allCorrect ? 'ok' : 'ko'}">${verdictHtml}</div><ul class="remark-bullets">${w.comment.map(l => `<li>${l}</li>`).join('')}</ul>`;
+  remarkEl.classList.add('visible');
+
+  checkBtn.style.display = 'none';
+  clearBtn.style.display = 'none';
+  nextRow.style.display = 'flex';
+  progressEl.textContent = `Forme ${currentIndex + 1} / ${words.length}   —   Score : ${score}`;
+});
+
+nextBtn.addEventListener('click', () => {
+  currentIndex++;
+  if(currentIndex >= words.length){
+    quizArea.style.display = 'none';
+    finalSummary.classList.add('visible');
+    finalBig.textContent = `${score} / ${words.length}`;
+  } else {
+    loadWord();
+  }
+});
+
+restartBtn.addEventListener('click', () => {
+  currentIndex = 0;
+  score = 0;
+  finalSummary.classList.remove('visible');
+  quizArea.style.display = '';
+  loadWord();
+});
+
+buildTable();
+loadWord();
+</script>
+
+</body>
+</html>

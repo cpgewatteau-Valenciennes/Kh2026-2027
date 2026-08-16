@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expression française : révisions</title>
+<style>
+  :root{
+    --parchment:#f3e8d0;
+    --parchment-dark:#e6d5ac;
+    --burgundy:#6e1f24;
+    --burgundy-dark:#4a1418;
+    --gold:#a8792f;
+    --ink:#3a2a1a;
+    --ok:#2f6b3a;
+    --ok-bg:#e3efe1;
+    --bad:#a13a2f;
+    --bad-bg:#f6e1dd;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Georgia','Iowan Old Style',serif;
+    background:var(--parchment);
+    background-image:
+      radial-gradient(circle at 20% 15%, rgba(168,121,47,0.08), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(110,31,36,0.06), transparent 45%);
+    color:var(--ink);
+    padding:0 0 40px;
+  }
+  .meander{
+    height:14px;
+    background:repeating-linear-gradient(
+      90deg,
+      var(--burgundy) 0 8px,
+      transparent 8px 16px
+    );
+    opacity:0.85;
+  }
+  .meander.thin{height:8px;}
+  header{
+    background:linear-gradient(180deg, var(--burgundy) 0%, var(--burgundy-dark) 100%);
+    color:var(--parchment);
+    padding:22px 16px 26px;
+    text-align:center;
+  }
+  header h1{
+    margin:0 0 6px;
+    font-size:1.5rem;
+    letter-spacing:0.03em;
+    font-weight:700;
+  }
+  header p{
+    margin:0;
+    font-size:0.92rem;
+    color:var(--parchment-dark);
+    font-style:italic;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 16px;}
+  .instructions{
+    background:#fffaf0;
+    border:1px solid var(--gold);
+    border-radius:6px;
+    padding:14px 16px;
+    margin:20px 0;
+    font-size:0.92rem;
+    line-height:1.5;
+  }
+  .instructions strong{color:var(--burgundy);}
+  .tabs{
+    display:flex;
+    gap:8px;
+    margin:24px 0 4px;
+  }
+  .tab-btn{
+    flex:1;
+    padding:12px 8px;
+    background:var(--parchment-dark);
+    border:2px solid var(--burgundy);
+    border-bottom:none;
+    border-radius:8px 8px 0 0;
+    font-family:inherit;
+    font-size:0.95rem;
+    font-weight:700;
+    color:var(--burgundy-dark);
+    cursor:pointer;
+    opacity:0.65;
+  }
+  .tab-btn.active{
+    background:#fffaf0;
+    opacity:1;
+  }
+  .panel{
+    display:none;
+    background:#fffaf0;
+    border:2px solid var(--burgundy);
+    border-radius:0 0 8px 8px;
+    padding:20px 18px 24px;
+  }
+  .panel.active{display:block;}
+  .panel h2{
+    margin-top:0;
+    color:var(--burgundy);
+    font-size:1.15rem;
+    border-bottom:2px dotted var(--gold);
+    padding-bottom:8px;
+  }
+  .texte{
+    font-size:1.06rem;
+    line-height:2.1;
+    text-align:justify;
+  }
+  .verif{
+    cursor:pointer;
+    border-bottom:2px dotted var(--gold);
+    padding:2px 3px;
+    border-radius:3px;
+    transition:background 0.15s;
+  }
+  .verif:hover{background:rgba(168,121,47,0.15);}
+  .verif.done-ok{
+    background:var(--ok-bg);
+    border-bottom-color:var(--ok);
+  }
+  .verif.done-bad{
+    background:var(--bad-bg);
+    border-bottom-color:var(--bad);
+  }
+  .verif.selected{
+    background:#fde9b8;
+  }
+  .feedback-box{
+    margin:16px 0 0;
+    padding:14px 16px;
+    border-radius:8px;
+    background:#faf3e2;
+    border:1px solid var(--gold);
+    display:none;
+  }
+  .feedback-box.show{display:block;}
+  .feedback-box .quote{
+    font-style:italic;
+    font-weight:700;
+    color:var(--burgundy-dark);
+    margin-bottom:8px;
+  }
+  .choice-row{
+    display:flex;
+    gap:10px;
+    margin-top:6px;
+  }
+  .choice-row button{
+    flex:1;
+    padding:10px;
+    font-family:inherit;
+    font-size:0.92rem;
+    font-weight:700;
+    border-radius:6px;
+    border:2px solid var(--burgundy);
+    background:#fff;
+    color:var(--burgundy-dark);
+    cursor:pointer;
+  }
+  .choice-row button:active{transform:scale(0.98);}
+  .verdict{
+    margin-top:10px;
+    padding:10px 12px;
+    border-radius:6px;
+    font-size:0.92rem;
+    line-height:1.5;
+    display:none;
+  }
+  .verdict.show{display:block;}
+  .verdict.win{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok);}
+  .verdict.lose{background:var(--bad-bg);color:var(--bad);border:1px solid var(--bad);}
+  .verdict .rule-title{
+    display:block;
+    font-weight:700;
+    margin-bottom:4px;
+    color:var(--ink);
+  }
+  .verdict .correction{
+    display:block;
+    margin-top:6px;
+    font-style:italic;
+    color:var(--ink);
+  }
+  .score{
+    margin-top:22px;
+    text-align:center;
+    font-size:0.95rem;
+    font-weight:700;
+    color:var(--burgundy-dark);
+  }
+  .reset-btn{
+    display:block;
+    margin:14px auto 0;
+    padding:8px 18px;
+    background:var(--burgundy);
+    color:var(--parchment);
+    border:none;
+    border-radius:20px;
+    font-family:inherit;
+    font-size:0.85rem;
+    cursor:pointer;
+  }
+  footer{
+    text-align:center;
+    margin-top:26px;
+    font-size:0.8rem;
+    color:var(--gold);
+    font-style:italic;
+  }
+
+.home-fab{
+  position:fixed; top:14px; left:14px; z-index:999;
+  display:flex; align-items:center; gap:6px;
+  background: linear-gradient(135deg, #B9812A, #6B1E23);
+  color:#fff; font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;
+  font-size:0.82rem; font-weight:700; text-decoration:none;
+  padding:8px 14px; border-radius:20px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.25);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.home-fab:hover{ transform: translateY(-2px); box-shadow:0 5px 14px rgba(0,0,0,0.3); }
+@media (max-width:480px){ .home-fab{ font-size:0.72rem; padding:6px 10px; top:8px; left:8px; } }
+.next-fab{
+  position:fixed; top:14px; right:14px; z-index:999;
+  display:flex; align-items:center; gap:6px;
+  background: linear-gradient(135deg, #6B1E23, #B9812A);
+  color:#fff; font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;
+  font-size:0.82rem; font-weight:700; text-decoration:none;
+  padding:8px 14px; border-radius:20px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.25);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.next-fab:hover{ transform: translateY(-2px); box-shadow:0 5px 14px rgba(0,0,0,0.3); }
+@media (max-width:480px){ .next-fab{ font-size:0.72rem; padding:6px 10px; top:8px; right:8px; } }
+</style>
+</head>
+<body>
+<a class="home-fab" href="index.html#serie-estivale-2">🏠 Accueil du site</a>
+
+
+<header>
+  <h1>Expression française : révisions</h1>
+  <p>Sénèque &amp; Ovide — deux destins, une même question : parviendras-tu à corriger les éventuelles fautes ?</p>
+</header>
+<div class="meander"></div>
+
+<div class="wrap">
+  <div class="instructions">
+    Dans chacun des deux textes évoquant les exils de Sénèque et d'Ovide,
+    certains mots ou groupes de mots sont <strong>soulignés en pointillés</strong>.
+    Touche-les un par un : indique s'ils te semblent <strong>corrects</strong> ou
+    <strong>incorrects</strong> au regard des règles d'expression qui sont à réviser
+    dans le polycopié des consignes estivales. Réfléchis à la correction que tu
+    apporterais si tu vois une erreur. Une explication avec les rappels du poly
+    s'affiche à chaque réponse.
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="seneque">La mort de Sénèque</button>
+    <button class="tab-btn" data-tab="ovide">L'exil d'Ovide &amp; de Cicéron</button>
+  </div>
+
+  <!-- TEXTE 1 : SENEQUE -->
+  <div class="panel active" id="panel-seneque">
+    <h2>Circonstances de la mort de Sénèque (65 apr. J.-C.)</h2>
+    <p class="texte">
+      En 65 après Jésus-Christ, Sénèque fut accusé d'avoir pris part à la
+      conjuration de Pison contre Néron.
+      <span class="verif" data-correct="false"
+            data-rule="Le poly dit : « après que + indicatif », toujours à un temps composé — ici le passé antérieur « eut appris » (rubrique « après que », p. 4). Avec l'accent circonflexe, « eût » devient un subjonctif plus-que-parfait : mode incompatible avec « après que », qui exige l'indicatif. À l'oral on entend souvent le passé composé quand le verbe principal est au passé simple, mais à l'écrit le passé antérieur reste attendu (voir aussi : parler-francais.eklablog.com/apres-que-indicatif-a3704329). Le plus sûr pour éviter l'erreur : puisque le sujet de la subordonnée (l'empereur) est le même que celui de la principale (il), on pouvait construire avec l'infinitif passé : « Après avoir appris la nouvelle, il envoya... »."
+            data-fix="eut appris (indicatif, sans accent) — ou, plus simplement : Après avoir appris la nouvelle">Après que l'empereur eût appris la nouvelle</span>,
+      il envoya un centurion sommer le philosophe de se donner la mort.
+      Sénèque,
+      <span class="verif" data-correct="false"
+            data-rule="Le poly dit : « minuscule lorsqu'il s'agit d'un adjectif : cet homme romain et cette femme grecque sont amis » (rubrique « les gentilés », p. 4). Ici « Romain » qualifie « philosophe et dramaturge » : c'est un adjectif, donc minuscule — à la différence du nom (« un Romain »), qui prend la majuscule."
+            data-fix="philosophe et dramaturge romain de Cordoue">philosophe et dramaturge Romain de Cordoue</span>
+      et fidèle aux préceptes du stoïcisme, accueillit cet ordre sans trembler et
+      fit ses adieux à ses proches. Il
+      <span class="verif" data-correct="false"
+            data-rule="La terminaison -A à la 3ᵉ personne du singulier du passé simple n'existe que pour les verbes du 1er groupe. « Ouvrir » est un verbe du 3ᵉ groupe : « ouvra » est donc forcément un barbarisme. Tableau du poly, p. 6 : les verbes en -IR (sauf courir, mourir, tenir, venir + composés) font leur passé simple en -IS, -IS, -IT, -ÎMES, -ÎTES, -IRENT — d'où « il s'ouvrit »."
+            data-fix="s'ouvrit">s'ouvra</span>
+      les veines, mais son sang, ralenti
+      par l'âge et un régime frugal,
+      <span class="verif" data-correct="true"
+            data-rule="Tableau du poly, 1er groupe (-er), p. 6 : « radical du verbe + -AI, -AS, -A, -ÂMES, -ÂTES, -ÈRENT ». « Couler » est un verbe en -er : sa 3ᵉ personne du singulier au passé simple, « coula », est donc parfaitement régulière."
+            data-fix="">coula</span>
+      trop lentement ; on lui apporta alors de la ciguë, sans plus d'effet.
+      <span class="verif" data-correct="false"
+            data-rule="Le poly dit : « le sujet ne doit pas être exprimé deux fois : une fois par un nom, une fois par un pronom, dans la même proposition » — exemple du poly : « Mucius, parce qu'il n'avait jamais vu Porsenna, il se trompa » est fautif ; il fallait « Mucius, parce qu'il n'avait jamais vu Porsenna, se trompa » (rubrique « reprise pronominale fautive du sujet », p. 4). Même faute ici : « Néron » est repris à tort par « il » dans la même proposition."
+            data-fix="Néron, redoutant la popularité grandissante de son ancien précepteur, ordonna sa mort (sans reprendre le sujet par « il »)">Néron, redoutant la popularité grandissante de son ancien précepteur, il ordonna sa mort</span>,
+      par crainte autant que par jalousie. Sénèque,
+      <span class="verif" data-correct="false"
+            data-rule="Le poly dit : « majuscule à Dieu uniquement s'il s'agit de celui, unique, que vénèrent les religions monothéistes » et « minuscule pour les divinités des religions polythéistes (donc dieux au pluriel est tjs sans majuscule) ». Sénèque, philosophe de la Rome païenne, invoque « les dieux » (rubrique « dieu/dieux », p. 4)."
+            data-fix="sans cesser d'invoquer les dieux">sans cesser d'invoquer les Dieux</span>,
+      demanda enfin à être plongé dans un bain de vapeur
+      <span class="verif" data-correct="true"
+            data-rule="Puisque le sujet de la subordonnée (Sénèque) est le même que celui de la principale, on peut bien remplacer « avant que + subjonctif » par « avant de + infinitif » : cela évite tout risque d'erreur de mode (rubrique « subordonnées et conjonctions de subordination », p. 4). Si l'on conjuguait malgré tout (« avant qu'il ne... »), la parfaite concordance des temps (verbe principal au passé), attendue à l'écrit, imposerait le subjonctif imparfait « s'évanouît » (avec l'accent circonflexe, car c'est un subjonctif imparfait !). À l'oral, on utilise rarement le subjonctif imparfait de nos jours et on lui substitue couramment le subjonctif présent, qui serait ici « s'évanouisse ». Je rappelle qu'il vaut toujours mieux un présent bien formé qu'un imparfait du subjonctif raté (barbarisme). En version latine, je ne pénalise pas cela, mais ce n'est pas forcément le cas dans toutes les matières !"
+            data-fix="">avant de s'évanouir</span>
+      tout à fait. Il
+      <span class="verif" data-correct="true"
+            data-rule="Tableau du poly, p. 6, série en -US (colonne de droite) : « courir, mourir + composés ». « Mourir » y est explicitement cité : sa 3ᵉ personne du singulier au passé simple, « mourut », est donc la forme attendue."
+            data-fix="">mourut</span>
+      ainsi, dit-on, avec un calme tout stoïcien.
+    </p>
+
+    <div class="feedback-box" id="fb-seneque">
+      <div class="quote" id="fb-seneque-quote"></div>
+      <div class="choice-row">
+        <button onclick="answer('seneque', true)">✅ C'est correct</button>
+        <button onclick="answer('seneque', false)">❌ C'est incorrect</button>
+      </div>
+      <div class="verdict" id="verdict-seneque"></div>
+    </div>
+
+    <div class="score" id="score-seneque">0 / 0 réponse(s)</div>
+    <button class="reset-btn" onclick="resetPanel('seneque')">Recommencer ce texte</button>
+  </div>
+
+  <!-- TEXTE 2 : OVIDE / CICERON -->
+  <div class="panel" id="panel-ovide">
+    <h2>L'exil d'Ovide (8 apr. J.-C.) — et un rappel sur Cicéron</h2>
+    <p class="texte">
+      En 8 après Jésus-Christ, Auguste
+      <span class="verif" data-correct="false"
+            data-rule="La terminaison -A à la 3ᵉ personne du singulier du passé simple n'existe que pour les verbes du 1er groupe. « Bannir » est un verbe du 2ᵉ groupe : « bannissa » est donc nécessairement un barbarisme. Les verbes du 2ème groupe ont TOUS un passé simple régulier en -IS, -IS, -IT, -ÎMES, -ÎTES, -IRENT — d'où « il bannit »."
+            data-fix="bannit">bannissa</span>
+      brutalement le poète Ovide à
+      Tomes, sur les rives du Pont-Euxin, chez
+      <span class="verif" data-correct="true"
+            data-rule="Le poly dit : « majuscule lorsqu'il s'agit d'un nom : ce Romain et ce Grec sont amis », avec l'exemple « Les Gaulois ont donc vaincu les Romains à Gergovie » (rubrique « les gentilés », p. 4). « Gètes » et « Sarmates » sont ici des noms désignant des peuples : la majuscule est correcte pour les deux."
+            data-fix="">les Gètes et les Sarmates</span>.
+      <span class="verif" data-correct="false"
+            data-rule="Le poly signale précisément cette faute : « nombreuses erreurs avec l'interrogative directe en oubliant l'inversion sujet-verbe » — avec l'exemple « Si ton amant est réellement Jupiter, pourquoi il ne se montre pas dans sa divine majesté tout entière ? ». Ici, « Auguste » (sujet nom) reste en place mais doit être repris par un pronom inversé : « le condamna-t-il » (rubrique « interrogative directe », p. 4)."
+            data-fix="Pourquoi Auguste le condamna-t-il si durement">Pourquoi Auguste le condamna si durement</span> ?
+      Le poète lui-même prétendait n'en connaître qu'une partie des raisons :
+      « un poème et une erreur », disait-il.
+      <span class="verif" data-correct="false"
+            data-rule="Rappel du poly : « bien que + subjonctif (Bien que tu aies vu Pierre, lui ne t'a pas vu.) » (rubrique « subordonnées et conjonctions de subordination », p. 4). Le poly signale aussi, à propos de l'accent circonflexe au passé simple : « si vous mettez un accent circonflexe sur 1 passé simple, vous risquez de le transformer en impft du subjonctif » — c'est l'inverse ici : sans l'accent, « fut » redevient un passé simple de l'indicatif, mode incompatible avec « bien que »."
+            data-fix="Bien qu'il fût aimé">Bien qu'il fut aimé</span>
+      du peuple
+      <span class="verif" data-correct="false"
+            data-rule="Le poly dit : « minuscule lorsqu'il s'agit d'un adjectif : cet homme romain et cette femme grecque sont amis », avec l'exemple « Mucius était un citoyen romain » (rubrique « les gentilés », p. 4). Ici « romain » qualifie « peuple » : c'est un adjectif, donc minuscule."
+            data-fix="romain">Romain</span>,
+      le prince refusa toujours de le rappeler à Rome. Ovide, désespéré, se
+      plaignait sans relâche que
+      <span class="verif" data-correct="true"
+            data-rule="Le poly dit : « minuscule pour les divinités des religions polythéistes (donc dieux au pluriel est tjs sans majuscule) » — univers païen d'Ovide, donc « les dieux » sans majuscule (rubrique « dieu/dieux », p. 4)."
+            data-fix="">les dieux</span>
+      l'avaient abandonné et
+      <span class="verif" data-correct="false"
+            data-rule="Le poly dit : « lorsque des subordonnées sont coordonnées (par <em>et</em>, <em>ou</em>, <em>mais</em>…), la/les subordonnée(s) suivante(s) doi(ven)t être obligatoirement introduite(s) avec un <em>que</em> (appelé que substitut), quel que soit le subordonnant initial », avec l'exemple « Si tu viens me voir et que tu apportes des chocolats… » (rubrique « présence du que substitut dans les subordonnées coordonnées », p. 5). Ici, la seconde subordonnée coordonnée à « que les dieux l'avaient abandonné » doit elle aussi être introduite par « que »."
+            data-fix="que sa patrie ne le reverrait jamais">sa patrie ne le reverrait jamais</span>.
+      Auguste demeura inflexible, et son successeur Tibère
+      <span class="verif" data-correct="false"
+            data-rule="Le poly dit : « au passé simple tous les verbes prennent un accent circonflexe uniquement à la première et à la deuxième personne du pluriel » et « si vous mettez un accent circonflexe sur 1 passé simple, vous risquez de le transformer en impft du subjonctif et ce ne sera plus une simple faute d'orthographe, mais une faute de mode » (rubrique « le passé simple », p. 4). Ici, rien n'appelle le subjonctif : donc « fut », sans accent. L'accent circonflexe ne sera pas pénalisé comme une simple faute d'orthographe, mais comme une faute de mode."
+            data-fix="ne fut pas plus clément">ne fût pas plus clément</span>.
+      Quelques décennies plus tôt, en 58 avant Jésus-Christ, un autre grand
+      homme avait connu un sort comparable. Accusé par le tribun Clodius
+      d'avoir fait exécuter sans procès les complices de Catilina, Cicéron dut
+      fuir précipitamment l'Italie ; sa maison du Palatin fut rasée et ses
+      biens furent confisqués. Réfugié à Thessalonique, en Macédoine, il y
+      vécut plusieurs mois dans l'angoisse, avant que ses partisans, et
+      notamment Pompée, n'obtinssent son rappel. Cicéron
+      <span class="verif" data-correct="false"
+            data-rule="Tableau du poly, 3ᵉ groupe, série en -INS : « tenir, venir + composés ». « Revenir » suit donc le même modèle : « il revint », et non « il revena » (rubrique « Le passé simple », p. 6)."
+            data-fix="revint enfin à Rome">revena</span>
+      enfin à Rome, où le peuple l'accueillit en triomphe.
+    </p>
+
+    <div class="feedback-box" id="fb-ovide">
+      <div class="quote" id="fb-ovide-quote"></div>
+      <div class="choice-row">
+        <button onclick="answer('ovide', true)">✅ C'est correct</button>
+        <button onclick="answer('ovide', false)">❌ C'est incorrect</button>
+      </div>
+      <div class="verdict" id="verdict-ovide"></div>
+    </div>
+
+    <div class="score" id="score-ovide">0 / 0 réponse(s)</div>
+    <button class="reset-btn" onclick="resetPanel('ovide')">Recommencer ce texte</button>
+  </div>
+
+</div>
+
+<div class="meander thin"></div>
+<footer></footer>
+
+<script>
+(function(){
+  // --- Tabs ---
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+      document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  var state = {
+    seneque: {seen:{}, correct:0, answered:0, current:null},
+    ovide:   {seen:{}, correct:0, answered:0, current:null}
+  };
+
+  function panelIdFor(span){
+    var panel = span.closest('.panel');
+    return panel.id.replace('panel-', '');
+  }
+
+  document.querySelectorAll('.verif').forEach(function(span, idx){
+    span.dataset.id = idx;
+    span.addEventListener('click', function(){
+      var key = panelIdFor(span);
+      document.querySelectorAll('#panel-' + key + ' .verif').forEach(function(s){s.classList.remove('selected');});
+      span.classList.add('selected');
+
+      var fb = document.getElementById('fb-' + key);
+      var quote = document.getElementById('fb-' + key + '-quote');
+      var verdict = document.getElementById('verdict-' + key);
+      verdict.classList.remove('show','win','lose');
+      verdict.innerHTML = '';
+      quote.textContent = '« ' + span.textContent.trim() + ' »';
+      fb.classList.add('show');
+      state[key].current = span;
+      fb.scrollIntoView({behavior:'smooth', block:'nearest'});
+    });
+  });
+
+  window.answer = function(key, userSaysCorrect){
+    var span = state[key].current;
+    if(!span) return;
+    var isCorrect = span.dataset.correct === 'true';
+    var rule = span.dataset.rule;
+    var fix = span.dataset.fix;
+    var verdict = document.getElementById('verdict-' + key);
+    var wasRight = (userSaysCorrect === isCorrect);
+
+    if(!span.dataset.wasSeen){
+      span.dataset.wasSeen = '1';
+      state[key].answered++;
+      if(wasRight) state[key].correct++;
+      updateScore(key);
+    }
+
+    span.classList.remove('selected');
+    span.classList.add(isCorrect ? 'done-ok' : 'done-bad');
+
+    verdict.classList.add('show', wasRight ? 'win' : 'lose');
+    var html = '<span class="rule-title">' +
+      (wasRight ? '✔ Bien vu — ' : '✘ Inexact — ') +
+      (isCorrect ? 'ce passage est correct.' : 'ce passage contient une erreur.') +
+      '</span>' + rule;
+    if(!isCorrect && fix){
+      html += '<span class="correction">Forme attendue : ' + fix + '</span>';
+    }
+    verdict.innerHTML = html;
+  };
+
+  function updateScore(key){
+    var s = state[key];
+    document.getElementById('score-' + key).textContent =
+      s.correct + ' / ' + s.answered + ' réponse(s) juste(s)';
+  }
+
+  window.resetPanel = function(key){
+    document.querySelectorAll('#panel-' + key + ' .verif').forEach(function(span){
+      span.classList.remove('done-ok','done-bad','selected');
+      delete span.dataset.wasSeen;
+    });
+    document.getElementById('fb-' + key).classList.remove('show');
+    document.getElementById('verdict-' + key).classList.remove('show','win','lose');
+    state[key] = {seen:{}, correct:0, answered:0, current:null};
+    updateScore(key);
+  };
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cornelia, Marcus, Quintus — Qui a bien traduit ?</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@600;700&display=swap');
+
+  :root{
+    --parchment: #f2e8d0;
+    --parchment-dark: #e6d7b3;
+    --ink: #3b2f22;
+    --burgundy: #7a2331;
+    --burgundy-dark: #591a24;
+    --gold: #a8823a;
+    --purple: #6b3f7a;
+    --green: #3d7a4a;
+    --red: #a13c3c;
+    --paper-shadow: rgba(59,47,34,0.18);
+  }
+
+  * { box-sizing: border-box; }
+
+  body{
+    margin:0;
+    padding: 20px 12px 60px;
+    background: var(--parchment);
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(168,130,58,0.08), transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(122,35,49,0.06), transparent 40%);
+    font-family: 'EB Garamond', 'Palatino', 'Iowan Old Style', Georgia, serif;
+    color: var(--ink);
+  }
+
+  .wrap{ max-width: 640px; margin: 0 auto; }
+
+  header{ text-align:center; margin-bottom: 18px; }
+
+  .badge{
+    display:inline-flex; align-items:center; gap:6px;
+    background: var(--purple); color:#fff;
+    font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.05em;
+    padding: 4px 12px; border-radius: 999px; margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  h1{
+    font-family: 'Cinzel', serif;
+    font-size: 1.35rem;
+    color: var(--burgundy-dark);
+    margin: 6px 0 4px;
+    letter-spacing: 0.02em;
+  }
+  .subtitle{ font-style: italic; color:#6b5a44; font-size: 0.92rem; margin:0; }
+
+  .meander{
+    height: 18px;
+    margin: 16px auto 22px;
+    max-width: 420px;
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--gold) 0px, var(--gold) 3px,
+      transparent 3px, transparent 6px
+    );
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='18'><path d='M0 0 H18 V18 H36 V0 H60 V6 H42 V12 H24 V6 H0 Z' fill='black'/></svg>");
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='18'><path d='M0 0 H18 V18 H36 V0 H60 V6 H42 V12 H24 V6 H0 Z' fill='black'/></svg>");
+    mask-repeat: repeat-x; -webkit-mask-repeat: repeat-x;
+    mask-size: 60px 18px; -webkit-mask-size: 60px 18px;
+    opacity: 0.85;
+  }
+
+  .instructions{
+    background: rgba(255,255,255,0.35);
+    border: 1px solid var(--parchment-dark);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    margin-bottom: 24px;
+    color: #4a3d2c;
+  }
+
+  .full-text-box{
+    background: #fffdf8;
+    border: 1.5px solid var(--gold);
+    border-radius: 12px;
+    padding: 16px 16px 14px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 10px var(--paper-shadow);
+  }
+  .full-text-title{
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    color: var(--burgundy-dark);
+    text-align: center;
+    margin-bottom: 10px;
+    letter-spacing: 0.03em;
+  }
+  .full-text-latin{
+    font-style: italic;
+    font-size: 1.05rem;
+    line-height: 1.55;
+    color: var(--burgundy-dark);
+    text-align: center;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    border-bottom: 1px dashed var(--parchment-dark);
+  }
+  .full-text-vocab-title{
+    font-family: 'Cinzel', serif;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .vocab-list{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3px;
+    font-size: 0.85rem;
+    color: #4a3d2c;
+  }
+  .vocab-list li{ line-height: 1.4; }
+  .vocab-list b{ color: var(--burgundy-dark); font-style: italic; font-weight: 600; }
+
+  .seg-vocab-title{
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--gold);
+    margin: -4px 0 8px;
+  }
+  .seg-vocab{
+    list-style: none;
+    margin: 0 0 14px;
+    padding: 0;
+    font-size: 0.8rem;
+    color: #4a3d2c;
+  }
+  .seg-vocab li{ line-height: 1.4; }
+  .seg-vocab b{ color: var(--burgundy-dark); font-style: italic; font-weight: 600; }
+
+  .segment{
+    background: #fffdf8;
+    border: 1px solid var(--parchment-dark);
+    border-radius: 14px;
+    padding: 18px 16px 16px;
+    margin-bottom: 22px;
+    box-shadow: 0 3px 10px var(--paper-shadow);
+    position: relative;
+  }
+
+  .seg-number{
+    font-family:'Cinzel', serif;
+    font-size: 0.7rem;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .latin{
+    font-style: italic;
+    font-size: 1.12rem;
+    color: var(--burgundy-dark);
+    line-height: 1.5;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--parchment-dark);
+  }
+
+  .card{
+    display:flex;
+    align-items:flex-start;
+    gap: 10px;
+    background: var(--parchment);
+    border: 2px solid var(--parchment-dark);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .card:active{ transform: scale(0.985); }
+
+  .card.flagged{
+    border-color: var(--red);
+    background: #f8e9e9;
+  }
+
+  .avatar{
+    flex: 0 0 auto;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Cinzel', serif; font-weight:700; font-size:0.85rem;
+    color:#fff;
+  }
+  .avatar.cornelia{ background: #9c5b7a; }
+  .avatar.marcus{ background: #5b7a9c; }
+  .avatar.quintus{ background: #7a9c5b; }
+
+  .card-body{ flex:1; }
+  .card-name{
+    font-family:'Cinzel', serif;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #6b5a44;
+    margin-bottom: 2px;
+  }
+  .card-text{ font-size: 0.98rem; line-height: 1.4; }
+
+  .flag-icon{
+    flex: 0 0 auto;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--parchment-dark);
+    display:flex; align-items:center; justify-content:center;
+    font-size: 0.75rem;
+    color: transparent;
+    margin-top: 2px;
+  }
+  .card.flagged .flag-icon{
+    border-color: var(--red);
+    background: var(--red);
+    color:#fff;
+  }
+
+  .card.locked{ cursor: default; }
+  .card.locked.correct{
+    border-color: var(--green);
+    background: #e9f2ea;
+  }
+  .card.locked.correct .flag-icon{
+    border-color: var(--green);
+    background: var(--green);
+    color: #fff;
+  }
+  .card.locked.wrong-correct{
+    /* the true translation but not flagged - fine */
+  }
+  .card.locked.wrong-missed{
+    border-color: var(--gold);
+  }
+
+  .remark{
+    display:none;
+    font-size: 0.85rem;
+    font-style: italic;
+    color: #6b5a44;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed var(--parchment-dark);
+  }
+  .card.locked .remark{ display:block; }
+
+  .cat-row{
+    display:none;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .card.flagged .cat-row{ display:flex; }
+  .card.locked .cat-row{ display:flex; }
+
+  .cat-chip{
+    font-size: 0.72rem;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.01em;
+    padding: 4px 9px;
+    border-radius: 999px;
+    border: 1.5px solid var(--parchment-dark);
+    background: #fffdf8;
+    cursor: pointer;
+    color: #6b5a44;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cat-chip.selected{
+    border-color: currentColor;
+    color: #fff;
+  }
+  .cat-chip[data-cat="construction"].selected{ background: #3f6fa8; border-color: #3f6fa8; }
+  .cat-chip[data-cat="temps"].selected{ background: var(--red); border-color: var(--red); }
+  .cat-chip[data-cat="expression"].selected{ background: var(--green); border-color: var(--green); }
+  .cat-chip[data-cat="omission"].selected{ background: #b8752b; border-color: #b8752b; }
+  .cat-chip[data-cat="contresens"].selected{ background: var(--purple); border-color: var(--purple); }
+  .cat-chip[data-cat="nombre"].selected{ background: #4a8b8b; border-color: #4a8b8b; }
+
+  .card.locked .cat-chip{ pointer-events: none; opacity: 0.55; }
+  .card.locked .cat-chip.selected{ opacity: 1; }
+  .card.locked .cat-chip.right-answer{
+    opacity: 1;
+    outline: 2px solid var(--green);
+  }
+
+  .verify-btn{
+    display:block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: var(--burgundy);
+    color: #fff;
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .verify-btn:disabled{
+    background: #b8a98a;
+    cursor: default;
+  }
+  .verify-btn.done{
+    background: var(--green);
+  }
+
+  .result-line{
+    text-align:center;
+    font-size: 0.85rem;
+    margin-top: 8px;
+    color: var(--burgundy-dark);
+    font-weight: 600;
+    display:none;
+  }
+  .segment.checked .result-line{ display:block; }
+
+  .correct-translation-box{
+    display:none;
+    margin-top: 12px;
+    background: #e9f2ea;
+    border: 1.5px solid var(--green);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .segment.checked .correct-translation-box{ display:block; }
+  .correct-translation-label{
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--green);
+    margin-bottom: 4px;
+  }
+  .correct-translation-text{
+    font-size: 0.95rem;
+    color: #2d4d33;
+    line-height: 1.4;
+  }
+
+  .final-translation-box{
+    display:none;
+    background: #fffdf8;
+    border: 2px solid var(--gold);
+    border-radius: 14px;
+    padding: 18px 16px;
+    margin: 24px 0;
+    box-shadow: 0 3px 10px var(--paper-shadow);
+  }
+  .final-translation-title{
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    color: var(--burgundy-dark);
+    text-align: center;
+    margin-bottom: 10px;
+    letter-spacing: 0.03em;
+  }
+  .final-translation-text{
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+
+  .score-banner{
+    position: sticky;
+    bottom: 10px;
+    background: var(--burgundy-dark);
+    color: #f2e8d0;
+    border-radius: 12px;
+    padding: 12px 16px;
+    text-align:center;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.03em;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .score-banner .num{ font-size: 1.1rem; color: #e8c98a; }
+
+.home-fab{
+  position:fixed; top:14px; left:14px; z-index:999;
+  display:flex; align-items:center; gap:6px;
+  background: linear-gradient(135deg, #B9812A, #6B1E23);
+  color:#fff; font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;
+  font-size:0.82rem; font-weight:700; text-decoration:none;
+  padding:8px 14px; border-radius:20px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.25);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.home-fab:hover{ transform: translateY(-2px); box-shadow:0 5px 14px rgba(0,0,0,0.3); }
+@media (max-width:480px){ .home-fab{ font-size:0.72rem; padding:6px 10px; top:8px; left:8px; } }
+.next-fab{
+  position:fixed; top:14px; right:14px; z-index:999;
+  display:flex; align-items:center; gap:6px;
+  background: linear-gradient(135deg, #6B1E23, #B9812A);
+  color:#fff; font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;
+  font-size:0.82rem; font-weight:700; text-decoration:none;
+  padding:8px 14px; border-radius:20px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.25);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.next-fab:hover{ transform: translateY(-2px); box-shadow:0 5px 14px rgba(0,0,0,0.3); }
+@media (max-width:480px){ .next-fab{ font-size:0.72rem; padding:6px 10px; top:8px; right:8px; } }
+</style>
+</head>
+<body>
+<a class="home-fab" href="index.html#serie-estivale-2">🏠 Accueil du site</a>
+<a class="next-fab" href="exercice-11-correction-theme-latin.html">Exercice suivant →</a>
+
+<div class="wrap">
+
+  <header>
+    <div class="badge">✦ Traduction ✦</div>
+    <h1>Corriger la version de Cornelia, de Marcus et de Quintus</h1>
+    <p class="subtitle">Tibère et le laurier</p>
+  </header>
+
+  <div class="meander"></div>
+
+  <div class="full-text-box">
+    <div class="full-text-title">Tibère et le laurier</div>
+    <div class="full-text-latin">Tonitrua immoderate Tiberius expavescebat. Itaque, ut primum tempestas impendebat caelumque nubibus obscurabatur, semper caput lauro coronabat, quia arbusculae frons numquam fulmine icitur.</div>
+    <div class="full-text-vocab-title">Vocabulaire complet</div>
+    <ul class="vocab-list" id="fullVocab"></ul>
+  </div>
+
+  <div class="instructions">
+    Tu as une version réellement donnée (vocabulaire fourni, sauf pour les mots figurant sur la liste à apprendre). Pour chaque segment, trois traductions te sont proposées (d'anciens étudiants, ici rebaptisés). Commence par regarder attentivement chacune d'elles (<strong>il peut y avoir 0, 1, 2 ou 3 traductions fautives</strong> — rien n'est garanti à l'avance). Pour chaque traduction que tu juges problématique, tape sur la carte (elle se marque en rouge), puis <strong>choisis le ou les types d'erreur</strong> parmi les puces qui apparaissent (plusieurs choix possibles). Après avoir réfléchi toi-même à la bonne traduction, appuie sur « Vérifier ce segment ». Tu auras la correction et des remarques pour chaque copie et, au-dessous, la traduction correcte de ce segment.
+  </div>
+
+  <div id="segments"></div>
+
+  <div class="final-translation-box" id="finalBox">
+    <div class="final-translation-title">✦ Traduction complète de la version ✦</div>
+    <div class="final-translation-text" id="finalText"></div>
+  </div>
+
+  <div class="score-banner" id="scoreBanner">
+    Score : <span class="num" id="scoreVal">0</span> / <span id="scoreMax">0</span>
+  </div>
+
+</div>
+
+<script>
+const FULL_VOCAB = [
+  ["arbuscula, ae, f.", "arbuste"],
+  ["caelum, i, n.", "ciel"],
+  ["caput, itis, n.", "tête ; l'extrémité"],
+  ["corono, as, are, avi, atum", "couronner"],
+  ["expavesco, is, ere, expavi, -", "redouter, effrayer"],
+  ["frons, frondis, f.", "feuillage"],
+  ["fulmen, inis, n.", "foudre"],
+  ["ico, is, ere, ici, ictum", "frapper"],
+  ["immoderate, adv.", "sans mesure, démesurément, à l'excès"],
+  ["impendeo, es, ere", "pendre au-dessus, menacer"],
+  ["laurus, i, f.", "laurier"],
+  ["nubes, is, f.", "nuage, nue, nuée"],
+  ["obscuro, as, are, avi, atum", "obscurcir"],
+  ["tempestas, atis, f.", "moment, temps, mauvais temps"],
+  ["Tiberius, ii, m.", "Tibère"],
+  ["tonitruum, i, n.", "tonnerre, orage"]
+];
+
+const CATS = {
+  contresens: { label: "Contresens", icon: "🟣" },
+  expression: { label: "Faux sens / non-sens", icon: "🟢" },
+  construction: { label: "Construction", icon: "🔵" },
+  temps: { label: "Temps / mode", icon: "🔴" },
+  nombre: { label: "Nombre (sg/pl)", icon: "🟦" },
+  omission: { label: "Omission", icon: "🟠" }
+};
+
+const DATA = [
+  {
+    latin: "Tonitrua immoderate Tiberius expavescebat.",
+    correctTranslation: "Tibère redoutait à l'excès les orages.",
+    vocab: [
+      ["expavesco, is, ere, expavi, -", "redouter, effrayer"],
+      ["immoderate, adv.", "sans mesure, démesurément, à l'excès"],
+      ["Tiberius, ii, m.", "Tibère"],
+      ["tonitruum, i, n.", "tonnerre, orage"]
+    ],
+    translations: [
+      { name: "Cornelia", correct: false, cats: ["contresens"],
+        text: "Les orages effrayaient démesurément Tibère.",
+        remark: "Contresens : construction non vue (Cornelia a simplement suivi l'ordre des mots latins, sans analyse). Tonitrua pourrait dans l'absolu être nominatif pluriel (neutre de la 2e), mais c'est impossible ici : le verbe est au singulier, et Tiberius, seul nominatif possible, est forcément le sujet. Tonitrua est donc accusatif pluriel (COD). Attendu : « Tibère redoutait les orages »." },
+      { name: "Marcus", correct: false, cats: ["expression"],
+        text: "Tibère effrayait démesurément les orages.",
+        remark: "Faux sens / non-sens (les deux réponses sont acceptées) : grammaticalement correct, mais choisir « effrayer » plutôt que « redouter » pour expavescere aboutit à un non-sens (Tibère effrayant les orages supposerait des orages doués de vie)." },
+      { name: "Quintus", correct: false, cats: ["nombre"],
+        text: "Tibère redoutait démesurément l'orage.",
+        remark: "Erreur de nombre : tonitrua est au pluriel, la traduction met un singulier (« l'orage »)." }
+    ]
+  },
+  {
+    latin: "Itaque, ut primum tempestas impendebat caelumque nubibus obscurabatur,",
+    correctTranslation: "C'est pourquoi, dès que le mauvais temps menaçait et que le ciel était obscurci par des nuages,",
+    vocab: [
+      ["caelum, i, n.", "ciel"],
+      ["impendeo, es, ere", "pendre au-dessus, menacer"],
+      ["nubes, is, f.", "nuage, nue, nuée"],
+      ["obscuro, as, are, avi, atum", "obscurcir"],
+      ["tempestas, atis, f.", "moment, temps, mauvais temps"]
+    ],
+    translations: [
+      { name: "Marcus", correct: false, cats: ["temps"],
+        text: "C'est pourquoi, dès que l'orage menaça et que le ciel fut obscurci par des nuages,",
+        remark: "Erreur de temps/mode : impendebat / obscurabatur sont à l'imparfait (suffixe -eba- reconnaissable), pas au parfait ponctuel « menaça / fut obscurci »." },
+      { name: "Cornelia", correct: false, cats: ["expression"],
+        text: "C'est pourquoi, quand le mauvais temps menaçait et que le ciel était obscurci par des nuages,",
+        remark: "Faux sens : ut primum ne signifie pas « quand » mais « dès que »." },
+      { name: "Quintus", correct: true,
+        text: "C'est pourquoi, dès que le mauvais temps menaçait et que le ciel était obscurci par des nuages,",
+        remark: "Tout est correct." }
+    ]
+  },
+  {
+    latin: "semper caput lauro coronabat,",
+    correctTranslation: "il couronnait toujours sa tête de laurier,",
+    vocab: [
+      ["caput, itis, n.", "tête ; l'extrémité"],
+      ["corono, as, are, avi, atum", "couronner"],
+      ["laurus, i, f.", "laurier"]
+    ],
+    translations: [
+      { name: "Marcus", correct: false, cats: ["expression", "temps", "omission"],
+        text: "il couronna aussitôt sa tête de laurier.",
+        remark: "Trois erreurs cumulées : faux sens (semper ≠ aussitôt, confusion avec statim), temps (coronabat est un imparfait, pas un passé simple — suffixe -eba- reconnaissable), et omission de semper (« toujours », qui marque l'habitude)." },
+      { name: "Cornelia", correct: false, cats: ["omission"],
+        text: "il couronnait toujours sa tête.",
+        remark: "Omission de lauro (ablatif de moyen) : « avec du laurier / de laurier » a disparu." },
+      { name: "Quintus", correct: true,
+        text: "il couronnait toujours sa tête de laurier.",
+        remark: "Tout est correct." }
+    ]
+  },
+  {
+    latin: "quia arbusculae frons numquam fulmine icitur.",
+    correctTranslation: "parce que le feuillage de l'arbrisseau n'est jamais frappé par la foudre.",
+    vocab: [
+      ["arbuscula, ae, f.", "arbuste"],
+      ["frons, frondis, f.", "feuillage"],
+      ["fulmen, inis, n.", "foudre"],
+      ["ico, is, ere, ici, ictum", "frapper"]
+    ],
+    translations: [
+      { name: "Marcus", correct: true,
+        text: "parce que le feuillage de l'arbrisseau n'est jamais frappé par la foudre.",
+        remark: "Tout est correct." },
+      { name: "Cornelia", correct: false, cats: ["omission", "construction"],
+        text: "parce que l'arbrisseau n'est jamais frappé par la foudre.",
+        remark: "Omission / construction : frons (nominatif), le vrai sujet (« le feuillage »), a disparu ; arbusculae (génitif, complément du nom) est traité à tort comme sujet." },
+      { name: "Quintus", correct: false, cats: ["temps"],
+        text: "parce que le feuillage de l'arbrisseau n'a jamais été frappé par la foudre.",
+        remark: "Erreur de temps : icitur est au présent, pas au passé composé suggéré par « n'a jamais été »." }
+    ]
+  }
+];
+
+const container = document.getElementById('segments');
+let totalPossible = 0;
+let totalEarned = 0;
+
+document.getElementById('fullVocab').innerHTML = FULL_VOCAB
+  .map(([w, def]) => `<li><b>${w}</b> : ${def}</li>`).join('');
+
+DATA.forEach((seg, si) => {
+  const segEl = document.createElement('div');
+  segEl.className = 'segment';
+  segEl.dataset.index = si;
+
+  let segPossible = 0; // 1 per card (flag) + 1 per expected category on faulty cards
+  seg.translations.forEach(t => { segPossible += t.correct ? 1 : 1 + t.cats.length; });
+  totalPossible += segPossible;
+
+  const num = document.createElement('div');
+  num.className = 'seg-number';
+  num.textContent = `Segment ${si + 1} / ${DATA.length}`;
+  segEl.appendChild(num);
+
+  const latinEl = document.createElement('div');
+  latinEl.className = 'latin';
+  latinEl.textContent = seg.latin;
+  segEl.appendChild(latinEl);
+
+  const vocabTitle = document.createElement('div');
+  vocabTitle.className = 'seg-vocab-title';
+  vocabTitle.textContent = 'Vocabulaire du segment';
+  segEl.appendChild(vocabTitle);
+
+  const vocabList = document.createElement('ul');
+  vocabList.className = 'seg-vocab';
+  vocabList.innerHTML = seg.vocab.map(([w, def]) => `<li><b>${w}</b> : ${def}</li>`).join('');
+  segEl.appendChild(vocabList);
+
+  const avatarClass = { Cornelia: 'cornelia', Marcus: 'marcus', Quintus: 'quintus' };
+  const initials = { Cornelia: 'Co', Marcus: 'Ma', Quintus: 'Qu' };
+
+  seg.translations.forEach((t, ti) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.flagged = 'false';
+    card.selectedCats = new Set();
+
+    const catChipsHtml = Object.entries(CATS).map(([key, c]) =>
+      `<span class="cat-chip" data-cat="${key}">${c.icon} ${c.label}</span>`
+    ).join('');
+
+    card.innerHTML = `
+      <div class="avatar ${avatarClass[t.name]}">${initials[t.name]}</div>
+      <div class="card-body">
+        <div class="card-name">${t.name}</div>
+        <div class="card-text">${t.text}</div>
+        <div class="cat-row">${catChipsHtml}</div>
+        <div class="remark">${t.remark}</div>
+      </div>
+      <div class="flag-icon">✕</div>
+    `;
+
+    card.addEventListener('click', (e) => {
+      if (segEl.classList.contains('checked')) return;
+      if (e.target.classList.contains('cat-chip')) {
+        const cat = e.target.dataset.cat;
+        if (card.selectedCats.has(cat)) {
+          card.selectedCats.delete(cat);
+          e.target.classList.remove('selected');
+        } else {
+          card.selectedCats.add(cat);
+          e.target.classList.add('selected');
+        }
+        return;
+      }
+      const flagged = card.dataset.flagged === 'true';
+      card.dataset.flagged = flagged ? 'false' : 'true';
+      card.classList.toggle('flagged', !flagged);
+    });
+
+    segEl.appendChild(card);
+  });
+
+  const btn = document.createElement('button');
+  btn.className = 'verify-btn';
+  btn.textContent = 'Vérifier ce segment';
+  btn.addEventListener('click', () => {
+    if (segEl.classList.contains('checked')) return;
+    segEl.classList.add('checked');
+    btn.classList.add('done');
+    btn.textContent = 'Segment vérifié';
+    btn.disabled = true;
+
+    let earnedHere = 0;
+    const cards = segEl.querySelectorAll('.card');
+    cards.forEach((card, ti) => {
+      const t = seg.translations[ti];
+      const flagged = card.dataset.flagged === 'true';
+      const shouldFlag = !t.correct;
+      card.classList.add('locked');
+      if (t.correct) card.classList.add('correct');
+      if (flagged === shouldFlag) earnedHere += 1;
+
+      if (!t.correct) {
+        t.cats.forEach(cat => { if (card.selectedCats.has(cat)) earnedHere += 1; });
+        card.querySelectorAll('.cat-chip').forEach(chip => {
+          if (t.cats.includes(chip.dataset.cat)) chip.classList.add('right-answer');
+        });
+      }
+    });
+
+    totalEarned += earnedHere;
+    document.getElementById('scoreVal').textContent = totalEarned;
+
+    const resultLine = document.createElement('div');
+    resultLine.className = 'result-line';
+    resultLine.textContent = `${earnedHere} / ${segPossible} points sur ce segment`;
+    segEl.appendChild(resultLine);
+
+    const correctBox = document.createElement('div');
+    correctBox.className = 'correct-translation-box';
+    correctBox.innerHTML = `<div class="correct-translation-label">Traduction correcte de ce segment</div><div class="correct-translation-text">${seg.correctTranslation}</div>`;
+    segEl.appendChild(correctBox);
+
+    const allChecked = container.querySelectorAll('.segment.checked').length === DATA.length;
+    if (allChecked) {
+      document.getElementById('finalText').textContent = DATA.map(s => s.correctTranslation).join(' ');
+      document.getElementById('finalBox').style.display = 'block';
+    }
+  });
+  segEl.appendChild(btn);
+
+  container.appendChild(segEl);
+});
+
+document.getElementById('scoreMax').textContent = totalPossible;
+</script>
+</body>
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Identifier les formes verbales — Série révision estivale</title>
+<style>
+  :root{
+    --burgundy:#6B1E23; --burgundy-dark:#4a1319; --burgundy-light:#8a3138;
+    --parchment:#F1E6CE; --parchment-dark:#e5d6b3; --ink:#2b1810;
+    --green:#1e6b45; --green-bg:#e3efe6;
+    --red:#8a2318; --red-bg:#f3e2df;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+  body{ margin:0; font-family:'Iowan Old Style','Palatino Linotype','Palatino',Georgia,serif;
+    background: var(--parchment); color: var(--ink); padding: 0 0 30px 0; }
+  header{ padding: 22px 16px 14px 16px; text-align:center; }
+  .pictogram{ width:52px; height:52px; margin:0 auto 8px auto; display:block; }
+  h1{ margin:0; font-size:1.3em; color: var(--burgundy); }
+  .subtitle{ margin:4px 0 0 0; font-style:italic; color:var(--burgundy-dark); font-size:0.85em; }
+  .meander{ height:10px; max-width:420px; margin:14px auto 0 auto;
+    background-image: repeating-linear-gradient(90deg, var(--burgundy) 0px, var(--burgundy) 5px, transparent 5px, transparent 10px);
+    background-size:20px 100%; opacity:0.55; }
+  .intro{ max-width:480px; margin:14px auto 0 auto; padding:12px 16px; background:white;
+    border-left:4px solid var(--burgundy); border-radius:4px; font-size:0.85em; line-height:1.45; }
+  .intro strong{ color:var(--burgundy); }
+  .scorebar{ position:sticky; top:0; z-index:5; background:var(--burgundy); color:var(--parchment);
+    text-align:center; font-size:0.8em; letter-spacing:0.5px; padding:7px 10px; }
+  main{ max-width:480px; margin:18px auto 0 auto; padding:0 14px; }
+
+  .card{ background:white; border-radius:8px; margin-bottom:18px; box-shadow:0 2px 6px rgba(43,24,16,0.12); overflow:hidden; }
+  .cnum{ background:var(--burgundy); color:var(--parchment); font-size:0.72em; font-weight:bold; letter-spacing:1px; padding:6px 14px; }
+  .form{ text-align:center; font-size:1.7em; padding: 14px 10px 6px 10px; color:var(--burgundy-dark); font-weight:bold; }
+  .verbref{ text-align:center; font-size:0.78em; font-style:italic; color:var(--burgundy-light); padding-bottom:12px; }
+
+  .groupwrap{ padding: 0 14px 12px 14px; }
+  .glabel{ font-size:0.7em; text-transform:uppercase; letter-spacing:0.5px; color:var(--burgundy-dark); font-weight:bold; margin-bottom:6px; }
+  .btnrow{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+  .opt{ background:var(--parchment); border:1.5px solid var(--burgundy-light); color:var(--ink);
+    font-family:inherit; font-size:0.85em; padding:7px 11px; border-radius:16px; cursor:pointer; }
+  .opt.selected{ background:var(--burgundy); color:var(--parchment); border-color:var(--burgundy); }
+  .opt:disabled{ opacity:0.35; pointer-events:none; }
+
+  .btnvalider{ display:block; width: calc(100% - 28px); margin: 4px 14px 14px 14px; background:var(--burgundy);
+    color:var(--parchment); border:none; font-family:inherit; font-size:0.92em; padding:11px; border-radius:8px; }
+  .btnvalider:disabled{ opacity:0.35; }
+
+  .result{ margin: 0 14px 16px 14px; padding:10px 12px; border-radius:6px; font-size:0.85em; line-height:1.45; display:none; }
+  .result.visible{ display:block; }
+  .result.ok{ background:var(--green-bg); color:var(--green); }
+  .result.partial{ background:#fbf1de; color:var(--burgundy-dark); }
+  .result .detail{ display:block; margin-top:4px; font-size:0.95em; }
+  .result .comment{ display:block; margin-top:6px; font-style:italic; opacity:0.9; }
+  .ok-mark{ color:var(--green); font-weight:bold; }
+  .ko-mark{ color:var(--red); font-weight:bold; }
+
+  .final-score{ max-width:480px; margin: 10px auto 30px auto; padding: 0 14px; display:none; }
+  .final-score.visible{ display:block; }
+  .final-score-inner{ background:white; border-radius:8px; padding:20px; text-align:center; box-shadow:0 2px 6px rgba(43,24,16,0.12); }
+  .final-score-inner .big{ font-size:2.2em; color:var(--burgundy); font-weight:bold; }
+
+.home-fab{
+  position:fixed; top:14px; left:14px; z-index:999;
+  display:flex; align-items:center; gap:6px;
+  background: linear-gradient(135deg, #B9812A, #6B1E23);
+  color:#fff; font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;
+  font-size:0.82rem; font-weight:700; text-decoration:none;
+  padding:8px 14px; border-radius:20px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.25);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.home-fab:hover{ transform: translateY(-2px); box-shadow:0 5px 14px rgba(0,0,0,0.3); }
+@media (max-width:480px){ .home-fab{ font-size:0.72rem; padding:6px 10px; top:8px; left:8px; } }
+.next-fab{
+  position:fixed; top:14px; right:14px; z-index:999;
+  display:flex; align-items:center; gap:6px;
+  background: linear-gradient(135deg, #6B1E23, #B9812A);
+  color:#fff; font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;
+  font-size:0.82rem; font-weight:700; text-decoration:none;
+  padding:8px 14px; border-radius:20px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.25);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.next-fab:hover{ transform: translateY(-2px); box-shadow:0 5px 14px rgba(0,0,0,0.3); }
+@media (max-width:480px){ .next-fab{ font-size:0.72rem; padding:6px 10px; top:8px; right:8px; } }
+</style>
+</head>
+<body>
+<a class="home-fab" href="index.html#serie-estivale-2">🏠 Accueil du site</a>
+<a class="next-fab" href="exercice-9-vocabulaire-chronometre-2.html">Exercice suivant →</a>
+
+
+<header>
+  <svg class="pictogram" viewBox="0 0 100 100">
+    <rect x="20" y="40" width="18" height="18" fill="#c0293b"/>
+    <rect x="41" y="40" width="18" height="18" fill="#c0293b" opacity="0.5"/>
+    <rect x="62" y="40" width="18" height="18" fill="#c0293b"/>
+    <text x="29" y="53" font-size="8" text-anchor="middle" fill="white">ama</text>
+    <text x="50" y="53" font-size="9" text-anchor="middle" fill="white">ba</text>
+    <text x="71" y="53" font-size="9" text-anchor="middle" fill="white">t</text>
+  </svg>
+  <h1>Identifier les formes verbales</h1>
+  <p class="subtitle">Série révision estivale — esse et autres conjugaisons</p>
+  <div class="meander"></div>
+  <div class="intro">
+    Pour chaque forme, indiquez le <strong>mode</strong>, le <strong>temps</strong>, la
+    <strong>personne</strong>, et, sauf pour <em>esse</em> (qui n'a ni voix ni n° de conjugaison à proprement parler),
+    la <strong>voix</strong> et le <strong>numéro de conjugaison</strong>.
+  </div>
+</header>
+
+<div class="scorebar" id="scorebar">0 / 10 formes traitées</div>
+
+<main id="cards"></main>
+
+<div class="final-score" id="finalScore">
+  <div class="final-score-inner">
+    <div class="big" id="finalBig">0 / 30</div>
+    <div>points (mode + temps + personne + voix + conjugaison quand applicable, un point chacun)</div>
+  </div>
+</div>
+
+<script>
+const persons = ['1re sg','2e sg','3e sg','1re pl','2e pl','3e pl'];
+const tempsIndicatif = ['présent','imparfait','parfait','plus-que-parfait'];
+const tempsSubjonctif = ['présent','imparfait','parfait','plus-que-parfait'];
+
+const items = [
+  { form:'eram', verbe:'esse (sum, es, esse, fui)', mode:'indicatif', temps:'imparfait', personne:'1re sg',
+    comment:"Imparfait irrégulier, formé sur un autre radical : pas d'autre solution que de le connaître." },
+  { form:'dicunt', verbe:'dico, is, ere, dixi, dictum', mode:'indicatif', temps:'présent', personne:'3e pl', voix:'actif', conj:'3',
+    comment:"Radical du présent (dic-) + voyelle de liaison -u- + terminaison active -nt : à la 3e pl., les verbes des 3e, 3e mixte et 4e conjugaisons prennent la voyelle de liaison -u- (dicunt, capiunt, veniunt). 3e conjugaison : -o, -ere." },
+  { form:'veniebant', verbe:'venio, is, ire, veni, ventum', mode:'indicatif', temps:'imparfait', personne:'3e pl', voix:'actif', conj:'4',
+    comment:"Radical du présent (veni-) + -eba- + terminaison active -nt (4e conjugaison). 4e conjugaison : -io, -ire." },
+  { form:'duxerant', verbe:'duco, is, ere, duxi, ductum', mode:'indicatif', temps:'plus-que-parfait', personne:'3e pl', voix:'actif', conj:'3',
+    comment:"Le plus-que-parfait actif se forme sur le radical du parfait + imparfait de l'indicatif de esse. 3e conjugaison : -o, -ere." },
+  { form:'scriberent', verbe:'scribo, is, ere, scripsi, scriptum', mode:'subjonctif', temps:'imparfait', personne:'3e pl', voix:'actif', conj:'3',
+    comment:"Le subjonctif imparfait actif se forme sur l'infinitif présent (scribere) + terminaisons personnelles (A ou P). 3e conjugaison : -o, -ere." },
+  { form:'fuerunt', verbe:'esse (sum, es, esse, fui)', mode:'indicatif', temps:'parfait', personne:'3e pl',
+    comment:"Le parfait actif se forme sur le radical du parfait + terminaisons spécifiques du parfait actif." },
+  { form:'cepissetis', verbe:'capio, is, ere, cepi, captum', mode:'subjonctif', temps:'plus-que-parfait', personne:'2e pl', voix:'actif', conj:'3m',
+    comment:"Radical du parfait (cep-) + -isse- + terminaison active : cepissetis = cep + isse + tis. 3e conjugaison mixte : -io, -ere." },
+  { form:'rogavistis', verbe:'rogo, as, are, avi, atum', mode:'indicatif', temps:'parfait', personne:'2e pl', voix:'actif', conj:'1',
+    comment:"Le parfait actif se forme sur le radical du parfait + terminaisons spécifiques du parfait actif. Attention à ne pas confondre les terminaisons du parfait : -isti (2e sg) et -istis (2e pl). 1re conjugaison : -o, -are." },
+  { form:'rogatus est', verbe:'rogo, as, are, avi, atum (passif)', mode:'indicatif', temps:'parfait', personne:'3e sg', voix:'passif', conj:'1',
+    comment:"Attention, on a ici une forme composée ! Le parfait passif se forme avec le PPP + le présent de l'indicatif de esse. L'accord du PPP au masculin sg (rogatus) indique que le sujet est masculin sg. Attention en traduisant à ne pas mettre un présent passif : on a tendance à calquer sur la formation française. 1re conjugaison : -o, -are." },
+  { form:'ducti erant', verbe:'duco, is, ere, duxi, ductum (passif)', mode:'indicatif', temps:'plus-que-parfait', personne:'3e pl', voix:'passif', conj:'3',
+    comment:"Attention, on a ici une forme composée ! Le plus-que-parfait passif se forme avec le PPP + l'imparfait de l'indicatif de esse. L'accord du PPP au masculin pl (ducti) indique que le sujet est masculin pl. Attention en traduisant à ne pas mettre un imparfait passif : on a tendance à calquer sur la formation française. 3e conjugaison : -o, -ere." },
+  { form:'essemus', verbe:'esse (sum, es, esse, fui)', mode:'subjonctif', temps:'imparfait', personne:'1re pl',
+    comment:"Formation régulière : infinitif présent (esse) + terminaisons personnelles." },
+  { form:'appellantur', verbe:'appello, as, are, avi, atum (passif)', mode:'indicatif', temps:'présent', personne:'3e pl', voix:'passif', conj:'1',
+    comment:"1re conjugaison : -o, -are." },
+  { form:'appellunt', verbe:'appello, is, ere, appuli, appulsum', mode:'indicatif', temps:'présent', personne:'3e pl', voix:'actif', conj:'3',
+    comment:"Radical du présent (appell-) + voyelle de liaison -u- + terminaison active -nt (3e conjugaison). 3e conjugaison : -o, -ere." },
+  { form:'mota sum', verbe:'moveo, es, ere, movi, motum (passif)', mode:'indicatif', temps:'parfait', personne:'1re sg', voix:'passif', conj:'2',
+    comment:"Attention, on a ici une forme composée ! PPP (accordé) + présent de l'indicatif de esse. L'accord du PPP au féminin singulier (mota) indique que le sujet est féminin singulier. Attention en traduisant à ne pas mettre un présent passif : on a tendance à calquer sur la formation française. 2e conjugaison : -eo, -ere." },
+  { form:'vincit', verbe:'vinco, is, ere, vici, victum', mode:'indicatif', temps:'présent', personne:'3e sg', voix:'actif', conj:'3',
+    comment:"Attention à ne pas confondre avec le parfait vicit : un seul n de différence. 3e conjugaison : -o, -ere." },
+  { form:'fuissent', verbe:'esse (sum, es, esse, fui)', mode:'subjonctif', temps:'plus-que-parfait', personne:'3e pl',
+    comment:"Radical du parfait (fu-) + -isse- + terminaison active : fuissent = fu + isse + nt." },
+  { form:'vicit', verbe:'vinco, is, ere, vici, victum', mode:'indicatif', temps:'parfait', personne:'3e sg', voix:'actif', conj:'3',
+    comment:"Attention à ne pas confondre avec le présent vincit : un seul n de différence. 3e conjugaison : -o, -ere." },
+  { form:'movisset', verbe:'moveo, es, ere, movi, motum', mode:'subjonctif', temps:'plus-que-parfait', personne:'3e sg', voix:'actif', conj:'2',
+    comment:"Radical du parfait (mov-) + -isse- + terminaison active : movisset = mov + isse + t. 2e conjugaison : -eo, -ere." },
+  { form:'dicti essent', verbe:'dico, is, ere, dixi, dictum (passif)', mode:'subjonctif', temps:'plus-que-parfait', personne:'3e pl', voix:'passif', conj:'3',
+    comment:"Attention, on a ici une forme composée ! PPP (accordé) + subjonctif imparfait de sum. L'accord du PPP au masculin pluriel (dicti) indique que le sujet est masculin pluriel. 3e conjugaison : -o, -ere." },
+  { form:'dicebatis', verbe:'dico, is, ere, dixi, dictum', mode:'indicatif', temps:'imparfait', personne:'2e pl', voix:'actif', conj:'3',
+    comment:"Radical du présent (dic-) + -eba- + terminaison active -tis (3e conjugaison). 3e conjugaison : -o, -ere." },
+  { form:'sumus', verbe:'esse (sum, es, esse, fui)', mode:'indicatif', temps:'présent', personne:'1re pl',
+    comment:"Attention : un seul m en latin !" },
+  { form:'scriberetur', verbe:'scribo, is, ere, scripsi, scriptum (passif)', mode:'subjonctif', temps:'imparfait', personne:'3e sg', voix:'passif', conj:'3',
+    comment:"Infinitif présent (scribere) + terminaison passive -tur. Contrairement au parfait/plus-que-parfait passif, c'est ici une forme simple (pas de participe + esse). 3e conjugaison : -o, -ere." },
+  { form:'rogatus esset', verbe:'rogo, as, are, avi, atum (passif)', mode:'subjonctif', temps:'plus-que-parfait', personne:'3e sg', voix:'passif', conj:'1',
+    comment:"Attention, on a ici une forme composée ! PPP (accordé) + subjonctif imparfait de sum. L'accord du PPP au masculin singulier (rogatus) indique que le sujet est masculin singulier. 1re conjugaison : -o, -are." }
+];
+
+const state = items.map(() => ({ mode:null, temps:null, personne:null, voix:null, conj:null, validated:false }));
+let treated = 0;
+
+const cardsEl = document.getElementById('cards');
+const scorebar = document.getElementById('scorebar');
+
+function updateScorebar(){ scorebar.textContent = `${treated} / ${items.length} formes traitées`; }
+
+items.forEach((item, i) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  const voixBlock = item.voix ? `
+      <div class="glabel">Voix</div>
+      <div class="btnrow" id="voix-${i}">
+        <button class="opt" data-val="actif">Actif</button>
+        <button class="opt" data-val="passif">Passif</button>
+      </div>` : '';
+  const conjBlock = item.conj ? `
+      <div class="glabel">Conjugaison</div>
+      <div class="btnrow" id="conj-${i}">
+        <button class="opt" data-val="1">1re</button>
+        <button class="opt" data-val="2">2e</button>
+        <button class="opt" data-val="3">3e</button>
+        <button class="opt" data-val="3m">3e mixte</button>
+        <button class="opt" data-val="4">4e</button>
+      </div>` : '';
+  card.innerHTML = `
+    <div class="cnum">Forme ${i+1}</div>
+    <div class="form">${item.form}</div>
+    <div class="verbref">${item.verbe}</div>
+    <div class="groupwrap">
+      <div class="glabel">Mode</div>
+      <div class="btnrow" id="mode-${i}">
+        <button class="opt" data-val="indicatif">Indicatif</button>
+        <button class="opt" data-val="subjonctif">Subjonctif</button>
+      </div>
+      <div class="glabel">Temps</div>
+      <div class="btnrow" id="temps-${i}"></div>
+      <div class="glabel">Personne</div>
+      <div class="btnrow" id="personne-${i}">
+        ${persons.map(p => `<button class="opt" data-val="${p}">${p}</button>`).join('')}
+      </div>${voixBlock}${conjBlock}
+    </div>
+    <button class="btnvalider" id="valider-${i}" disabled>Valider</button>
+    <div class="result" id="result-${i}"></div>
+  `;
+  cardsEl.appendChild(card);
+
+  document.querySelectorAll(`#mode-${i} .opt`).forEach(btn => {
+    btn.addEventListener('click', () => selectMode(i, btn));
+  });
+  document.querySelectorAll(`#personne-${i} .opt`).forEach(btn => {
+    btn.addEventListener('click', () => selectSimple(i, 'personne', btn, `personne-${i}`));
+  });
+  if(item.voix){
+    document.querySelectorAll(`#voix-${i} .opt`).forEach(btn => {
+      btn.addEventListener('click', () => selectSimple(i, 'voix', btn, `voix-${i}`));
+    });
+  }
+  if(item.conj){
+    document.querySelectorAll(`#conj-${i} .opt`).forEach(btn => {
+      btn.addEventListener('click', () => selectSimple(i, 'conj', btn, `conj-${i}`));
+    });
+  }
+  document.getElementById(`valider-${i}`).addEventListener('click', () => validate(i));
+});
+
+function selectMode(i, btn){
+  if(state[i].validated) return;
+  document.querySelectorAll(`#mode-${i} .opt`).forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state[i].mode = btn.dataset.val;
+
+  const tempsWrap = document.getElementById(`temps-${i}`);
+  tempsWrap.innerHTML = '';
+  const list = state[i].mode === 'indicatif' ? tempsIndicatif : tempsSubjonctif;
+  list.forEach(t => {
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.dataset.val = t;
+    b.textContent = t;
+    b.addEventListener('click', () => selectSimple(i, 'temps', b, `temps-${i}`));
+    tempsWrap.appendChild(b);
+  });
+  state[i].temps = null;
+  checkReady(i);
+}
+
+function selectSimple(i, field, btn, wrapId){
+  if(state[i].validated) return;
+  document.querySelectorAll(`#${wrapId} .opt`).forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state[i][field] = btn.dataset.val;
+  checkReady(i);
+}
+
+function checkReady(i){
+  const s = state[i];
+  const item = items[i];
+  const voixOk = !item.voix || s.voix;
+  const conjOk = !item.conj || s.conj;
+  document.getElementById(`valider-${i}`).disabled = !(s.mode && s.temps && s.personne && voixOk && conjOk);
+}
+
+const conjLabels = { '1':'1re', '2':'2e', '3':'3e', '3m':'3e mixte', '4':'4e' };
+
+function validate(i){
+  const s = state[i];
+  if(s.validated) return;
+  s.validated = true;
+  treated++;
+  updateScorebar();
+
+  const item = items[i];
+  document.querySelectorAll(`#mode-${i} .opt, #temps-${i} .opt, #personne-${i} .opt`).forEach(b => b.disabled = true);
+  if(item.voix){
+    document.querySelectorAll(`#voix-${i} .opt`).forEach(b => b.disabled = true);
+  }
+  if(item.conj){
+    document.querySelectorAll(`#conj-${i} .opt`).forEach(b => b.disabled = true);
+  }
+  document.getElementById(`valider-${i}`).disabled = true;
+
+  const modeOk = s.mode === item.mode;
+  const tempsOk = s.temps === item.temps;
+  const personneOk = s.personne === item.personne;
+  const voixOk = !item.voix || s.voix === item.voix;
+  const conjOk = !item.conj || s.conj === item.conj;
+  const allOk = modeOk && tempsOk && personneOk && voixOk && conjOk;
+
+  const result = document.getElementById(`result-${i}`);
+  result.className = 'result visible ' + (allOk ? 'ok' : 'partial');
+  const fieldLine = (label, ok, given, correct) => ok
+    ? `${label} : <span class="ok-mark">✓</span> ${correct}`
+    : `${label} : <span class="ko-mark">✗</span> ta réponse : ${given} — bonne réponse : <strong>${correct}</strong>`;
+  result.innerHTML = `
+    <span class="detail">${fieldLine('Mode', modeOk, s.mode, item.mode)}
+    <br>${fieldLine('Temps', tempsOk, s.temps, item.temps)}
+    <br>${fieldLine('Personne', personneOk, s.personne, item.personne)}
+    ${item.voix ? `<br>${fieldLine('Voix', voixOk, s.voix, item.voix)}` : ''}
+    ${item.conj ? `<br>${fieldLine('Conjugaison', conjOk, conjLabels[s.conj] || '—', conjLabels[item.conj])}` : ''}</span>
+    ${item.comment ? `<span class="comment">${item.comment}</span>` : ''}
+  `;
+
+  if(treated === items.length) showFinal();
+}
+
+function showFinal(){
+  let points = 0;
+  let maxPoints = 0;
+  items.forEach((item, i) => {
+    const s = state[i];
+    if(s.mode === item.mode) points++;
+    if(s.temps === item.temps) points++;
+    if(s.personne === item.personne) points++;
+    maxPoints += 3;
+    if(item.voix){
+      if(s.voix === item.voix) points++;
+      maxPoints++;
+    }
+    if(item.conj){
+      if(s.conj === item.conj) points++;
+      maxPoints++;
+    }
+  });
+  document.getElementById('finalBig').textContent = `${points} / ${maxPoints}`;
+  document.getElementById('finalScore').classList.add('visible');
+}
+
+updateScorebar();
+</script>
+
+</body>
+</html>

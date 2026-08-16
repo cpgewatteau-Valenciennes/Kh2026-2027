@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Corriger les phrases de thème</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parchment:#F1E6CE; --parchment-dark:#e5d6b3; --ink:#2b1810; --ink-soft:#59493A;
+    --burgundy:#7A2430; --burgundy-dark:#5B1B24; --burgundy-light:#8a3138;
+    --gold:#A9782F; --gold-light:#D9B96A;
+    --green:#2E6B4E; --green-bg:#E4EFE6;
+    --red:#B0342D; --red-bg:#F7E5E3;
+    --blue:#2C4A7C; --blue-bg:#E6ECF5;
+    --card:#FBF6E9; --shadow: 0 4px 14px rgba(43,32,22,0.12);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--parchment);
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(169,120,47,0.08), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(122,36,48,0.06), transparent 45%);
+    color: var(--ink);
+    font-family:"EB Garamond", Georgia, serif;
+    font-size:18px;
+    line-height:1.55;
+    padding: 40px 18px 80px;
+  }
+  h1,h2,.display{font-family:"Cormorant Garamond", Georgia, serif;}
+  .wrap{max-width:880px;margin:0 auto;}
+  header.page-head{text-align:center;margin-bottom:38px;}
+  header.page-head .eyebrow{
+    letter-spacing:0.18em;text-transform:uppercase;font-size:13px;
+    color:var(--gold);font-weight:600;
+  }
+  header.page-head h1{font-size:38px;font-weight:700;margin:6px 0 14px;color:var(--burgundy-dark);}
+  .app-note{
+    font-size:15px;color:var(--burgundy-dark);background:#FBF4E3;
+    border-left:3px solid var(--burgundy);padding:14px 18px;border-radius:6px;
+    text-align:left;margin:0 auto;max-width:680px;line-height:1.55;
+  }
+  .legend{
+    background:var(--card);border:1px solid var(--parchment-dark);
+    border-radius:14px;padding:20px 24px;box-shadow:var(--shadow);
+    max-width:680px;margin:22px auto 0;
+  }
+  .legend h3{margin:0 0 10px;font-size:19px;color:var(--burgundy);}
+  .legend-grid{display:flex;flex-wrap:wrap;gap:8px;}
+  .legend-chip{
+    font-size:13.5px;background:rgba(169,120,47,0.08);
+    border:1px solid var(--parchment-dark);border-radius:999px;
+    padding:4px 12px;color:var(--ink-soft);
+  }
+  .legend-note{
+    margin:14px 0 0;font-size:13.5px;color:var(--ink-soft);
+    font-style:italic;
+  }
+  .rule{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:38px 0;border:0;}
+
+  .item{
+    background:var(--card);border:1px solid var(--parchment-dark);
+    border-radius:14px;padding:24px 26px;margin-bottom:22px;box-shadow:var(--shadow);
+  }
+  .item-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:6px;}
+  .item-num{
+    flex-shrink:0;width:32px;height:32px;border-radius:50%;
+    border:1.5px solid var(--gold);color:var(--gold);background:var(--card);
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Cormorant Garamond",serif;font-size:18px;font-weight:700;
+  }
+  .item-title{flex:1;min-width:200px;font-size:1.15rem;font-weight:600;color:var(--burgundy-dark);}
+  .progress-badge{
+    font-size:12.5px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;
+    background:rgba(89,73,58,0.12);color:var(--ink-soft);
+    padding:4px 12px;border-radius:999px;white-space:nowrap;
+  }
+  .progress-badge.done{background:var(--green-bg);color:var(--green);}
+  .vocab-line{
+    font-size:14.5px;color:var(--ink-soft);margin:6px 0 16px 46px;line-height:1.6;
+  }
+  .vocab-line i{font-style:italic;color:var(--ink);}
+  .latin-sentence{
+    font-style:italic;font-size:1.3rem;line-height:2.2;
+    color:var(--burgundy-dark);margin-left:46px;
+  }
+  .w{
+    cursor:pointer;padding:.05em .18em;border-radius:4px;
+    border-bottom:2px dotted var(--gold-light);
+    transition:background .15s,border-color .15s;
+  }
+  .w:hover{background:rgba(169,120,47,0.14);}
+  .w.not-clickable{cursor:default;border-bottom:none;}
+  .w.wrong-guess{border-bottom-color:var(--red);background:var(--red-bg);}
+  .w.pending{background:#fff3d6;border-bottom:2px solid var(--gold);}
+  .w.found{background:var(--green-bg);border-bottom:2px solid var(--green);font-weight:700;cursor:default;}
+
+  .feedback-area{margin:14px 0 0 46px;}
+  .msg{font-size:15px;padding:9px 14px;border-radius:8px;margin-bottom:10px;}
+  .msg.info{background:var(--blue-bg);color:var(--blue);}
+  .msg.bad{background:var(--red-bg);color:var(--red);}
+  .msg.good{background:var(--green-bg);color:var(--green);}
+
+  .type-buttons{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 10px;}
+  .opt-btn{
+    font-family:"EB Garamond",serif;font-size:14.5px;
+    padding:7px 15px;border-radius:999px;border:1.5px solid var(--parchment-dark);
+    background:#fff;color:var(--ink-soft);cursor:pointer;
+  }
+  .opt-btn:hover{border-color:var(--gold);}
+  .opt-btn.active{background:var(--gold-light);border-color:var(--gold);color:var(--ink);font-weight:600;}
+
+  .verify-btn{
+    font-family:"Cormorant Garamond",serif;font-size:15.5px;font-weight:700;
+    letter-spacing:.03em;padding:9px 22px;border-radius:999px;border:none;
+    background:var(--burgundy);color:#fff;cursor:pointer;margin-top:2px;
+  }
+  .verify-btn:hover{background:var(--burgundy-dark);}
+
+  .explication{
+    font-size:15px;background:var(--blue-bg);border-left:3px solid var(--blue);
+    padding:10px 14px;margin-top:8px;border-radius:6px;color:var(--ink);
+  }
+  .explication .fixhead{font-weight:700;color:var(--burgundy);margin-bottom:2px;display:block;}
+  .lat{font-style:italic;}
+  .term{font-weight:700;text-transform:uppercase;color:var(--burgundy);}
+
+  .final-area{
+    margin:16px 0 0 46px;padding:14px 18px;background:var(--card);
+    border:1px solid var(--parchment-dark);border-radius:10px;
+  }
+  .final-area .corrected-sentence{
+    font-style:italic;font-weight:700;color:var(--green);
+    background:var(--green-bg);padding:10px 14px;border-radius:8px;margin-bottom:6px;
+  }
+  .final-area .note{
+    display:block;margin-top:8px;font-style:normal;font-weight:400;
+    font-size:14.5px;color:var(--ink-soft);
+  }
+  .fixword{background:var(--gold-light);padding:0 .25em;border-radius:4px;color:var(--ink);}
+  .hidden{display:none;}
+  .reconstruct{font-size:13px;font-style:italic;color:var(--ink-soft);font-weight:400;}
+
+  @media (max-width:560px){
+    .vocab-line,.latin-sentence,.feedback-area,.final-area{margin-left:0;}
+  }
+
+.home-fab{
+  position:fixed; top:14px; left:14px; z-index:999;
+  display:flex; align-items:center; gap:6px;
+  background: linear-gradient(135deg, #B9812A, #6B1E23);
+  color:#fff; font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;
+  font-size:0.82rem; font-weight:700; text-decoration:none;
+  padding:8px 14px; border-radius:20px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.25);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.home-fab:hover{ transform: translateY(-2px); box-shadow:0 5px 14px rgba(0,0,0,0.3); }
+@media (max-width:480px){ .home-fab{ font-size:0.72rem; padding:6px 10px; top:8px; left:8px; } }
+.next-fab{
+  position:fixed; top:14px; right:14px; z-index:999;
+  display:flex; align-items:center; gap:6px;
+  background: linear-gradient(135deg, #6B1E23, #B9812A);
+  color:#fff; font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;
+  font-size:0.82rem; font-weight:700; text-decoration:none;
+  padding:8px 14px; border-radius:20px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.25);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.next-fab:hover{ transform: translateY(-2px); box-shadow:0 5px 14px rgba(0,0,0,0.3); }
+@media (max-width:480px){ .next-fab{ font-size:0.72rem; padding:6px 10px; top:8px; right:8px; } }
+</style>
+</head>
+<body>
+<a class="home-fab" href="index.html#serie-estivale-2">🏠 Accueil du site</a>
+<a class="next-fab" href="exercice-12-expression-francaise.html">Exercice suivant →</a>
+
+<div class="wrap">
+
+<header class="page-head">
+  <div class="eyebrow">Grammaire &amp; Traduction</div>
+  <h1>Travailler la grammaire et la traduction en corrigeant des phrases de thème d'anciens étudiants</h1>
+  <p class="app-note">Voici des phrases de thème données à d'anciens étudiants avec le vocabulaire à utiliser (sauf pour les noms figurant sur la liste de rentrée). J'ai repris des réponses comprenant des erreurs variées (cas, temps, accord, construction, barbarisme, vocabulaire…). J'ai mis le vocabulaire (sauf les mots figurant sur la liste de rentrée). J'ai indiqué le nombre d'erreurs à trouver. À toi de jouer le correcteur : repère la/les erreur(s), en cliquant sur le(s) mot(s) concerné(s), coche la/les case(s) pour le type d'erreur, donne (mentalement) la bonne traduction avant de vérifier. Tu y trouveras la bonne réponse avec des précisions.<br><br><strong>Conseil :</strong> pour que l'entraînement soit efficace, attends pour cliquer sur « voir la phrase complète avec correction(s) » d'avoir trouvé toutes les erreurs !</p>
+</header>
+
+<div class="legend">
+  <h3>Types d'erreurs possibles</h3>
+  <div class="legend-grid" id="legend-grid"></div>
+  <p class="legend-note"><strong>N.B. :</strong> L'ordre des mots n'est jamais problématique.</p>
+</div>
+
+<hr class="rule">
+
+<div id="app"></div>
+
+</div>
+
+<script>
+const CATEGORIES = [
+  {key:"barbarisme", label:"Barbarisme"},
+  {key:"vocabulaire", label:"Faute de vocabulaire"},
+  {key:"accord", label:"Faute d'accord (nombre, genre)"},
+  {key:"construction", label:"Faute de construction (mauvais cas/mode/ pbl de préposition...)"},
+  {key:"temps", label:"Faute de temps"}
+];
+
+document.getElementById('legend-grid').innerHTML =
+  CATEGORIES.map(c => `<span class="legend-chip">${c.label}</span>`).join('');
+
+const exercises = [
+  {
+    french: "L'empereur est honoré par le peuple.",
+    vocab: "empereur : <i>imperator, oris</i>, m. — honorer : <i>honoro, as, are, avi, atum</i> — peuple : <i>populus, i</i>, m.",
+    words: [
+      {text:"Imperator", error:false},
+      {text:"populo", error:true, type:"construction",
+        fix:"a populo",
+        explanation:"<span class='lat'>populo</span> est un complément d'agent (être animé) d'un verbe au passif : il faut la préposition <span class='lat'>a/ab</span> + ablatif."},
+      {text:"honoratur.", error:false}
+    ],
+    corrected: "Imperator <span class='fixword'>a populo</span> honoratur."
+  },
+  {
+    french: "Après que le fils d'Anchise eut fui, une grande douleur saisit la reine Didon.",
+    vocab: "Anchise : <i>Anchisa, ae</i>, m. — Didon : <i>Dido, onis</i>, f. — douleur : <i>dolor, oris</i>, m. — fils : <i>filius, ii</i>, m. — fuir : <i>fugio, is, ere, fugi</i> — grand : <i>magnus, a, um</i> — reine : <i>regina, ae</i>, f. — saisir : traduire par « prendre » (<i>capio</i>).",
+    words: [
+      {text:"Postquam", error:false},
+      {text:"Anchisae", error:false},
+      {text:"filius", error:false},
+      {text:"fugit,", error:false,
+        customFeedback:"Non, c'est le bon temps ! <span class='lat'>fugio, fugere</span> fait au présent, 3<sup>e</sup> pers. sg. actif, <span class='lat'>fugit</span> ; et comme son parfait actif est <span class='lat'>fugi</span>, il fait aussi <span class='lat'>fugit</span> à la 3<sup>e</sup> pers. sg. du parfait."},
+      {text:"magna", error:true, type:"accord",
+        fix:"magnus",
+        explanation:"<span class='lat'>dolor, doloris</span> est masculin en latin, comme la plupart des noms de la 3<sup>e</sup> déclinaison en <span class='term'>-or</span> (<span class='lat'>amor, timor, honor…</span>). Exception à connaître : <span class='lat'>arbor, arboris</span> (l'arbre), féminin. L'adjectif doit donc être au masculin."},
+      {text:"dolor", error:false},
+      {text:"Didonam", error:true, type:"barbarisme",
+        fix:"Didonem",
+        explanation:"<span class='lat'>Dido, Didonis</span> (F) est un nom de la 3<sup>e</sup> déclinaison : l'accusatif singulier se forme en <span class='term'>-em</span> → <span class='lat'>Didonem</span>. La terminaison en <span class='term'>-am</span> vient d'une confusion avec la 1<sup>re</sup> déclinaison, sans doute par proximité avec <span class='lat'>reginam</span> juste après."},
+      {text:"reginam", error:false},
+      {text:"cepit.", error:false}
+    ],
+    corrected: "Postquam Anchisae filius fugit, <span class='fixword'>magnus</span> dolor <span class='fixword'>Didonem</span> reginam cepit.",
+    note:"Rappel : « après que » demande en français l'indicatif à un temps composé (« eut fui »). <span class='lat'>fugit</span> convient : cette forme peut se lire comme un parfait, conformément à l'usage classique de <span class='lat'>postquam</span> + parfait."
+  },
+  {
+    french: "Les habitants de Carthage sacrifièrent parfois des victimes humaines aux dieux.",
+    vocab: "Carthage : <i>Carthago, inis</i>, f. — dieu : <i>deus, i</i>, m. — habitant : <i>incola, ae</i>, m. — humain : <i>humanus, a, um</i> — sacrifier : <i>immolo, as, are, avi, atum</i> — victime : <i>hostia, ae</i>, f.",
+    words: [
+      {text:"Carthaginis", error:false},
+      {text:"incolae", error:false},
+      {text:"humanas", error:false},
+      {text:"hostias", error:false},
+      {text:"deo", error:true, type:"accord",
+        fix:"deis",
+        explanation:"<span class='lat'>deo</span> est un datif singulier, alors que la phrase parle « des dieux » (pluriel) : il fallait un datif pluriel, <span class='lat'>deis</span>."},
+      {text:"numquam", error:true, type:"vocabulaire",
+        fix:"nonnumquam",
+        explanation:"<span class='lat'>numquam</span> signifie « jamais ». Or « parfois » se traduit par <span class='lat'>nonnumquam</span> (<span class='lat'>non</span> + <span class='lat'>numquam</span> = « pas jamais » → « parfois »)."},
+      {text:"immolaverant.", error:true, type:"temps",
+        fix:"immolaverunt.",
+        explanation:"<span class='lat'>immolaverant</span> est un plus-que-parfait. Ici, c'est un parfait qui est attendu (« sacrifièrent » = passé simple) : <span class='lat'>immolaverunt</span>."}
+    ],
+    corrected: "Carthaginis incolae humanas hostias <span class='fixword'>deis</span> <span class='fixword'>nonnumquam</span> <span class='fixword'>immolaverunt.</span>"
+  },
+  {
+    french: "Brutus, premier consul romain, avait chassé Tarquin le Superbe.",
+    vocab: "Brutus : <i>Brutus, i</i>, m. — consul : <i>consul, is</i>, m. — chasser : <i>expello, is, ere, expuli, expulsum</i> — premier : <i>primus, a, um</i> — romain : <i>Romanus, a, um</i> — Superbe (surnom) : <i>Superbus, i</i>, m. — Tarquin : <i>Tarquinus, i</i>, m.",
+    words: [
+      {text:"Brutus,", error:false},
+      {text:"primus", error:false},
+      {text:"consul", error:false},
+      {text:"Romanus,", error:false},
+      {text:"Tarquinum", error:false},
+      {text:"Superbum", error:false},
+      {text:"expulserat.", error:true, type:"barbarisme",
+        fix:"expulerat.",
+        explanation:"Forme sans doute calquée sur le français « expulser ». Le parfait de <span class='lat'>expello</span> est <span class='lat'>expuli</span> (radical du parfait : <span class='lat'>expul-</span>) ; le plus-que-parfait se forme sur ce radical + indicatif imparfait de <span class='lat'>sum</span> (<span class='term'>-eram, -eras, -erat…</span>) → <span class='lat'>expulerat</span>."}
+    ],
+    corrected: "Brutus, primus consul Romanus, Tarquinum Superbum <span class='fixword'>expulerat.</span>"
+  },
+  {
+    french: "L'arbre est frappé par la foudre.",
+    vocab: "arbre : <i>arbor, oris</i>, f. — foudre : <i>fulmen, inis</i>, n. — frapper : <i>ico, is, ere, ici, ictum</i>",
+    words: [
+      {text:"Arbor", error:false},
+      {text:"ab", error:true, type:"construction",
+        fix:"(supprimer ab)",
+        explanation:"La foudre n'est pas un agent animé : pas de préposition devant un complément de cause/moyen inanimé — l'ablatif seul suffit."},
+      {text:"fulmino", error:true, type:"barbarisme",
+        fix:"fulmine",
+        explanation:"<span class='lat'>fulmen, inis</span> (N) est un nom de la 3<sup>e</sup> déclinaison : l'ablatif singulier se forme en <span class='term'>-e</span>, et non en <span class='term'>-o</span> (désinence de la 2<sup>e</sup> déclinaison)."},
+      {text:"ictus", error:true, group:"ictusest"},
+      {text:"est.", error:true, group:"ictusest"}
+    ],
+    groups: {
+      ictusest: {
+        types:["accord","temps"],
+        label:"ictus est",
+        fix:"icitur.",
+        foundMessage:"Bravo ! Tu as bien identifié un souci avec la forme verbale « ictus est » qui regroupe en fait 2 erreurs.",
+        explanation:"Deux erreurs sont regroupées ici. <strong>Accord :</strong> <span class='lat'>arbor, arboris</span> (F) est féminin (rappel : la plupart des noms de la 3<sup>e</sup> déclinaison en <span class='term'>-or</span> sont masculins, mais <span class='lat'>arbor</span> est l'exception à connaître) — si l'on gardait un participe, il faudrait l'accorder au féminin. <strong>Temps :</strong> en français, « est frappé » est un présent passif. Or <span class='lat'>ictus est</span> est une forme composée, un parfait passif, calqué par erreur sur la formation du présent passif français. La bonne forme est le présent passif : <span class='lat'>icitur</span>."
+      }
+    },
+    corrected: "Arbor fulmine <span class='fixword'>icitur.</span>"
+  }
+];
+
+const app = document.getElementById('app');
+
+function computeNErrors(exo){
+  let total = 0;
+  const seenGroups = new Set();
+  exo.words.forEach(w=>{
+    if(!w.error) return;
+    if(w.group){
+      if(!seenGroups.has(w.group)){
+        seenGroups.add(w.group);
+        total += exo.groups[w.group].types.length;
+      }
+    } else {
+      total += 1;
+    }
+  });
+  return total;
+}
+
+const exoStates = exercises.map(() => ({found:0}));
+
+exercises.forEach((exo, exoIndex) => {
+  exo.totalErrors = computeNErrors(exo);
+
+  const item = document.createElement('div');
+  item.className = 'item';
+  item.id = `item-${exoIndex}`;
+
+  const head = document.createElement('div');
+  head.className = 'item-head';
+  head.innerHTML = `
+    <div class="item-num">${exoIndex+1}</div>
+    <div class="item-title">${exo.french}${exo.reconstruct ? ' <span class="reconstruct">(phrase reconstituée)</span>' : ''}</div>
+    <div class="progress-badge" id="progress-${exoIndex}">0/${exo.totalErrors} erreur${exo.totalErrors>1?'s':''} trouvée${exo.totalErrors>1?'s':''}</div>
+  `;
+  item.appendChild(head);
+
+  const vocabLine = document.createElement('div');
+  vocabLine.className = 'vocab-line';
+  vocabLine.innerHTML = exo.vocab;
+  item.appendChild(vocabLine);
+
+  const latinDiv = document.createElement('div');
+  latinDiv.className = 'latin-sentence';
+  exo.words.forEach((w, wIndex) => {
+    const span = document.createElement('span');
+    span.textContent = w.text;
+    span.className = 'w';
+    if(w.group) span.dataset.group = w.group;
+    span.addEventListener('click', () => handleClick(exoIndex, wIndex, span));
+    latinDiv.appendChild(span);
+    latinDiv.appendChild(document.createTextNode(' '));
+  });
+  item.appendChild(latinDiv);
+
+  const feedbackArea = document.createElement('div');
+  feedbackArea.className = 'feedback-area';
+  feedbackArea.id = `feedback-${exoIndex}`;
+  item.appendChild(feedbackArea);
+
+  const finalArea = document.createElement('div');
+  finalArea.className = 'final-area hidden';
+  finalArea.id = `final-${exoIndex}`;
+  finalArea.innerHTML = `<button class="verify-btn" id="revealfinal-${exoIndex}">Voir la phrase complète avec correction(s)</button><div class="final-content hidden" id="finalcontent-${exoIndex}"></div>`;
+  item.appendChild(finalArea);
+
+  app.appendChild(item);
+});
+
+exercises.forEach((exo, exoIndex) => {
+  const btn = document.getElementById(`revealfinal-${exoIndex}`);
+  if(btn) btn.addEventListener('click', () => revealFinal(exoIndex));
+});
+
+function revealFinal(exoIndex){
+  const exo = exercises[exoIndex];
+  const contentEl = document.getElementById(`finalcontent-${exoIndex}`);
+  const explanationsHtml = (exo._explanations || [])
+    .map(e => `<div class="explication"><span class="fixhead">→ ${e.fix}</span>${e.explanation}</div>`)
+    .join('');
+  contentEl.innerHTML = `<div class="corrected-sentence">${exo.corrected}${exo.note ? `<span class="note">${exo.note}</span>` : ''}</div>${explanationsHtml}`;
+  contentEl.classList.remove('hidden');
+  const btn = document.getElementById(`revealfinal-${exoIndex}`);
+  if(btn) btn.remove();
+}
+
+function refreshProgressUI(exoIndex){
+  const exo = exercises[exoIndex];
+  const total = exo.totalErrors;
+  const found = Math.min(exoStates[exoIndex].found, total);
+  const el = document.getElementById(`progress-${exoIndex}`);
+  el.textContent = `${found}/${total} erreur${total>1?'s':''} trouvée${total>1?'s':''}`;
+  if(found >= total){
+    el.classList.add('done');
+    document.getElementById(`final-${exoIndex}`).classList.remove('hidden');
+  }
+}
+
+function bumpProgress(exoIndex, delta){
+  exoStates[exoIndex].found += delta;
+  refreshProgressUI(exoIndex);
+}
+
+function showBad(feedbackArea, text){
+  const existing = feedbackArea.querySelector('.msg.bad');
+  if(existing) existing.remove();
+  const bad = document.createElement('div');
+  bad.className = 'msg bad';
+  bad.innerHTML = text;
+  feedbackArea.insertBefore(bad, feedbackArea.firstChild);
+}
+
+function catLabel(key){
+  const cat = CATEGORIES.find(c => c.key === key);
+  return cat ? cat.label : key;
+}
+
+function markPendingSpans(exoIndex, spans){
+  const item = document.getElementById(`item-${exoIndex}`);
+  item.querySelectorAll('.w').forEach(el => el.classList.remove('pending'));
+  spans.forEach(s => s.classList.add('pending'));
+}
+
+function makeVerifyBtn(label, onClick){
+  const btn = document.createElement('button');
+  btn.className = 'verify-btn';
+  btn.textContent = label;
+  btn.addEventListener('click', onClick);
+  return btn;
+}
+
+function handleClick(exoIndex, wIndex, span){
+  const exo = exercises[exoIndex];
+  const w = exo.words[wIndex];
+  const feedbackArea = document.getElementById(`feedback-${exoIndex}`);
+
+  if(span.classList.contains('found')) return;
+
+  if(!w.error){
+    const msg = w.customFeedback || "Non, ce mot est correct. Cherche encore.";
+    feedbackArea.innerHTML = `<div class="msg bad">${msg}</div>`;
+    span.classList.add('wrong-guess');
+    setTimeout(()=>span.classList.remove('wrong-guess'), 700);
+    return;
+  }
+
+  if(w.group){
+    handleGroupClick(exoIndex, w.group, feedbackArea);
+  } else {
+    handleSingleClick(exoIndex, wIndex, span, feedbackArea);
+  }
+}
+
+function handleSingleClick(exoIndex, wIndex, span, feedbackArea){
+  const exo = exercises[exoIndex];
+  const w = exo.words[wIndex];
+
+  markPendingSpans(exoIndex, [span]);
+
+  const btnRow = document.createElement('div');
+  btnRow.className = 'type-buttons';
+  CATEGORIES.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = cat.label;
+    btn.addEventListener('click', () => handleTypeChoice(exoIndex, wIndex, span, cat.key, feedbackArea));
+    btnRow.appendChild(btn);
+  });
+
+  feedbackArea.innerHTML = `<div class="msg info">Bien vu, ce mot pose problème ! Quel est le type d'erreur ?</div>`;
+  feedbackArea.appendChild(btnRow);
+}
+
+function handleTypeChoice(exoIndex, wIndex, span, chosenType, feedbackArea){
+  const exo = exercises[exoIndex];
+  const w = exo.words[wIndex];
+
+  span.classList.remove('pending');
+  span.classList.add('found');
+
+  const resultHtml = (chosenType !== w.type)
+    ? `<div class="msg bad">Ce n'est pas le bon type d'erreur. Il fallait cliquer « ${catLabel(w.type)} ».</div>`
+    : `<div class="msg good">Bravo, c'est la bonne erreur et le bon type !</div>`;
+
+  feedbackArea.innerHTML = `<div class="msg info">Réfléchis à la correction à apporter puis clique sur « Vérifier ».</div>`;
+  const verifyBtn = makeVerifyBtn('Vérifier', () => {
+    feedbackArea.innerHTML = resultHtml + `<div class="explication"><span class="fixhead">→ ${w.fix}</span>${w.explanation}</div>`;
+    exo._explanations = exo._explanations || [];
+    exo._explanations.push({fix:w.fix, explanation:w.explanation});
+    bumpProgress(exoIndex, 1);
+  });
+  feedbackArea.appendChild(verifyBtn);
+}
+
+function handleGroupClick(exoIndex, groupKey, feedbackArea){
+  const exo = exercises[exoIndex];
+  const group = exo.groups[groupKey];
+  const item = document.getElementById(`item-${exoIndex}`);
+  const spans = Array.from(item.querySelectorAll('.w')).filter(s => s.dataset.group === groupKey);
+
+  markPendingSpans(exoIndex, spans);
+
+  const selected = new Set();
+
+  const btnRow = document.createElement('div');
+  btnRow.className = 'type-buttons';
+  CATEGORIES.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = cat.label;
+    btn.addEventListener('click', () => {
+      if(selected.has(cat.key)){
+        selected.delete(cat.key);
+        btn.classList.remove('active');
+      } else {
+        selected.add(cat.key);
+        btn.classList.add('active');
+      }
+    });
+    btnRow.appendChild(btn);
+  });
+
+  const validateBtn = makeVerifyBtn('Valider', () => {
+    const need = group.types;
+    const ok = need.length === selected.size && need.every(k => selected.has(k));
+
+    spans.forEach(s => { s.classList.remove('pending'); s.classList.add('found'); });
+
+    const resultHtml = !ok
+      ? `<div class="msg bad">Ce n'est pas le(s) bon(s) type(s) d'erreur. Il fallait cocher ${need.map(k => `« ${catLabel(k)} »`).join(' et ')}.</div>`
+      : `<div class="msg good">${group.foundMessage || `Bravo ! Tu as bien identifié les ${group.types.length} erreurs regroupées ici.`}</div>`;
+
+    feedbackArea.innerHTML = `<div class="msg info">Réfléchis à la correction à apporter puis clique sur « Vérifier ».</div>`;
+    const verifyBtn = makeVerifyBtn('Vérifier', () => {
+      feedbackArea.innerHTML = resultHtml + `<div class="explication"><span class="fixhead">→ ${group.fix}</span>${group.explanation}</div>`;
+      exo._explanations = exo._explanations || [];
+      exo._explanations.push({fix:group.fix, explanation:group.explanation});
+      bumpProgress(exoIndex, group.types.length);
+    });
+    feedbackArea.appendChild(verifyBtn);
+  });
+
+  feedbackArea.innerHTML = `<div class="msg info">Bien vu, il y a ici ${group.types.length} erreurs regroupées dans la forme verbale <span class="lat">${group.label}</span> ! Sélectionne les ${group.types.length} types d'erreurs concernés, puis valide.</div>`;
+  feedbackArea.appendChild(btnRow);
+  feedbackArea.appendChild(validateBtn);
+}
+</script>
+</body>
+</html>

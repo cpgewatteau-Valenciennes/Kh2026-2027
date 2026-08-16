@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Declinationes — Exercice de déclinaisons latines</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --papyrus: #EDE3CE;
+    --papyrus-deep: #E2D5B7;
+    --stone: #DCD0B4;
+    --ink: #2B241C;
+    --ink-soft: #55493a;
+    --pompeii: #9C3B30;
+    --pompeii-dark: #7c2e26;
+    --verdigris: #4C7A6E;
+    --verdigris-dark: #3a5f56;
+    --gold: #A9812E;
+    --line: #b9a97e;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html,body{
+    margin:0; padding:0;
+    background: var(--papyrus);
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(255,255,255,0.25), transparent 55%),
+      radial-gradient(ellipse at 90% 80%, rgba(0,0,0,0.05), transparent 60%);
+    color: var(--ink);
+    font-family: 'EB Garamond', serif;
+    font-size: 18px;
+    line-height: 1.5;
+  }
+
+  .page{
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  .eyebrow{
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.28em;
+    font-size: 12.5px;
+    color: var(--pompeii);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  h1{
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: clamp(30px, 5vw, 46px);
+    letter-spacing: 0.02em;
+    margin: 0 0 8px;
+    color: var(--ink);
+  }
+  h1 em{
+    font-style: normal;
+    color: var(--pompeii);
+  }
+  .subtitle{
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 18px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .laurel{
+    width: 220px;
+    height: 14px;
+    margin: 18px auto 0;
+    opacity: 0.75;
+  }
+
+  /* ---------- Instructions ---------- */
+  .instructions{
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 16px;
+    max-width: 700px;
+    margin: 0 auto 26px;
+  }
+  .instructions .hint{
+    display:block;
+    margin-top:6px;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  /* ---------- Table ---------- */
+  .table-wrap{
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    box-shadow: 0 6px 20px rgba(60,45,20,0.15);
+    background: var(--papyrus-deep);
+  }
+  table{
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 1000px;
+  }
+  thead th{
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 10px 4px;
+    text-align: center;
+    border: 1px solid var(--line);
+  }
+  .grp-row th{
+    font-size: 14px;
+    letter-spacing: 0.22em;
+    padding: 8px 4px;
+  }
+  .grp-sg{ background: #d8cba9; color: var(--ink); }
+  .grp-pl{ background: #c4c9bd; color: var(--ink); }
+  .grp-meta{ background: #cbb99a; color: var(--ink); }
+  .case-sg{ background: #efe6cf; color: var(--verdigris-dark); font-style: italic; }
+  .case-pl{ background: #dcdfd3; color: var(--verdigris-dark); font-style: italic; }
+  th.meta-label{ background: #e4d7ba; color: var(--ink); font-size: 11px; }
+
+  tbody th.word-cell{
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    text-align: left;
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    background: var(--stone);
+    white-space: nowrap;
+    position: sticky;
+    left: 0;
+    transition: background 0.15s ease;
+  }
+  tbody th.word-cell.active-ref{ background: var(--gold); color: #2b2015; }
+  tbody th.word-cell .lat{ font-style: italic; }
+  tbody th.word-cell .entry{
+    display: block;
+    font-family: 'EB Garamond', serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 12.5px;
+    letter-spacing: 0.01em;
+    color: var(--ink-soft);
+    margin-top: 3px;
+    white-space: normal;
+  }
+  .row-verify-btn{
+    display: block;
+    margin-top: 8px;
+    font-family: 'Cinzel', serif;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid var(--verdigris-dark);
+    background: var(--verdigris);
+    color: #fbf3e4;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  .row-verify-btn:hover{ background: var(--verdigris-dark); }
+  .row-verify-btn:active{ transform: translateY(1px); }
+  th.word-cell.row-checked-ok .row-verify-btn{ background: #4f8f6b; border-color: #3a6b50; }
+  th.word-cell.row-checked-err .row-verify-btn{ background: var(--pompeii); border-color: var(--pompeii-dark); }
+  .row-status{
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 12px;
+  }
+
+  td.cell{
+    border: 1px solid var(--line);
+    width: 52px;
+    height: 46px;
+    text-align: center;
+    cursor: pointer;
+    background: #faf5e6;
+    transition: background 0.15s ease;
+    user-select: none;
+    position: relative;
+  }
+  td.cell.pl{ background: #eef0e7; }
+  td.cell:hover{ background: #f3e6c8; }
+  td.cell.pl:hover{ background: #e2e6d5; }
+
+  .mark{
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--pompeii-dark);
+  }
+
+  td.cell.correct{ background: #dce9df !important; }
+  td.cell.correct .mark{ color: var(--verdigris-dark); }
+  td.cell.wrong{ background: #f1dcd8 !important; }
+  td.cell.wrong .mark{ color: var(--pompeii-dark); }
+  td.cell.missed{ box-shadow: inset 0 0 0 2px var(--gold); }
+  td.cell.missed::after{
+    content: "•";
+    color: var(--gold);
+    font-size: 22px;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -60%);
+  }
+
+  /* ---------- Meta columns: déclinaison + neutre ---------- */
+  td.meta{
+    border: 1px solid var(--line);
+    background: #f1e9d3;
+    padding: 8px 6px;
+    text-align: center;
+    transition: background 0.15s ease;
+  }
+  .decl-picker{
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+  }
+  .decl-btn{
+    width: 26px;
+    height: 26px;
+    border: 1px solid var(--line);
+    background: #fff8e8;
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    border-radius: 2px;
+    padding: 0;
+  }
+  .decl-btn:hover{ background: #f3e6c8; }
+  .decl-btn.selected{
+    background: var(--verdigris);
+    color: #fbf3e4;
+    border-color: var(--verdigris-dark);
+  }
+  td.meta.correct{ background: #dce9df; }
+  td.meta.wrong{ background: #f1dcd8; }
+
+  .neuter-check{
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--verdigris-dark);
+  }
+
+  /* ---------- Controls ---------- */
+  .controls{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+  button.action{
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 12px 26px;
+    border-radius: 2px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: transform 0.1s ease, box-shadow 0.15s ease;
+  }
+  button:focus-visible{
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+  }
+  button:active{ transform: translateY(1px); }
+
+  .btn-primary{
+    background: var(--pompeii);
+    color: #fbf3e4;
+    box-shadow: 0 4px 10px rgba(124,46,38,0.3);
+  }
+  .btn-primary:hover{ background: var(--pompeii-dark); }
+
+  .btn-secondary{
+    background: transparent;
+    color: var(--ink-soft);
+    border-color: var(--line);
+  }
+  .btn-secondary:hover{ background: rgba(0,0,0,0.05); }
+
+  .score{
+    font-family: 'Cinzel', serif;
+    font-size: 15px;
+    color: var(--verdigris-dark);
+    min-height: 22px;
+    text-align: center;
+    margin-top: 16px;
+  }
+
+  .legend{
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .legend span{ display:inline-flex; align-items:center; gap:6px; }
+  .swatch{
+    width: 13px; height: 13px; display:inline-block; border: 1px solid var(--line);
+  }
+  .sw-correct{ background:#dce9df; }
+  .sw-wrong{ background:#f1dcd8; }
+  .sw-missed{ background: #faf5e6; box-shadow: inset 0 0 0 2px var(--gold); }
+
+  footer{
+    text-align:center;
+    margin-top: 46px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; }
+  }
+
+  /* ---------- Aide-mémoire (tableau de synthèse) ---------- */
+  details.synthesis{
+    margin: 0 auto 30px;
+    max-width: 900px;
+    border: 1px solid var(--line);
+    background: var(--papyrus-deep);
+    box-shadow: 0 4px 14px rgba(60,45,20,0.12);
+  }
+  details.synthesis summary{
+    cursor: pointer;
+    list-style: none;
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--verdigris-dark);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  details.synthesis summary::-webkit-details-marker{ display:none; }
+  details.synthesis summary::before{
+    content: "▸";
+    font-size: 12px;
+    color: var(--pompeii);
+    transition: transform 0.15s ease;
+  }
+  details.synthesis[open] summary::before{ transform: rotate(90deg); }
+  details.synthesis summary:hover{ background: rgba(0,0,0,0.03); }
+
+  details.synthesis.locked summary{
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  details.synthesis.locked summary::before{ content: "🔒"; font-size: 12px; }
+  details.synthesis.locked summary:hover{ background: none; }
+  .lock-note{
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--ink-soft);
+  }
+
+  .synth-body{
+    padding: 6px 20px 24px;
+  }
+  .synth-block + .synth-block{ margin-top: 26px; }
+  .synth-title{
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-align: center;
+    color: var(--ink);
+    margin: 0 0 10px;
+  }
+  .synth-scroll{ overflow-x: auto; }
+  table.synth{
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 560px;
+    background: #fff;
+  }
+  table.synth th, table.synth td{
+    border: 1px solid #444;
+    text-align: center;
+    padding: 7px 6px;
+    font-size: 14px;
+  }
+  table.synth thead th{
+    font-family: 'Cinzel', serif;
+    font-size: 12.5px;
+    letter-spacing: 0.04em;
+    background: #fff;
+  }
+  table.synth thead tr.sub th{ font-size: 11px; font-style: italic; font-weight: 400; }
+  table.synth tbody th{
+    font-style: italic;
+    font-weight: 600;
+    text-align: left;
+    padding-left: 10px;
+    background: #fff;
+    white-space: nowrap;
+  }
+  table.synth td{ font-weight: 600; color: #1c1c1c; }
+
+  table.synth tr.thick-below th,
+  table.synth tr.thick-below td{ border-bottom: 3px solid #111; }
+  table.synth tr.thick-row th,
+  table.synth tr.thick-row td{ border-top: 3px solid #111; border-bottom: 3px solid #111; }
+  table.synth td.thick-cell{ border: 3px solid #111; }
+
+  /* colour families reused from the paper reference sheet */
+  .k-pink{ background:#E8CBEA; }
+  .k-red{ background:#EA1B1B; color:#fff; }
+  .k-lightblue{ background:#BEE6F4; }
+  .k-mint{ background:#C7EABF; }
+  .k-orange{ background:#F5A22B; }
+  .k-purple{ background:#7A3FA0; color:#fff; }
+  .k-blue{ background:#3E8FCB; color:#fff; }
+  .k-yellow{ background:#FFF04D; }
+  .k-magenta{ background:#FF63CB; }
+  .k-green{ background:#4FAE49; color:#fff; }
+  .k-gray{ background:#9C9C9C; color:#fff; }
+  .k-tan{ background:#F6DDC0; }
+  .k-lavender{ background:#D9C3EC; }
+  .k-pinkbright{ background:#F58FC0; }
+  .k-brown{ background:#B05A2A; color:#fff; }
+  .k-white{ background:#fff; }
+
+  /* compact mode shown automatically after verification */
+  .synth-body.compact{
+    padding: 6px 14px 16px;
+  }
+  .synth-body.compact .synth-title{ font-size: 11px; margin-bottom: 6px; }
+  .synth-body.compact .synth-block + .synth-block{ margin-top: 16px; }
+  .synth-body.compact table.synth{ min-width: 420px; }
+  .synth-body.compact table.synth th,
+  .synth-body.compact table.synth td{ padding: 3px 4px; font-size: 10.5px; }
+  .synth-body.compact table.synth thead th{ font-size: 9.5px; }
+  .synth-body.compact table.synth thead tr.sub th{ font-size: 8.5px; }
+
+  td[data-ref].ref-highlight{
+    box-shadow: 0 0 0 3px #fff, 0 0 0 9px #111;
+    position: relative;
+    z-index: 2;
+    animation: ref-pulse 1.1s ease-in-out 2;
+  }
+  @keyframes ref-pulse{
+    0%, 100%{ box-shadow: 0 0 0 3px #fff, 0 0 0 9px #111; }
+    50%{ box-shadow: 0 0 0 3px #fff, 0 0 0 9px var(--pompeii); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    td[data-ref].ref-highlight{ animation: none; }
+  }
+
+  /* ---------- Floating "Vérifier" button ---------- */
+  .page{ padding-bottom: 110px; }
+  .mobile-fab{
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(to top, var(--papyrus) 65%, rgba(237,227,206,0));
+    z-index: 50;
+  }
+  .mobile-fab button{
+    width: 100%;
+    max-width: 420px;
+    padding: 15px 26px;
+    box-shadow: 0 6px 18px rgba(124,46,38,0.35);
+  }
+
+.home-fab{
+  position:fixed; top:14px; left:14px; z-index:999;
+  display:flex; align-items:center; gap:6px;
+  background: linear-gradient(135deg, #B9812A, #6B1E23);
+  color:#fff; font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;
+  font-size:0.82rem; font-weight:700; text-decoration:none;
+  padding:8px 14px; border-radius:20px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.25);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.home-fab:hover{ transform: translateY(-2px); box-shadow:0 5px 14px rgba(0,0,0,0.3); }
+@media (max-width:480px){ .home-fab{ font-size:0.72rem; padding:6px 10px; top:8px; left:8px; } }
+.next-fab{
+  position:fixed; top:14px; right:14px; z-index:999;
+  display:flex; align-items:center; gap:6px;
+  background: linear-gradient(135deg, #6B1E23, #B9812A);
+  color:#fff; font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;
+  font-size:0.82rem; font-weight:700; text-decoration:none;
+  padding:8px 14px; border-radius:20px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.25);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.next-fab:hover{ transform: translateY(-2px); box-shadow:0 5px 14px rgba(0,0,0,0.3); }
+@media (max-width:480px){ .next-fab{ font-size:0.72rem; padding:6px 10px; top:8px; right:8px; } }
+</style>
+</head>
+<body>
+<a class="home-fab" href="index.html#serie-estivale-2">🏠 Accueil du site</a>
+<a class="next-fab" href="exercice-7-3e-declinaison-forme-par-forme.html">Exercice suivant →</a>
+
+<div class="page">
+
+  <header>
+    <h1>Revoir les trois premières déclinaisons</h1>
+    <svg class="laurel" viewBox="0 0 220 14" xmlns="http://www.w3.org/2000/svg">
+      <line x1="0" y1="7" x2="90" y2="7" stroke="#A9812E" stroke-width="1"/>
+      <circle cx="110" cy="7" r="3" fill="#9C3B30"/>
+      <line x1="130" y1="7" x2="220" y2="7" stroke="#A9812E" stroke-width="1"/>
+    </svg>
+  </header>
+
+  <p class="instructions">
+    Pour commencer, coche la déclinaison (1, 2 ou 3), puis la case N si le nom est neutre.
+    Ensuite, en veillant à ne pas mélanger les terminaisons des différentes déclinaisons et en faisant attention aux neutres, clique sur la/les case(s) du tableau correspondant au cas et au nombre.
+    Clique ensuite sur le bouton « Vérifier » sous chaque mot pour contrôler cette ligne. Le tableau de synthèse des terminaisons des 3 premières décl. apparaîtra avec la/les case(s) de la réponse encadrées.
+  </p>
+
+  <details class="synthesis locked" id="synth-details">
+    <summary>Tableau de synthèse (aide-mémoire) <span class="lock-note">— disponible après avoir cliqué sur Vérifier</span></summary>
+    <div class="synth-body" id="synth-body">
+
+      <div class="synth-block">
+        <p class="synth-title">SINGULIER</p>
+        <div class="synth-scroll">
+          <table class="synth">
+            <thead>
+              <tr>
+                <th></th>
+                <th>1°</th>
+                <th colspan="2">2°</th>
+                <th colspan="3">3°</th>
+              </tr>
+              <tr class="sub">
+                <th></th>
+                <th></th>
+                <th></th>
+                <th>neutres</th>
+                <th></th>
+                <th></th>
+                <th>Neutres pari</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>nominatif</th>
+                <td class="k-pink" data-ref="sg-nom-1">A</td>
+                <td class="k-lightblue" data-ref="sg-nom-2">US<br><span style="font-weight:400;font-size:11px;">(ER/IR)</span></td>
+                <td class="k-mint" data-ref="sg-nom-2n">UM</td>
+                <td class="k-orange" data-ref="sg-nom-3">-</td>
+                <td class="k-orange" data-ref="sg-nom-3is">IS</td>
+                <td class="k-purple" data-ref="sg-nom-3n">E</td>
+              </tr>
+              <tr>
+                <th>vocatif</th>
+                <td class="k-pink" data-ref="sg-voc-1">A</td>
+                <td class="k-lightblue" data-ref="sg-voc-2">E<br><span style="font-weight:400;font-size:11px;">(ER/IR)</span></td>
+                <td class="k-mint" data-ref="sg-voc-2n">UM</td>
+                <td class="k-orange" data-ref="sg-voc-3">-</td>
+                <td class="k-orange" data-ref="sg-voc-3is">IS</td>
+                <td class="k-purple" data-ref="sg-voc-3n">E</td>
+              </tr>
+              <tr class="thick-below">
+                <th>accusatif</th>
+                <td class="k-red thick-cell" data-ref="sg-acc-1">AM</td>
+                <td class="k-mint" colspan="2" data-ref="sg-acc-2 sg-acc-2n">UM</td>
+                <td class="k-blue thick-cell" colspan="2" data-ref="sg-acc-3">EM</td>
+                <td class="k-purple" data-ref="sg-acc-3n">E</td>
+              </tr>
+              <tr class="thick-row">
+                <th>génitif</th>
+                <td class="k-yellow" data-ref="sg-gen-1">AE</td>
+                <td class="k-green" colspan="2" data-ref="sg-gen-2 sg-gen-2n">I</td>
+                <td class="k-orange" colspan="3" data-ref="sg-gen-3 sg-gen-3n">IS</td>
+              </tr>
+              <tr>
+                <th>datif</th>
+                <td class="k-yellow" data-ref="sg-dat-1">AE</td>
+                <td class="k-magenta" colspan="2" data-ref="sg-dat-2 sg-dat-2n">O</td>
+                <td class="k-green" colspan="3" data-ref="sg-dat-3 sg-dat-3n">I</td>
+              </tr>
+              <tr>
+                <th>ablatif</th>
+                <td class="k-pink" data-ref="sg-abl-1">A</td>
+                <td class="k-magenta" colspan="2" data-ref="sg-abl-2 sg-abl-2n">O</td>
+                <td class="k-purple" colspan="2" data-ref="sg-abl-3">E</td>
+                <td class="k-green" data-ref="sg-abl-3n">I</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="synth-block">
+        <p class="synth-title">PLURIEL</p>
+        <div class="synth-scroll">
+          <table class="synth">
+            <thead>
+              <tr>
+                <th></th>
+                <th>1°</th>
+                <th colspan="2">2°</th>
+                <th colspan="2">3°</th>
+              </tr>
+              <tr class="sub">
+                <th></th>
+                <th></th>
+                <th></th>
+                <th>neutres</th>
+                <th></th>
+                <th>neutres</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>nominatif</th>
+                <td class="k-yellow" data-ref="pl-nom-1">AE</td>
+                <td class="k-green" data-ref="pl-nom-2">I</td>
+                <td class="k-lavender" data-ref="pl-nom-2n">A</td>
+                <td class="k-white" data-ref="pl-nom-3">ES</td>
+                <td class="k-pinkbright" data-ref="pl-nom-3n">(I)A</td>
+              </tr>
+              <tr>
+                <th>vocatif</th>
+                <td class="k-yellow" data-ref="pl-voc-1">AE</td>
+                <td class="k-green" data-ref="pl-voc-2">I</td>
+                <td class="k-lavender" data-ref="pl-voc-2n">A</td>
+                <td class="k-white" data-ref="pl-voc-3">ES</td>
+                <td class="k-pinkbright" data-ref="pl-voc-3n">(I)A</td>
+              </tr>
+              <tr>
+                <th>accusatif</th>
+                <td class="k-blue" data-ref="pl-acc-1">AS</td>
+                <td class="k-tan" data-ref="pl-acc-2">OS</td>
+                <td class="k-lavender" data-ref="pl-acc-2n">A</td>
+                <td class="k-white" data-ref="pl-acc-3">ES</td>
+                <td class="k-pinkbright" data-ref="pl-acc-3n">(I)A</td>
+              </tr>
+              <tr class="thick-row">
+                <th>génitif</th>
+                <td class="k-yellow" data-ref="pl-gen-1">ARUM</td>
+                <td class="k-gray" colspan="2" data-ref="pl-gen-2 pl-gen-2n">ORUM</td>
+                <td class="k-mint" colspan="2" data-ref="pl-gen-3 pl-gen-3n">(I)UM</td>
+              </tr>
+              <tr>
+                <th>datif</th>
+                <td class="k-orange" data-ref="pl-dat-1">IS</td>
+                <td class="k-orange" colspan="2" data-ref="pl-dat-2 pl-dat-2n">IS</td>
+                <td class="k-brown" colspan="2" data-ref="pl-dat-3 pl-dat-3n">IBUS</td>
+              </tr>
+              <tr>
+                <th>ablatif</th>
+                <td class="k-orange" data-ref="pl-abl-1">IS</td>
+                <td class="k-orange" colspan="2" data-ref="pl-abl-2 pl-abl-2n">IS</td>
+                <td class="k-brown" colspan="2" data-ref="pl-abl-3 pl-abl-3n">IBUS</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </details>
+
+  <div class="table-wrap">
+    <table id="decl-table">
+      <thead>
+        <tr class="grp-row">
+          <th rowspan="2"></th>
+          <th rowspan="2" class="grp-meta">Décl.</th>
+          <th rowspan="2" class="grp-meta">N.</th>
+          <th class="grp-sg" colspan="6">Singulier</th>
+          <th class="grp-pl" colspan="6">Pluriel</th>
+        </tr>
+        <tr>
+          <th class="case-sg">Nom</th><th class="case-sg">Voc</th><th class="case-sg">Acc</th><th class="case-sg">Gén</th><th class="case-sg">Dat</th><th class="case-sg">Abl</th>
+          <th class="case-pl">Nom</th><th class="case-pl">Voc</th><th class="case-pl">Acc</th><th class="case-pl">Gén</th><th class="case-pl">Dat</th><th class="case-pl">Abl</th>
+        </tr>
+      </thead>
+      <tbody id="decl-body"></tbody>
+    </table>
+  </div>
+
+  <div class="controls">
+    <button class="action btn-primary" id="verify-btn" style="display:none;">Tout vérifier</button>
+    <button class="action btn-secondary" id="reset-btn">Réinitialiser</button>
+  </div>
+  <p class="score" id="score"></p>
+
+  <div class="legend" id="legend" style="display:none;">
+    <span><span class="swatch sw-correct"></span> réponse correcte</span>
+    <span><span class="swatch sw-wrong"></span> réponse marquée à tort</span>
+    <span><span class="swatch sw-missed"></span> case correcte non marquée</span>
+  </div>
+
+  <footer>Declinationes discere, disciplina est — apprendre les déclinaisons est une discipline.</footer>
+</div>
+
+<div class="mobile-fab" id="mobile-fab" style="display:none;">
+  <button class="action btn-primary" id="verify-btn-fab">Tout vérifier</button>
+</div>
+
+<script>
+  const CASES = ["nom","voc","acc","gen","dat","abl"];
+
+  // Each row: latin form, dictionary entry shown underneath, valid case/number
+  // answers (key "s-<case>" / "p-<case>"), and accepted {decl, neuter} combos.
+  const ROWS = [
+    { word: "domino",     entry: "dominus, i (M)",
+      correct: ["s-dat","s-abl"], combos: [{decl:2, neuter:false}],
+      refs: ["sg-dat-2","sg-abl-2"] },
+
+    { word: "sententias",  entry: "sententia, ae (F)",
+      correct: ["p-acc"], combos: [{decl:1, neuter:false}],
+      refs: ["pl-acc-1"] },
+
+    { word: "regionibus",  entry: "regio, onis (F)",
+      correct: ["p-dat","p-abl"], combos: [{decl:3, neuter:false}],
+      refs: ["pl-dat-3","pl-abl-3"] },
+
+    { word: "verborum",    entry: "verbum, i (N)",
+      correct: ["p-gen"], combos: [{decl:2, neuter:true}],
+      refs: ["pl-gen-2n"] },
+
+    { word: "opera",       entry: "opera, ae (F) · opus, operis (N)",
+      correct: ["s-nom","s-voc","p-nom","p-voc","p-acc"],
+      combos: [{decl:1, neuter:false}, {decl:3, neuter:true}],
+      refs: ["sg-nom-1","sg-voc-1","pl-nom-3n","pl-voc-3n","pl-acc-3n"] },
+
+    { word: "operis",      entry: "opus, operis (N)",
+      correct: ["s-gen"], combos: [{decl:3, neuter:true}],
+      refs: ["sg-gen-3n"] },
+
+    { word: "retia",       entry: "rete, is (N)",
+      correct: ["p-nom","p-voc","p-acc"], combos: [{decl:3, neuter:true}],
+      refs: ["pl-nom-3n","pl-voc-3n","pl-acc-3n"] },
+
+    { word: "caedes",      entry: "caedes, is (F)",
+      correct: ["s-nom","s-voc","p-nom","p-voc","p-acc"], combos: [{decl:3, neuter:false}],
+      refs: ["sg-nom-3","sg-voc-3","pl-nom-3","pl-voc-3","pl-acc-3"] },
+
+    { word: "quietum",     entry: "quies, etis (F)",
+      correct: ["p-gen"], combos: [{decl:3, neuter:false}],
+      refs: ["pl-gen-3"] },
+
+    { word: "retis",       entry: "rete, is (N)",
+      correct: ["s-gen"], combos: [{decl:3, neuter:true}],
+      refs: ["sg-gen-3n"] },
+
+    { word: "regionem",    entry: "regio, onis (F)",
+      correct: ["s-acc"], combos: [{decl:3, neuter:false}],
+      refs: ["sg-acc-3"] },
+
+    { word: "domine",      entry: "dominus, i (M)",
+      correct: ["s-voc"], combos: [{decl:2, neuter:false}],
+      refs: ["sg-voc-2"] },
+
+    { word: "verbi",       entry: "verbum, i (N)",
+      correct: ["s-gen"], combos: [{decl:2, neuter:true}],
+      refs: ["sg-gen-2n"] },
+
+    { word: "mus",         entry: "mus, muris (M)",
+      correct: ["s-nom","s-voc"], combos: [{decl:3, neuter:false}],
+      refs: ["sg-nom-3","sg-voc-3"] },
+  ];
+
+  const tbody = document.getElementById("decl-body");
+  const userMarks = ROWS.map(() => new Set());
+  const userDecl = ROWS.map(() => null);
+  const userNeuter = ROWS.map(() => false);
+  const rowVerified = ROWS.map(() => false);
+  let lastActiveRow = null;
+  let highlightedRow = null;
+
+  function clearHighlight(){
+    document.querySelectorAll("td[data-ref]").forEach(td => td.classList.remove("ref-highlight"));
+    tbody.querySelectorAll("th.word-cell").forEach(th => th.classList.remove("active-ref"));
+    highlightedRow = null;
+    const details = document.getElementById("synth-details");
+    if(hasVerified) details.open = false;
+  }
+  let hasVerified = false;
+
+  function clearRowGrading(ri){
+    tbody.querySelectorAll(`td.cell[data-row="${ri}"]`).forEach(td => td.classList.remove("correct","wrong","missed"));
+    const metaCells = tbody.querySelectorAll(`td.meta[data-row="${ri}"]`);
+    metaCells.forEach(td => td.classList.remove("correct","wrong"));
+    rowVerified[ri] = false;
+    const th = tbody.querySelector(`th.word-cell[data-row="${ri}"]`);
+    if(th){
+      th.classList.remove("row-checked-ok","row-checked-err");
+      const status = th.querySelector(".row-status");
+      if(status) status.remove();
+    }
+    if(highlightedRow !== null && highlightedRow !== ri){
+      clearHighlight();
+    }
+    updateScore();
+    updateGlobalVerifyVisibility();
+  }
+
+  function updateScore(){
+    const verifiedCount = rowVerified.filter(Boolean).length;
+    if(verifiedCount === 0){
+      document.getElementById("score").textContent = "";
+      document.getElementById("legend").style.display = "none";
+      return;
+    }
+    const okCount = ROWS.reduce((sum, row, ri) => sum + (rowVerified[ri] && isRowFullyCorrect(ri) ? 1 : 0), 0);
+    document.getElementById("score").textContent =
+      `${okCount} / ${verifiedCount} formes vérifiées correctes (sur ${ROWS.length} au total)`;
+    document.getElementById("legend").style.display = "flex";
+  }
+
+  function isRowFullyCorrect(ri){
+    const row = ROWS[ri];
+    const correctSet = new Set(row.correct);
+    const marked = userMarks[ri];
+    const casesOk = marked.size === correctSet.size && [...marked].every(k => correctSet.has(k));
+    const grammarOk = row.combos.some(c => c.decl === userDecl[ri] && c.neuter === userNeuter[ri]);
+    return casesOk && grammarOk;
+  }
+
+  function buildTable(){
+    ROWS.forEach((row, ri) => {
+      const tr = document.createElement("tr");
+
+      // Word + dictionary entry
+      const th = document.createElement("th");
+      th.className = "word-cell";
+      th.dataset.row = ri;
+      th.innerHTML = `<span class="lat">${row.word}</span><span class="entry">${row.entry}</span>`;
+
+      const rowBtn = document.createElement("button");
+      rowBtn.type = "button";
+      rowBtn.className = "row-verify-btn";
+      rowBtn.textContent = "Vérifier";
+      rowBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        verifyRow(ri, th);
+      });
+      th.appendChild(rowBtn);
+      tr.appendChild(th);
+
+      // Declension picker
+      const tdDecl = document.createElement("td");
+      tdDecl.className = "meta";
+      tdDecl.dataset.row = ri;
+      const picker = document.createElement("div");
+      picker.className = "decl-picker";
+      [1,2,3].forEach(n => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "decl-btn";
+        btn.textContent = n;
+        btn.addEventListener("click", () => {
+          userDecl[ri] = (userDecl[ri] === n) ? null : n;
+          picker.querySelectorAll(".decl-btn").forEach(b => b.classList.remove("selected"));
+          if(userDecl[ri] === n) btn.classList.add("selected");
+          lastActiveRow = ri;
+          clearRowGrading(ri);
+        });
+        picker.appendChild(btn);
+      });
+      tdDecl.appendChild(picker);
+      tr.appendChild(tdDecl);
+
+      // Neuter checkbox
+      const tdNeuter = document.createElement("td");
+      tdNeuter.className = "meta";
+      tdNeuter.dataset.row = ri;
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.className = "neuter-check";
+      cb.setAttribute("aria-label", `${row.word} est neutre`);
+      cb.addEventListener("change", () => {
+        userNeuter[ri] = cb.checked;
+        lastActiveRow = ri;
+        clearRowGrading(ri);
+      });
+      tdNeuter.appendChild(cb);
+      tr.appendChild(tdNeuter);
+
+      // Case / number grid
+      ["s","p"].forEach(num => {
+        CASES.forEach(c => {
+          const key = `${num}-${c}`;
+          const td = document.createElement("td");
+          td.className = "cell" + (num === "p" ? " pl" : "");
+          td.dataset.row = ri;
+          td.dataset.key = key;
+          td.addEventListener("click", () => {
+            const set = userMarks[ri];
+            if(set.has(key)){
+              set.delete(key);
+              td.innerHTML = "";
+            } else {
+              set.add(key);
+              td.innerHTML = '<span class="mark">X</span>';
+            }
+            lastActiveRow = ri;
+            clearRowGrading(ri);
+          });
+          tr.appendChild(td);
+        });
+      });
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  function gradeRow(ri){
+    const row = ROWS[ri];
+    const correctSet = new Set(row.correct);
+    const marked = userMarks[ri];
+    let casesOk = marked.size === correctSet.size;
+
+    CASES.forEach(c => {
+      ["s","p"].forEach(num => {
+        const key = `${num}-${c}`;
+        const td = tbody.querySelector(`td.cell[data-row="${ri}"][data-key="${key}"]`);
+        const isCorrect = correctSet.has(key);
+        const isMarked = marked.has(key);
+        td.classList.remove("correct","wrong","missed");
+        if(isMarked && isCorrect) td.classList.add("correct");
+        else if(isMarked && !isCorrect){ td.classList.add("wrong"); casesOk = false; }
+        else if(!isMarked && isCorrect){ td.classList.add("missed"); casesOk = false; }
+      });
+    });
+
+    const grammarOk = row.combos.some(c => c.decl === userDecl[ri] && c.neuter === userNeuter[ri]);
+    const metaCells = tbody.querySelectorAll(`td.meta[data-row="${ri}"]`);
+    metaCells.forEach(td => {
+      td.classList.remove("correct","wrong");
+      td.classList.add(grammarOk ? "correct" : "wrong");
+    });
+
+    rowVerified[ri] = true;
+    return casesOk && grammarOk;
+  }
+
+  function verifyRow(ri, thEl){
+    const fullyOk = gradeRow(ri);
+    lastActiveRow = ri;
+
+    thEl.classList.remove("row-checked-ok","row-checked-err");
+    const oldStatus = thEl.querySelector(".row-status");
+    if(oldStatus) oldStatus.remove();
+    const status = document.createElement("span");
+    status.className = "row-status";
+    status.textContent = fullyOk ? "✓" : "✗";
+    thEl.classList.add(fullyOk ? "row-checked-ok" : "row-checked-err");
+    thEl.querySelector(".lat").appendChild(status);
+
+    updateScore();
+
+    // reveal the reference table, full size, framing ONLY the cell(s)
+    // concerned by this specific word
+    hasVerified = true;
+    const details = document.getElementById("synth-details");
+    const body = document.getElementById("synth-body");
+    details.classList.remove("locked");
+    details.open = true;
+    body.classList.remove("compact");
+    highlightRow(ri, thEl);
+    updateGlobalVerifyVisibility();
+
+    // wait a frame so the now-open <details> has laid out before scrolling
+    requestAnimationFrame(() => {
+      const firstHighlighted = document.querySelector("td[data-ref].ref-highlight");
+      (firstHighlighted || details).scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  }
+
+  function verifyAll(){
+    ROWS.forEach((row, ri) => gradeRow(ri));
+    updateScore();
+
+    hasVerified = true;
+    const details = document.getElementById("synth-details");
+    const body = document.getElementById("synth-body");
+    details.classList.remove("locked");
+    details.open = true;
+    body.classList.remove("compact");
+    if(lastActiveRow !== null){
+      const th = tbody.querySelector(`th.word-cell[data-row="${lastActiveRow}"]`);
+      highlightRow(lastActiveRow, th);
+    }
+  }
+
+  function updateGlobalVerifyVisibility(){
+    const allDone = rowVerified.every(Boolean);
+    document.getElementById("verify-btn").style.display = allDone ? "" : "none";
+    document.getElementById("mobile-fab").style.display = allDone ? "" : "none";
+  }
+
+  function highlightRow(ri, thEl){
+    tbody.querySelectorAll("th.word-cell").forEach(th => th.classList.remove("active-ref"));
+    document.querySelectorAll("td[data-ref]").forEach(td => td.classList.remove("ref-highlight"));
+    if(thEl) thEl.classList.add("active-ref");
+    ROWS[ri].refs.forEach(ref => {
+      document.querySelectorAll(`td[data-ref~="${ref}"]`).forEach(td => td.classList.add("ref-highlight"));
+    });
+    highlightedRow = ri;
+  }
+
+  function reset(){
+    userMarks.forEach(s => s.clear());
+    userDecl.fill(null);
+    userNeuter.fill(false);
+    rowVerified.fill(false);
+    lastActiveRow = null;
+    highlightedRow = null;
+    hasVerified = false;
+    tbody.querySelectorAll("td.cell").forEach(td => {
+      td.innerHTML = "";
+      td.classList.remove("correct","wrong","missed");
+    });
+    tbody.querySelectorAll("th.word-cell").forEach(th => {
+      th.classList.remove("row-checked-ok","row-checked-err");
+      const status = th.querySelector(".row-status");
+      if(status) status.remove();
+    });
+    tbody.querySelectorAll(".decl-btn").forEach(b => b.classList.remove("selected"));
+    tbody.querySelectorAll(".neuter-check").forEach(cb => cb.checked = false);
+    tbody.querySelectorAll("td.meta").forEach(td => td.classList.remove("correct","wrong"));
+    document.getElementById("score").textContent = "";
+    document.getElementById("legend").style.display = "none";
+
+    document.getElementById("synth-body").classList.remove("compact");
+    document.querySelectorAll("td[data-ref]").forEach(td => td.classList.remove("ref-highlight"));
+    tbody.querySelectorAll("th.word-cell").forEach(th => th.classList.remove("active-ref"));
+    document.getElementById("synth-details").open = false;
+    document.getElementById("synth-details").classList.add("locked");
+    updateGlobalVerifyVisibility();
+  }
+
+  document.getElementById("verify-btn").addEventListener("click", verifyAll);
+  document.getElementById("verify-btn-fab").addEventListener("click", verifyAll);
+  document.getElementById("reset-btn").addEventListener("click", reset);
+
+  document.querySelector("#synth-details summary").addEventListener("click", (e) => {
+    if(!hasVerified) e.preventDefault();
+  });
+
+  buildTable();
+</script>
+</body>
+</html>

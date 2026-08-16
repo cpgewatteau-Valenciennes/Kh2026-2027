@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Exercice chronométré de vocabulaire</title>
+<title>Exercice chronométré de vocabulaire (2)</title>
 <style>
   :root{
     --parchment:#F1E6CE;
@@ -30,7 +30,7 @@
       var(--parchment);
     font-family: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
     color: var(--ink);
-    padding: 56px 16px 60px;
+    padding: 24px 16px 60px;
   }
   .meander{
     height: 14px;
@@ -292,7 +292,7 @@
 .home-fab{
   position:fixed; top:14px; left:14px; z-index:999;
   display:flex; align-items:center; gap:6px;
-  background: linear-gradient(135deg, var(--ochre), var(--burgundy));
+  background: linear-gradient(135deg, #B9812A, #6B1E23);
   color:#fff; font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;
   font-size:0.82rem; font-weight:700; text-decoration:none;
   padding:8px 14px; border-radius:20px;
@@ -301,12 +301,10 @@
 }
 .home-fab:hover{ transform: translateY(-2px); box-shadow:0 5px 14px rgba(0,0,0,0.3); }
 @media (max-width:480px){ .home-fab{ font-size:0.72rem; padding:6px 10px; top:8px; left:8px; } }
-
-
 .next-fab{
   position:fixed; top:14px; right:14px; z-index:999;
   display:flex; align-items:center; gap:6px;
-  background: linear-gradient(135deg, var(--burgundy), var(--ochre));
+  background: linear-gradient(135deg, #6B1E23, #B9812A);
   color:#fff; font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;
   font-size:0.82rem; font-weight:700; text-decoration:none;
   padding:8px 14px; border-radius:20px;
@@ -314,11 +312,13 @@
   transition: transform .15s ease, box-shadow .15s ease;
 }
 .next-fab:hover{ transform: translateY(-2px); box-shadow:0 5px 14px rgba(0,0,0,0.3); }
-@media (max-width:480px){ .next-fab{ font-size:0.72rem; padding:6px 10px; top:8px; right:8px; } }f</style>
+@media (max-width:480px){ .next-fab{ font-size:0.72rem; padding:6px 10px; top:8px; right:8px; } }
+</style>
 </head>
 <body>
-<a class="home-fab" href="index.html#serie-estivale-1">🏠 Accueil du site</a>
-  <a class="next-fab" href="exercice-4-vocabulaire-mixte.html">Exercice suivant →</a>
+<a class="home-fab" href="index.html#serie-estivale-2">🏠 Accueil du site</a>
+<a class="next-fab" href="exercice-10-version-cornelia-marcus-quintus.html">Exercice suivant →</a>
+
 
 <svg style="display:none" aria-hidden="true">
   <symbol id="pic-vocab" viewBox="0 0 100 100">
@@ -333,16 +333,16 @@
 <header>
   <div class="title-row">
     <svg class="title-icon"><use href="#pic-vocab"></use></svg>
-    <h1>Exercice chronométré de vocabulaire</h1>
+    <h1>Exercice chronométré de vocabulaire (2)</h1>
   </div>
-  <p class="subtitle">25 mots tirés au hasard · prépositions, conjonctions, verbes, mots invariables</p>
+  <p class="subtitle">25 mots tirés au hasard · prépositions, conjonctions, verbes, mots invariables — et cette fois des formes au parfait à identifier !</p>
 </header>
 
 <div class="wrap">
 
   <!-- ÉCRAN DE DÉPART -->
   <div class="start-card" id="start-screen">
-    <p>Choisis ta vitesse. Un mot latin s'affiche : réfléchis puis clique dès que tu penses avoir la réponse (cas/mode/temps primitifs + sens selon le mot). La bonne réponse s'affiche ensuite et tu t'auto-évalues.</p>
+    <p>Choisis ta vitesse. Un mot (ou une forme verbale) latin s'affiche : réfléchis puis clique dès que tu penses avoir la réponse. Attention, pour certaines formes verbales au parfait, il faudra retrouver le verbe dont elles sont issues (1ʳᵉ pers. sg. de l'indicatif présent + sens). La bonne réponse s'affiche ensuite et tu t'auto-évalues.</p>
     <div class="speed-row" id="speed-row">
       <button class="speed-btn" data-seconds="25">
         <span class="emoji">🐢</span>
@@ -423,8 +423,8 @@
 
   const conjs = [
     { latin: "antequam", mode: "indicatif", sens: "avant que, avant de", note: "peut aussi, plus rarement, être suivi du subjonctif" },
-    { latin: "cum (temporel)", mode: "indicatif", sens: "lorsque, quand" },
-    { latin: "cum (causal)", mode: "subjonctif", sens: "comme, puisque (cause)", note: "le plus souvent à l'imparfait ou au plus-que-parfait du subjonctif" },
+    { latin: "cum (temporel)", mode: "indicatif", sens: "lorsque, quand", note: "attention, sens différent pour cum + subjonctif !" },
+    { latin: "cum (causal)", mode: "subjonctif", sens: "comme, puisque (cause)", note: "le plus souvent à l'imparfait ou au plus-que-parfait du subjonctif — attention, sens différent pour cum + indicatif !" },
     { latin: "donec", mode: "indicatif", sens: "jusqu'à ce que, tant que" },
     { latin: "etsi", mode: "indicatif", sens: "bien que, quoique" },
     { latin: "postquam", mode: "indicatif", sens: "après que" },
@@ -436,37 +436,44 @@
     { latin: "ut primum", mode: "indicatif", sens: "dès que" }
   ].map(c => ({ ...c, type: "conj" }));
 
+  // Verbes interrogés sous leur forme "normale" (temps primitifs → sens)
   const verbs = [
     { latin: "capio", primitifs: "capio, is, ere, cepi, captum", sens: "prendre" },
     { latin: "credo", primitifs: "credo, is, ere, credidi, creditum", sens: "croire" },
     { latin: "cupio", primitifs: "cupio, is, ere, cupivi (ou cupii), cupitum", sens: "désirer" },
-    { latin: "do", primitifs: "do, das, dare, dedi, datum", sens: "donner" },
     { latin: "dico", primitifs: "dico, is, ere, dixi, dictum", sens: "dire" },
-    { latin: "duco", primitifs: "duco, is, ere, duxi, ductum", sens: "conduire, mener ; compter, estimer" },
-    { latin: "facio", primitifs: "facio, is, ere, feci, factum", sens: "faire" },
-    { latin: "fero", primitifs: "fero, fers, ferre, tuli, latum", sens: "porter, rapporter, supporter" },
+    { latin: "do", primitifs: "do, das, dare, dedi, datum", sens: "donner" },
+    { latin: "duco", primitifs: "duco, is, ere, duxi, ductum", sens: "compter, estimer, conduire" },
+    { latin: "fero", primitifs: "fero, fers, ferre, tuli, latum", sens: "porter, rapporter, supporter", note: "parfait irrégulier (tuli) — à mémoriser par cœur" },
     { latin: "fugio", primitifs: "fugio, is, ere, fugi, —", sens: "s'enfuir, fuir" },
-    { latin: "interficio", primitifs: "interficio, is, ere, interfeci, interfectum", sens: "tuer" },
     { latin: "mitto", primitifs: "mitto, is, ere, misi, missum", sens: "envoyer, lancer" },
     { latin: "moneo", primitifs: "moneo, es, ere, monui, monitum", sens: "avertir, engager à" },
     { latin: "nescio", primitifs: "nescio, is, ire, nescivi (ou nescii), nescitum", sens: "ne pas savoir, ignorer" },
-    { latin: "peto", primitifs: "peto, is, ere, petivi (ou petii), petitum", sens: "chercher à atteindre, demander" },
+    { latin: "peto", primitifs: "peto, is, ere, petivi (ou petii), petitum", sens: "chercher à atteindre, demander (ab + abl. = à qqn)" },
     { latin: "quaero", primitifs: "quaero, is, ere, quaesivi (ou quaesii), quaesitum", sens: "chercher, rechercher, demander" },
     { latin: "respondeo", primitifs: "respondeo, es, ere, respondi, responsum", sens: "répondre" },
     { latin: "rogo", primitifs: "rogo, as, are, rogavi, rogatum", sens: "demander" },
     { latin: "scio", primitifs: "scio, is, ire, scivi (ou scii), scitum", sens: "savoir" },
-    { latin: "scribo", primitifs: "scribo, is, ere, scripsi, scriptum", sens: "écrire" },
     { latin: "sto", primitifs: "sto, as, are, steti, statum", sens: "se tenir debout" },
-    { latin: "sum", primitifs: "sum, es, esse, fui, —", sens: "être" },
     { latin: "traho", primitifs: "traho, is, ere, traxi, tractum", sens: "tirer" },
     { latin: "venio", primitifs: "venio, is, ire, veni, ventum", sens: "venir" },
-    { latin: "video", primitifs: "video, es, ere, vidi, visum", sens: "voir" },
-    { latin: "vinco", primitifs: "vinco, is, ere, vici, victum", sens: "vaincre" },
-    { latin: "volo", primitifs: "volo, vis, velle, volui, —", sens: "vouloir" }
+    { latin: "vinco", primitifs: "vinco, is, ere, vici, victum", sens: "vaincre" }
   ].map(v => ({ ...v, type: "verb" }));
 
+  // Verbes interrogés à partir de leur forme au PARFAIT : uniquement les parfaits
+  // que les élèves doivent savoir par cœur (fui, volui, vidi, feci, scripsi, interfeci).
+  // Il faut retrouver le verbe (1ʳᵉ sg. indicatif présent) et son sens.
+  const verbsPerf = [
+    { latin: "fui", verbe: "sum, es, esse, fui, —", present1sg: "sum", sens: "être" },
+    { latin: "volui", verbe: "volo, vis, velle, volui, —", present1sg: "volo", sens: "vouloir" },
+    { latin: "vidi", verbe: "video, es, ere, vidi, visum", present1sg: "video", sens: "voir" },
+    { latin: "feci", verbe: "facio, is, ere, feci, factum", present1sg: "facio", sens: "faire" },
+    { latin: "scripsi", verbe: "scribo, is, ere, scripsi, scriptum", present1sg: "scribo", sens: "écrire" },
+    { latin: "interfeci", verbe: "interficio, is, ere, interfeci, interfectum", present1sg: "interficio", sens: "tuer" }
+  ].map(v => ({ ...v, type: "verbperf" }));
+
   const advs = [
-    { latin: "atque / ac", sens: "et" },
+    { latin: "atque / ac", sens: "et", note: "ac devant une consonne, atque devant une voyelle" },
     { latin: "aut", sens: "ou, ou bien" },
     { latin: "autem", sens: "or, d'autre part, quant à, mais (souvent intraduisible)" },
     { latin: "deinde", sens: "ensuite, puis" },
@@ -494,6 +501,7 @@
     { latin: "quoque", sens: "aussi, encore" },
     { latin: "repente", sens: "soudain" },
     { latin: "saepe", sens: "souvent" },
+    { latin: "sed", sens: "mais" },
     { latin: "semper", sens: "toujours" },
     { latin: "solum", sens: "seulement" },
     { latin: "statim", sens: "aussitôt" },
@@ -502,18 +510,20 @@
     { latin: "tunc", sens: "alors" }
   ].map(a => ({ ...a, type: "adv" }));
 
-  const fullPool = [...preps, ...conjs, ...verbs, ...advs];
+  const fullPool = [...preps, ...conjs, ...verbs, ...verbsPerf, ...advs];
 
   const promptText = {
     prep: "Quel cas régit ce mot ? Quel est son sens ?",
     conj: "Cette conjonction de subordination est suivie de quel mode en latin ? Quel est son sens ?",
     verb: "Quel est le sens de ce verbe ?",
+    verbperf: "Cette forme est un parfait. De quel verbe est-elle le parfait ? Donne la 1ʳᵉ pers. du sg. de l'indicatif présent de ce verbe et son sens.",
     adv: "Quel est le sens de ce mot ?"
   };
   const badgeText = {
     prep: "Préposition",
     conj: "Conjonction",
-    verb: "Verbe",
+    verb: "Verbe (temps primitifs)",
+    verbperf: "Forme au parfait à identifier",
     adv: "Mot invariable"
   };
 
@@ -659,6 +669,10 @@
       html += '<div class="line"><b>Mode :</b> ' + q.mode + '</div>';
       html += '<div class="line"><b>Sens :</b> ' + q.sens + '</div>';
     } else if(q.type === 'verb'){
+      html += '<div class="line"><b>Sens :</b> ' + q.sens + '</div>';
+    } else if(q.type === 'verbperf'){
+      html += '<div class="line"><b>Verbe :</b> ' + q.verbe + '</div>';
+      html += '<div class="line"><b>1ʳᵉ sg. indicatif présent :</b> ' + q.present1sg + '</div>';
       html += '<div class="line"><b>Sens :</b> ' + q.sens + '</div>';
     } else {
       html += '<div class="line"><b>Sens :</b> ' + q.sens + '</div>';
