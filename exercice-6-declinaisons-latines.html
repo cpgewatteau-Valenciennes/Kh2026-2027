@@ -250,6 +250,13 @@
   }
   td.meta.correct{ background: #dce9df; }
   td.meta.wrong{ background: #f1dcd8; }
+  .meta-hint{
+    font-size: 9.5px;
+    font-weight: 700;
+    color: var(--pompeii-dark);
+    margin-top: 3px;
+    white-space: nowrap;
+  }
 
   .neuter-check{
     width: 20px;
@@ -807,7 +814,11 @@
   function clearRowGrading(ri){
     tbody.querySelectorAll(`td.cell[data-row="${ri}"]`).forEach(td => td.classList.remove("correct","wrong","missed"));
     const metaCells = tbody.querySelectorAll(`td.meta[data-row="${ri}"]`);
-    metaCells.forEach(td => td.classList.remove("correct","wrong"));
+    metaCells.forEach(td => {
+      td.classList.remove("correct","wrong");
+      const oldHint = td.querySelector(".meta-hint");
+      if(oldHint) oldHint.remove();
+    });
     rowVerified[ri] = false;
     const th = tbody.querySelector(`th.word-cell[data-row="${ri}"]`);
     if(th){
@@ -956,7 +967,17 @@
     metaCells.forEach(td => {
       td.classList.remove("correct","wrong");
       td.classList.add(grammarOk ? "correct" : "wrong");
+      const oldHint = td.querySelector(".meta-hint");
+      if(oldHint) oldHint.remove();
     });
+    if(!grammarOk && metaCells[0]){
+      const hint = document.createElement("div");
+      hint.className = "meta-hint";
+      hint.textContent = "→ " + row.combos
+        .map(c => `${c.decl}${c.neuter ? " (N)" : ""}`)
+        .join(" ou ");
+      metaCells[0].appendChild(hint);
+    }
 
     rowVerified[ri] = true;
     return casesOk && grammarOk;
@@ -991,7 +1012,18 @@
     // wait a frame so the now-open <details> has laid out before scrolling
     requestAnimationFrame(() => {
       const firstHighlighted = document.querySelector("td[data-ref].ref-highlight");
-      (firstHighlighted || details).scrollIntoView({ behavior: "smooth", block: "center" });
+      if(firstHighlighted){
+        const scrollBox = firstHighlighted.closest(".synth-scroll");
+        if(scrollBox){
+          const boxRect = scrollBox.getBoundingClientRect();
+          const cellRect = firstHighlighted.getBoundingClientRect();
+          const offset = (cellRect.left + cellRect.width / 2) - (boxRect.left + boxRect.width / 2);
+          scrollBox.scrollBy({ left: offset, behavior: "smooth" });
+        }
+        firstHighlighted.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+      } else {
+        details.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
     });
   }
 
@@ -1046,7 +1078,11 @@
     });
     tbody.querySelectorAll(".decl-btn").forEach(b => b.classList.remove("selected"));
     tbody.querySelectorAll(".neuter-check").forEach(cb => cb.checked = false);
-    tbody.querySelectorAll("td.meta").forEach(td => td.classList.remove("correct","wrong"));
+    tbody.querySelectorAll("td.meta").forEach(td => {
+      td.classList.remove("correct","wrong");
+      const oldHint = td.querySelector(".meta-hint");
+      if(oldHint) oldHint.remove();
+    });
     document.getElementById("score").textContent = "";
     document.getElementById("legend").style.display = "none";
 
