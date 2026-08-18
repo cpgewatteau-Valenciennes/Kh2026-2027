@@ -768,6 +768,7 @@
 
 <script>
   const CASES = ["nom","voc","acc","gen","dat","abl"];
+  const NOTE_TEASER = "⚠ Cette même forme en version pourrait venir d'un nom d'une autre déclinaison et vous faire faire des erreurs !";
 
   // Each row: latin form, dictionary entry shown underneath, valid case/number
   // answers (key "s-<case>" / "p-<case>"), and accepted {decl, neuter} combos.
@@ -830,7 +831,14 @@
 
     { word: "operis",      entry: "opus, operis (N)",
       correct: ["s-gen"], combos: [{decl:3, neuter:true}],
-      refs: ["sg-gen-3n"] },
+      refs: ["sg-gen-3n"],
+      note: "⚠ Cette même forme « operis » est aussi le datif/ablatif pluriel de opera, ae (1re décl. : datif/ablatif pluriel toujours en -is) — vois l'entrée suivante. En version, vérifie toujours le sens et le contexte pour ne pas confondre les deux mots." },
+
+    { word: "operis",      entry: "opera, ae (F)",
+      correct: ["p-dat","p-abl"],
+      combos: [{decl:1, neuter:false}],
+      refs: ["pl-dat-1","pl-abl-1"],
+      note: "⚠ Cette même forme « operis » est aussi le génitif singulier de opus, operis (3e décl. neutre) — vois l'entrée précédente. En version, vérifie toujours le sens et le contexte pour ne pas confondre les deux mots." },
 
     { word: "mus",         entry: "mus, muris (M)",
       correct: ["s-nom","s-voc"], combos: [{decl:3, neuter:false}],
@@ -870,6 +878,8 @@
       th.classList.remove("row-checked-ok","row-checked-err");
       const status = th.querySelector(".row-status");
       if(status) status.remove();
+      const noteEl = th.querySelector(".row-note");
+      if(noteEl) noteEl.textContent = NOTE_TEASER;
     }
     if(highlightedRow !== null && highlightedRow !== ri){
       clearHighlight();
@@ -909,7 +919,7 @@
       th.className = "word-cell";
       th.dataset.row = ri;
       th.innerHTML = `<span class="lat">${row.word}</span><span class="entry">${row.entry}</span>` +
-        (row.note ? `<span class="row-note">${row.note}</span>` : "");
+        (row.note ? `<span class="row-note" data-full="${row.note.replace(/"/g,'&quot;')}">${NOTE_TEASER}</span>` : "");
 
       const rowBtn = document.createElement("button");
       rowBtn.type = "button";
@@ -1031,6 +1041,11 @@
       metaCells[0].appendChild(hint);
     }
 
+    const noteEl = tbody.querySelector(`th.word-cell[data-row="${ri}"] .row-note`);
+    if(noteEl && noteEl.dataset.full){
+      noteEl.textContent = noteEl.dataset.full;
+    }
+
     rowVerified[ri] = true;
     return casesOk && grammarOk;
   }
@@ -1127,6 +1142,8 @@
       th.classList.remove("row-checked-ok","row-checked-err");
       const status = th.querySelector(".row-status");
       if(status) status.remove();
+      const noteEl = th.querySelector(".row-note");
+      if(noteEl) noteEl.textContent = NOTE_TEASER;
     });
     tbody.querySelectorAll(".decl-btn").forEach(b => b.classList.remove("selected"));
     tbody.querySelectorAll(".neuter-check").forEach(cb => cb.checked = false);
