@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Logo Conjugaison et Traduction">
+  <circle cx="60" cy="60" r="56" fill="#6B1E23" stroke="#B9812A" stroke-width="4"/>
+  <circle cx="60" cy="60" r="47" fill="none" stroke="#D9A94F" stroke-width="1.5"/>
+  <text x="60" y="68" text-anchor="middle" font-family="Georgia,serif" font-size="40" font-weight="700" fill="#F1E6CE">A→Z</text>
+  <text x="60" y="88" text-anchor="middle" font-family="Georgia,serif" font-size="10" letter-spacing="2" fill="#D9A94F">AMO · AMAS</text>
+  <text x="60" y="35" text-anchor="middle" font-family="Georgia,serif" font-size="9" letter-spacing="2" fill="#D9A94F">LATIN</text>
+</svg>
