@@ -136,6 +136,11 @@
   .folder-body .folder-body .folder-tab{ background:var(--pastel-pink); }
   .folder-body .folder-tab::before{ background:inherit; }
 
+  /* Couleur d'un dossier de premier niveau (propriété "couleur" dans periode.js / index) */
+  .folder-tab[data-couleur="vert"],
+  .folder-tab[data-couleur="vert"]::before{ background:#8fc29a; }
+  .folder-tab[data-couleur="vert"]:hover{ background:#79b087; }
+
   .files{list-style:none;margin:6px 0 4px;padding:0;}
   .files li{margin-bottom:6px;}
   .files a{
@@ -220,10 +225,11 @@
 
   <ul class="tree" id="tree"></ul>
 
-  <footer>Mis à jour automatiquement depuis data.js</footer>
+  <footer>Mis à jour automatiquement depuis periode.js et data.js</footer>
 </div>
 
 <script src="data.js"></script>
+<script src="periode.js"></script>
 <script>
   const treeRoot = document.getElementById('tree');
 
@@ -284,6 +290,7 @@
     btn.id = id;
     btn.setAttribute('aria-expanded', 'false');
     btn.setAttribute('aria-controls', id + '-body');
+    if(node.couleur) btn.dataset.couleur = node.couleur;
 
     const label = document.createElement('span');
     label.textContent = '📁 ' + node.nom;
@@ -357,14 +364,15 @@
     return li;
   }
 
-  if(typeof STRUCTURE === 'undefined' || !Array.isArray(STRUCTURE)){
-    const msg = document.createElement('li');
-    msg.className = 'empty-hint';
-    msg.textContent = 'Impossible de charger la liste des dossiers (data.js manquant ou invalide).';
-    treeRoot.appendChild(msg);
-  } else {
-    STRUCTURE.forEach(node => treeRoot.appendChild(renderFolder(node, '')));
-  }
+  // Racine : « Période en cours » (periode.js) puis « Révisions estivales » (data.js, inchangé)
+  const periode = (typeof PERIODE !== 'undefined' && Array.isArray(PERIODE)) ? PERIODE : [];
+  const estival = (typeof STRUCTURE !== 'undefined' && Array.isArray(STRUCTURE)) ? STRUCTURE : [];
+
+  const RACINE = [
+    { nom: 'Période en cours', couleur: 'vert', dossiers: periode },
+    { nom: 'Révisions estivales', dossiers: estival }
+  ];
+  RACINE.forEach(node => treeRoot.appendChild(renderFolder(node, '')));
 
   function expandToId(id){
     const btn = document.getElementById(id);
