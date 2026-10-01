@@ -27,6 +27,12 @@
 */
 
 const STRUCTURE = [
+    {
+    nom: "Conjugaison",
+    fichiers: [
+      { nom: "Conj 01 — Identification et traduction de formes verbales", url: "exercices-langues/conjugaison/conjugaison_identification-traduction-formes-verbales.html", pictos: ["conj"] }
+    ]
+  },
   {
     nom: "Révisions estivales 2026",
     dossiers: [
