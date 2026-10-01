@@ -11,8 +11,7 @@ const PERIODE = [
       {
         nom: "Conjugaison",
         fichiers: [
-          // Exemple (à décommenter et adapter) :
-          // { nom: "Exercice 1 – Présent de l'indicatif", url: "exercices-langues/exercice-1.html", pictos: ["conj"] }
+         { nom: "Identification et traduction de formes verbales", url: "exercices-langues/conjugaison/conjugaison_identification-traduction-formes-verbales.html", pictos: ["conj"] }
         ]
       },
       { nom: "Déclinaisons", fichiers: [] }
