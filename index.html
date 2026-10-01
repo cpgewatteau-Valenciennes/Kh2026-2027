@@ -368,10 +368,21 @@
   const periode = (typeof PERIODE !== 'undefined' && Array.isArray(PERIODE)) ? PERIODE : [];
   const estival = (typeof STRUCTURE !== 'undefined' && Array.isArray(STRUCTURE)) ? STRUCTURE : [];
 
-  const RACINE = [
-    { nom: 'Période en cours', couleur: 'vert', dossiers: periode },
-    { nom: 'Révisions estivales', dossiers: estival }
-  ];
+  const courante = (typeof PERIODE_EN_COURS !== 'undefined') ? PERIODE_EN_COURS : null;
+
+function collecter(dossiers, out){
+  (dossiers || []).forEach(d => {
+    (d.fichiers || []).forEach(f => { if(courante && f.periode === courante) out.push(f); });
+    collecter(d.dossiers, out);
+  });
+  return out;
+}
+
+const RACINE = [
+  { nom: 'Période en cours', couleur: 'vert', fichiers: collecter(periode, []) },
+  ...periode,
+  { nom: 'Révisions estivales', dossiers: estival }
+];
   RACINE.forEach(node => treeRoot.appendChild(renderFolder(node, '')));
 
   function expandToId(id){
