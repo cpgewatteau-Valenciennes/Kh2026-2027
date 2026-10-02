@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Declinationes — Les pièges des terminaisons</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+@charset "utf-8";
+
+:root { --papyrus: #EDE3CE; --papyrus-deep: #E2D5B7; --stone: #DCD0B4; --ink: #2B241C; --ink-soft: #55493a; --pompeii: #9C3B30; --pompeii-dark: #7c2e26; --verdigris: #4C7A6E; --verdigris-dark: #3a5f56; --gold: #A9812E; --line: #b9a97e; }
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0px; padding: 0px; background-color: var(--papyrus); background-image: radial-gradient(at 20% 10%, rgba(255, 255, 255, 0.25), transparent 55%), radial-gradient(at 90% 80%, rgba(0, 0, 0, 0.05), transparent 60%); color: var(--ink); font-family: "EB Garamond", serif; font-size: 18px; line-height: 1.5; }
+
+.page { max-width: 1120px; margin: 0px auto; padding: 48px 24px 80px; }
+
+header { text-align: center; margin-bottom: 36px; }
+
+.eyebrow { font-family: Cinzel, serif; letter-spacing: 0.28em; font-size: 12.5px; color: var(--pompeii); text-transform: uppercase; margin-bottom: 10px; }
+
+h1 { font-family: Cinzel, serif; font-weight: 700; font-size: clamp(30px, 5vw, 46px); letter-spacing: 0.02em; margin: 0px 0px 8px; color: var(--ink); }
+
+h1 em { font-style: normal; color: var(--pompeii); }
+
+.subtitle { font-style: italic; color: var(--ink-soft); font-size: 18px; max-width: 600px; margin: 0px auto; }
+
+.laurel { width: 220px; height: 14px; margin: 18px auto 0px; opacity: 0.75; }
+
+.instructions { text-align: center; color: var(--ink-soft); font-size: 16px; max-width: 700px; margin: 0px auto 26px; }
+
+.instructions .hint { display: block; margin-top: 6px; font-size: 14px; font-style: italic; color: var(--gold); }
+
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); box-shadow: rgba(60, 45, 20, 0.15) 0px 6px 20px; background: var(--papyrus-deep); }
+
+table { border-collapse: collapse; width: 100%; min-width: 1000px; }
+
+thead th { font-family: Cinzel, serif; font-weight: 600; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; padding: 10px 4px; text-align: center; border: 1px solid var(--line); }
+
+.grp-row th { font-size: 14px; letter-spacing: 0.22em; padding: 8px 4px; }
+
+.grp-sg { background: rgb(216, 203, 169); color: var(--ink); }
+
+.grp-pl { background: rgb(196, 201, 189); color: var(--ink); }
+
+.grp-meta { background: rgb(203, 185, 154); color: var(--ink); }
+
+.case-sg { background: rgb(239, 230, 207); color: var(--verdigris-dark); font-style: italic; }
+
+.case-pl { background: rgb(220, 223, 211); color: var(--verdigris-dark); font-style: italic; }
+
+th.meta-label { background: rgb(228, 215, 186); color: var(--ink); font-size: 11px; }
+
+tbody th.word-cell { font-family: Cinzel, serif; font-weight: 600; font-size: 15px; letter-spacing: 0.02em; text-align: left; padding: 10px 14px; border: 1px solid var(--line); background: var(--stone); white-space: nowrap; position: sticky; left: 0px; transition: background 0.15s; }
+
+tbody th.word-cell.active-ref { background: var(--gold); color: rgb(43, 32, 21); }
+
+tbody th.word-cell .lat { font-style: italic; }
+
+tbody th.word-cell .entry { display: block; font-family: "EB Garamond", serif; font-weight: 400; font-style: italic; font-size: 12.5px; letter-spacing: 0.01em; color: var(--ink-soft); margin-top: 3px; white-space: normal; }
+
+.row-verify-btn { display: block; margin-top: 8px; font-family: Cinzel, serif; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 10px; border: 1px solid var(--verdigris-dark); background: var(--verdigris); color: rgb(251, 243, 228); border-radius: 2px; cursor: pointer; }
+
+.row-verify-btn:hover { background: var(--verdigris-dark); }
+
+.row-verify-btn:active { transform: translateY(1px); }
+
+th.word-cell.row-checked-ok .row-verify-btn { background: rgb(79, 143, 107); border-color: rgb(58, 107, 80); }
+
+th.word-cell.row-checked-err .row-verify-btn { background: var(--pompeii); border-color: var(--pompeii-dark); }
+
+.row-status { display: inline-block; margin-left: 6px; font-size: 12px; }
+
+td.cell { border: 1px solid var(--line); width: 52px; height: 46px; text-align: center; cursor: pointer; background: rgb(250, 245, 230); transition: background 0.15s; user-select: none; position: relative; }
+
+td.cell.pl { background: rgb(238, 240, 231); }
+
+td.cell:hover { background: rgb(243, 230, 200); }
+
+td.cell.pl:hover { background: rgb(226, 230, 213); }
+
+.mark { font-family: Cinzel, serif; font-weight: 700; font-size: 20px; color: var(--pompeii-dark); }
+
+td.cell.correct { background: rgb(220, 233, 223) !important; }
+
+td.cell.correct .mark { color: var(--verdigris-dark); }
+
+td.cell.wrong { background: rgb(241, 220, 216) !important; }
+
+td.cell.wrong .mark { color: var(--pompeii-dark); }
+
+td.cell.missed { box-shadow: inset 0 0 0 2px var(--gold); }
+
+td.cell.missed::after { content: "★"; color: var(--gold); font-size: 22px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -60%); }
+
+td.meta { border: 1px solid var(--line); background: rgb(241, 233, 211); padding: 8px 6px; text-align: center; transition: background 0.15s; }
+
+.decl-picker { display: flex; gap: 4px; justify-content: center; }
+
+.decl-btn { width: 26px; height: 26px; border: 1px solid var(--line); background: rgb(255, 248, 232); font-family: Cinzel, serif; font-size: 13px; color: var(--ink-soft); cursor: pointer; border-radius: 2px; padding: 0px; }
+
+.decl-btn:hover { background: rgb(243, 230, 200); }
+
+.decl-btn.selected { background: var(--verdigris); color: rgb(251, 243, 228); border-color: var(--verdigris-dark); }
+
+td.meta.correct { background: rgb(220, 233, 223); }
+
+td.meta.wrong { background: rgb(243, 201, 194); }
+
+.meta-icon { display: inline-block; font-size: 15px; font-weight: 900; margin-left: 4px; vertical-align: middle; }
+
+.meta-icon.ok { color: rgb(46, 107, 78); }
+
+.meta-icon.ko { color: rgb(161, 60, 60); }
+
+.meta-hint { font-size: 9.5px; font-weight: 700; color: var(--pompeii-dark); margin-top: 3px; white-space: nowrap; }
+
+.row-note { display: block; font-size: 10.5px; font-style: italic; color: var(--pompeii-dark); margin-top: 3px; white-space: normal; line-height: 1.3; max-width: 220px; }
+
+.neuter-check { width: 20px; height: 20px; cursor: pointer; accent-color: var(--verdigris-dark); }
+
+.controls { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 30px; flex-wrap: wrap; }
+
+button.action { font-family: Cinzel, serif; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; padding: 12px 26px; border-radius: 2px; cursor: pointer; border: 1px solid transparent; transition: transform 0.1s, box-shadow 0.15s; }
+
+button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+button:active { transform: translateY(1px); }
+
+.btn-primary { background: var(--pompeii); color: rgb(251, 243, 228); box-shadow: rgba(124, 46, 38, 0.3) 0px 4px 10px; }
+
+.btn-primary:hover { background: var(--pompeii-dark); }
+
+.btn-secondary { background: transparent; color: var(--ink-soft); border-color: var(--line); }
+
+.btn-secondary:hover { background: rgba(0, 0, 0, 0.05); }
+
+.score { font-family: Cinzel, serif; font-size: 15px; color: var(--verdigris-dark); min-height: 22px; text-align: center; margin-top: 16px; }
+
+.legend { display: flex; justify-content: center; gap: 22px; flex-wrap: wrap; margin-top: 14px; font-size: 13px; color: var(--ink-soft); }
+
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+.swatch { width: 13px; height: 13px; display: inline-block; border: 1px solid var(--line); }
+
+.sw-correct { background: rgb(220, 233, 223); }
+
+.sw-wrong { background: rgb(241, 220, 216); }
+
+.sw-missed { background: rgb(250, 245, 230); box-shadow: inset 0 0 0 2px var(--gold); }
+
+footer { text-align: center; margin-top: 46px; font-size: 13px; color: var(--ink-soft); font-style: italic; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+
+details.synthesis { margin: 0px auto 30px; max-width: 900px; border: 1px solid var(--line); background: var(--papyrus-deep); box-shadow: rgba(60, 45, 20, 0.12) 0px 4px 14px; }
+
+details.synthesis summary { cursor: pointer; list-style: none; font-family: Cinzel, serif; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--verdigris-dark); padding: 14px 20px; display: flex; align-items: center; gap: 10px; }
+
+details.synthesis summary::-webkit-details-marker { display: none; }
+
+details.synthesis summary::before { content: "▶"; font-size: 12px; color: var(--pompeii); transition: transform 0.15s; }
+
+details.synthesis[open] summary::before { transform: rotate(90deg); }
+
+details.synthesis summary:hover { background: rgba(0, 0, 0, 0.03); }
+
+details.synthesis.locked summary { cursor: not-allowed; opacity: 0.5; }
+
+details.synthesis.locked summary::before { content: "🔒"; font-size: 12px; }
+
+details.synthesis.locked summary:hover { background: none; }
+
+.lock-note { font-family: "EB Garamond", serif; font-style: italic; font-size: 12px; letter-spacing: normal; text-transform: none; color: var(--ink-soft); }
+
+.synth-body { padding: 6px 20px 24px; }
+
+.synth-block + .synth-block { margin-top: 26px; }
+
+.synth-title { font-family: Cinzel, serif; font-size: 13px; letter-spacing: 0.18em; text-align: center; color: var(--ink); margin: 0px 0px 10px; }
+
+.synth-scroll { overflow-x: auto; }
+
+table.synth { border-collapse: collapse; width: 100%; min-width: 560px; background: rgb(255, 255, 255); }
+
+table.synth th, table.synth td { border: 1px solid rgb(68, 68, 68); text-align: center; padding: 7px 6px; font-size: 14px; }
+
+table.synth thead th { font-family: Cinzel, serif; font-size: 12.5px; letter-spacing: 0.04em; background: rgb(255, 255, 255); }
+
+table.synth thead tr.sub th { font-size: 11px; font-style: italic; font-weight: 400; }
+
+table.synth tbody th { font-style: italic; font-weight: 600; text-align: left; padding-left: 10px; background: rgb(255, 255, 255); white-space: nowrap; }
+
+table.synth td { font-weight: 600; color: rgb(28, 28, 28); }
+
+table.synth tr.thick-below th, table.synth tr.thick-below td { border-bottom: 3px solid rgb(17, 17, 17); }
+
+table.synth tr.thick-row th, table.synth tr.thick-row td { border-top: 3px solid rgb(17, 17, 17); border-bottom: 3px solid rgb(17, 17, 17); }
+
+table.synth td.thick-cell { border: 3px solid rgb(17, 17, 17); }
+
+.k-pink { background: rgb(232, 203, 234); }
+
+.k-red { background: rgb(234, 27, 27); color: rgb(255, 255, 255); }
+
+.k-lightblue { background: rgb(190, 230, 244); }
+
+.k-mint { background: rgb(199, 234, 191); }
+
+.k-orange { background: rgb(245, 162, 43); }
+
+.k-purple { background: rgb(122, 63, 160); color: rgb(255, 255, 255); }
+
+.k-blue { background: rgb(62, 143, 203); color: rgb(255, 255, 255); }
+
+.k-yellow { background: rgb(255, 240, 77); }
+
+.k-magenta { background: rgb(255, 99, 203); }
+
+.k-green { background: rgb(79, 174, 73); color: rgb(255, 255, 255); }
+
+.k-gray { background: rgb(156, 156, 156); color: rgb(255, 255, 255); }
+
+.k-tan { background: rgb(246, 221, 192); }
+
+.k-lavender { background: rgb(217, 195, 236); }
+
+.k-pinkbright { background: rgb(245, 143, 192); }
+
+.k-brown { background: rgb(176, 90, 42); color: rgb(255, 255, 255); }
+
+.k-white { background: rgb(255, 255, 255); }
+
+.synth-body.compact { padding: 6px 14px 16px; }
+
+.synth-body.compact .synth-title { font-size: 11px; margin-bottom: 6px; }
+
+.synth-body.compact .synth-block + .synth-block { margin-top: 16px; }
+
+.synth-body.compact table.synth { min-width: 420px; }
+
+.synth-body.compact table.synth th, .synth-body.compact table.synth td { padding: 3px 4px; font-size: 10.5px; }
+
+.synth-body.compact table.synth thead th { font-size: 9.5px; }
+
+.synth-body.compact table.synth thead tr.sub th { font-size: 8.5px; }
+
+td[data-ref].ref-highlight { position: relative; z-index: 2; animation: 1.1s ease-in-out 0s 2 normal none running ref-pulse; border: 4px solid rgb(215, 38, 61) !important; }
+
+td[data-ref].ref-highlight::after { content: "✓"; position: absolute; top: -9px; right: -9px; width: 18px; height: 18px; line-height: 18px; background: rgb(215, 38, 61); color: rgb(255, 255, 255); border-radius: 50%; font-size: 12px; font-weight: 900; text-align: center; box-shadow: rgb(255, 255, 255) 0px 0px 0px 2px; z-index: 3; }
+
+@keyframes ref-pulse { 
+  0%, 100% { border-color: rgb(215, 38, 61); }
+  50% { border-color: rgb(17, 17, 17); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  td[data-ref].ref-highlight { animation: none; }
+}
+
+.page { padding-bottom: 110px; }
+
+.mobile-fab { display: flex; justify-content: center; position: fixed; left: 0px; right: 0px; bottom: 0px; padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(to top, var(--papyrus) 65%, rgba(237,227,206,0)); z-index: 50; }
+
+.mobile-fab button { width: 100%; max-width: 420px; padding: 15px 26px; box-shadow: rgba(124, 46, 38, 0.35) 0px 6px 18px; }
+
+.home-fab { position: fixed; top: 14px; left: 14px; z-index: 999; display: flex; align-items: center; gap: 6px; background: linear-gradient(135deg, rgb(185, 129, 42), rgb(107, 30, 35)); color: rgb(255, 255, 255); font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-size: 0.82rem; font-weight: 700; text-decoration: none; padding: 8px 14px; border-radius: 20px; box-shadow: rgba(0, 0, 0, 0.25) 0px 3px 10px; transition: transform 0.15s, box-shadow 0.15s; }
+
+.home-fab:hover { transform: translateY(-2px); box-shadow: rgba(0, 0, 0, 0.3) 0px 5px 14px; }
+
+@media (max-width: 480px) {
+  .home-fab { font-size: 0.72rem; padding: 6px 10px; top: 8px; left: 8px; }
+}
+
+.next-fab { position: fixed; top: 14px; right: 14px; z-index: 999; display: flex; align-items: center; gap: 6px; background: linear-gradient(135deg, rgb(107, 30, 35), rgb(185, 129, 42)); color: rgb(255, 255, 255); font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-size: 0.82rem; font-weight: 700; text-decoration: none; padding: 8px 14px; border-radius: 20px; box-shadow: rgba(0, 0, 0, 0.25) 0px 3px 10px; transition: transform 0.15s, box-shadow 0.15s; }
+
+.next-fab:hover { transform: translateY(-2px); box-shadow: rgba(0, 0, 0, 0.3) 0px 5px 14px; }
+
+@media (max-width: 480px) {
+  .next-fab { font-size: 0.72rem; padding: 6px 10px; top: 8px; right: 8px; }
+}
+/* --- couleurs du tableau des 5 déclinaisons --- */
+.k-pink { background: #f2ceed; color: #1c1c1c; }
+.k-red { background: #f94d4d; color: #1c1c1c; }
+.k-lime { background: #3aed09; color: #1c1c1c; }
+.k-white { background: #ffffff; color: #1c1c1c; }
+.k-orange { background: #fb7e31; color: #1c1c1c; }
+.k-magenta { background: #ff00ff; color: #1c1c1c; }
+.k-lightblue { background: #e5f5ff; color: #1c1c1c; }
+.k-paleyellow { background: #fbfda1; color: #1c1c1c; }
+.k-teal { background: #04cec9; color: #1c1c1c; }
+.k-purple { background: #7030a0; color: #fff; }
+.k-yellow { background: #ffff00; color: #1c1c1c; }
+.k-lgreen { background: #abdb77; color: #1c1c1c; }
+.k-royal { background: #0000ff; color: #fff; }
+.k-sky { background: #2dc8ff; color: #1c1c1c; }
+.k-black { background: #000000; color: #fff; }
+.k-lavender { background: #ccccff; color: #1c1c1c; }
+.k-azure { background: #0081e2; color: #fff; }
+.k-gray1 { background: #e6e6e6; color: #1c1c1c; }
+.k-gray2 { background: #adadad; color: #1c1c1c; }
+.k-orchid { background: #d86dcb; color: #1c1c1c; }
+.k-peach { background: #fae2d5; color: #1c1c1c; }
+.k-blue4 { background: #c1e4f5; color: #1c1c1c; }
+.k-violet { background: #9966ff; color: #fff; }
+.k-dkgreen { background: #2b5d19; color: #fff; }
+.k-gray3 { background: #808080; color: #fff; }
+.k-brown { background: #b24712; color: #fff; }
+.k-ochre { background: #cc9900; color: #fff; }
+.k-white { background:#fff; }
+table.synth td.thick-cell { border: 3px solid rgb(17,17,17); }
+.decl-picker { flex-wrap: nowrap; }
+td.meta { min-width: 168px; }
+.row-note.after { display: none; }
+.row-note.after.show { display: block; }
+.subtitle strong { color: var(--pompeii); font-weight: 600; }
+
+.tabs { display:flex; gap:8px; flex-wrap:wrap; margin:22px 0 6px; justify-content:center; }
+.tab { font-family: 'Cinzel', serif; font-weight:600; font-size:14px; padding:9px 16px; cursor:pointer;
+  border:1.5px solid #A9812E; background:#fbf6ea; color:#5a3a1a; border-radius:6px; }
+.tab .tab-slug { font-family:'EB Garamond', serif; font-weight:500; font-style:italic; margin-left:4px; }
+.tab .tab-score { margin-left:6px; color:#2e7d32; font-weight:700; }
+.tab.active { background:#9C3B30; color:#fff; border-color:#9C3B30; }
+.tab.active .tab-score { color:#fff; }
+.panel { display:none; } .panel.active { display:block; }
+@media (max-width:700px){ .tab{ font-size:13px; padding:8px 11px; } .tab .tab-slug{ display:block; margin:0; } }
+
+</style>
+</head>
+<body>
+<a class="home-fab" href="https://cpgewatteau-valenciennes.github.io/Kh2026-2027/index.html">🏠 Accueil du site</a>
+
+<div class="page">
+
+  <header>
+    <h1>Revoir les cinq déclinaisons</h1>
+    <p class="subtitle">Les pièges des terminaisons identiques en 3 séries</p>
+    <svg class="laurel" viewBox="0 0 220 14" xmlns="http://www.w3.org/2000/svg">
+      <line x1="0" y1="7" x2="90" y2="7" stroke="#A9812E" stroke-width="1"></line>
+      <circle cx="110" cy="7" r="3" fill="#9C3B30"></circle>
+      <line x1="130" y1="7" x2="220" y2="7" stroke="#A9812E" stroke-width="1"></line>
+    </svg>
+  </header>
+
+  <p class="instructions">
+    Pour commencer, coche la déclinaison (1, 2, 3, 4 ou 5), puis la case N si le nom est neutre.
+    Ensuite, en veillant à ne pas mélanger les terminaisons des différentes déclinaisons et en faisant attention aux neutres, clique sur la/les case(s) du tableau correspondant au cas et au nombre.
+    Clique ensuite sur le bouton « Vérifier » sous chaque mot pour contrôler cette ligne. Par ailleurs vous verrez apparaître au-dessus le tableau de synthèse des terminaisons des 5 déclinaisons avec la/les case(s) de la réponse encadrées.
+    Chaque série regroupe des formes qui ont la même terminaison : à toi de voir si elles appartiennent à la même déclinaison…
+  </p>
+
+  <details class="synthesis locked" id="synth-details">
+    <summary>Tableau de synthèse (aide-mémoire) <span class="lock-note">— disponible après avoir cliqué sur Vérifier</span></summary>
+    <div class="synth-body" id="synth-body">
+<div class="synth-block"><div class="synth-title">SINGULIER</div><div class="synth-scroll"><table class="synth"><thead><tr><th></th><th>1°</th><th colspan="2">2°</th><th colspan="4">3°*</th><th colspan="2">4°</th><th>5°</th></tr><tr class="sub"><th></th><th>F (m)</th><th>M (f)</th><th>neutres</th><th colspan="2">MF</th><th>N</th><th>N pari</th><th>M (f)</th><th>neutres</th><th>F (m)</th></tr></thead><tbody><tr><th>nominatif</th><td class="k-pink" data-ref="sg-nom-1">A</td><td class="k-lightblue" data-ref="sg-nom-2">US<br><small>(ER/IR)</small></td><td class="k-lime" data-ref="sg-nom-2n">UM</td><td class="k-white" data-ref="sg-nom-3">-</td><td class="k-orange" data-ref="sg-nom-3is">IS</td><td class="k-white" data-ref="sg-nom-3n">-</td><td class="k-magenta" data-ref="sg-nom-3p">E</td><td class="k-lightblue" data-ref="sg-nom-4">US</td><td class="k-paleyellow" data-ref="sg-nom-4n">U</td><td class="k-teal" data-ref="sg-nom-5">ES</td></tr><tr><th>vocatif</th><td class="k-pink" data-ref="sg-voc-1">A</td><td class="k-magenta" data-ref="sg-voc-2">E<br><small>(ER/IR)</small></td><td class="k-lime" data-ref="sg-voc-2n">UM</td><td class="k-white" data-ref="sg-voc-3">-</td><td class="k-orange" data-ref="sg-voc-3is">IS</td><td class="k-white" data-ref="sg-voc-3n">-</td><td class="k-magenta" data-ref="sg-voc-3p">E</td><td class="k-lightblue" data-ref="sg-voc-4">US</td><td class="k-paleyellow" data-ref="sg-voc-4n">U</td><td class="k-teal" data-ref="sg-voc-5">ES</td></tr><tr><th>accusatif</th><td class="k-red" data-ref="sg-acc-1">AM</td><td class="k-lime" colspan="2" data-ref="sg-acc-2 sg-acc-2n">UM</td><td class="k-purple" colspan="2" data-ref="sg-acc-3">EM</td><td class="k-white" data-ref="sg-acc-3n">-</td><td class="k-magenta" data-ref="sg-acc-3p">E</td><td class="k-lime" data-ref="sg-acc-4">UM</td><td class="k-paleyellow" data-ref="sg-acc-4n">U</td><td class="k-purple" data-ref="sg-acc-5">EM</td></tr><tr class="thick-row"><th>génitif</th><td class="k-yellow" data-ref="sg-gen-1">AE</td><td class="k-lgreen" colspan="2" data-ref="sg-gen-2 sg-gen-2n">I</td><td class="k-orange" colspan="4" data-ref="sg-gen-3 sg-gen-3n sg-gen-3p">IS</td><td class="k-lightblue" colspan="2" data-ref="sg-gen-4 sg-gen-4n">US</td><td class="k-royal" data-ref="sg-gen-5">EI</td></tr><tr><th>datif</th><td class="k-yellow" data-ref="sg-dat-1">AE</td><td class="k-sky" colspan="2" data-ref="sg-dat-2 sg-dat-2n">O</td><td class="k-lgreen" colspan="4" data-ref="sg-dat-3 sg-dat-3n sg-dat-3p">I</td><td class="k-black" colspan="2" data-ref="sg-dat-4 sg-dat-4n">UI</td><td class="k-royal" data-ref="sg-dat-5">EI</td></tr><tr><th>ablatif</th><td class="k-pink" data-ref="sg-abl-1">A</td><td class="k-sky" colspan="2" data-ref="sg-abl-2 sg-abl-2n">O</td><td class="k-magenta" colspan="3" data-ref="sg-abl-3 sg-abl-3n">E</td><td class="k-lgreen" data-ref="sg-abl-3p">I</td><td class="k-paleyellow" colspan="2" data-ref="sg-abl-4 sg-abl-4n">U</td><td class="k-magenta" data-ref="sg-abl-5">E</td></tr></tbody></table></div></div><div class="synth-block"><div class="synth-title">PLURIEL</div><div class="synth-scroll"><table class="synth"><thead><tr><th></th><th>1°</th><th colspan="2">2°</th><th colspan="2">3°*</th><th colspan="2">4°</th><th>5°</th></tr><tr class="sub"><th></th><th>F (m)</th><th>M (f)</th><th>neutres</th><th>MF</th><th>neutres</th><th>M (f)</th><th>neutres</th><th>F (m)</th></tr></thead><tbody><tr><th>nominatif</th><td class="k-yellow" data-ref="pl-nom-1">AE</td><td class="k-lgreen" data-ref="pl-nom-2">I</td><td class="k-pink" data-ref="pl-nom-2n">A</td><td class="k-teal" data-ref="pl-nom-3">ES</td><td class="k-orchid" data-ref="pl-nom-3n">(IA)</td><td class="k-blue4" data-ref="pl-nom-4">US</td><td class="k-violet" data-ref="pl-nom-4n">UA</td><td class="k-teal" data-ref="pl-nom-5">ES</td></tr><tr><th>vocatif</th><td class="k-yellow" data-ref="pl-voc-1">AE</td><td class="k-lgreen" data-ref="pl-voc-2">I</td><td class="k-pink" data-ref="pl-voc-2n">A</td><td class="k-teal" data-ref="pl-voc-3">ES</td><td class="k-orchid" data-ref="pl-voc-3n">(IA)</td><td class="k-blue4" data-ref="pl-voc-4">US</td><td class="k-violet" data-ref="pl-voc-4n">UA</td><td class="k-teal" data-ref="pl-voc-5">ES</td></tr><tr><th>accusatif</th><td class="k-lavender" data-ref="pl-acc-1">AS</td><td class="k-azure" data-ref="pl-acc-2">OS</td><td class="k-pink" data-ref="pl-acc-2n">A</td><td class="k-teal" data-ref="pl-acc-3">ES</td><td class="k-orchid" data-ref="pl-acc-3n">(IA)</td><td class="k-blue4" data-ref="pl-acc-4">US</td><td class="k-violet" data-ref="pl-acc-4n">UA</td><td class="k-teal" data-ref="pl-acc-5">ES</td></tr><tr class="thick-row"><th>génitif</th><td class="k-gray1" data-ref="pl-gen-1">ARUM</td><td class="k-gray2" colspan="2" data-ref="pl-gen-2 pl-gen-2n">ORUM</td><td class="k-peach" colspan="2" data-ref="pl-gen-3 pl-gen-3n">(I)UM</td><td class="k-dkgreen" colspan="2" data-ref="pl-gen-4 pl-gen-4n">UUM</td><td class="k-gray3" data-ref="pl-gen-5">ERUM</td></tr><tr><th>datif</th><td class="k-orange" data-ref="pl-dat-1">IS</td><td class="k-orange" colspan="2" data-ref="pl-dat-2 pl-dat-2n">IS</td><td class="k-brown" colspan="2" data-ref="pl-dat-3 pl-dat-3n">IBUS</td><td class="k-brown" colspan="2" data-ref="pl-dat-4 pl-dat-4n">IBUS</td><td class="k-ochre" data-ref="pl-dat-5">EBUS</td></tr><tr><th>ablatif</th><td class="k-orange" data-ref="pl-abl-1">IS</td><td class="k-orange" colspan="2" data-ref="pl-abl-2 pl-abl-2n">IS</td><td class="k-brown" colspan="2" data-ref="pl-abl-3 pl-abl-3n">IBUS</td><td class="k-brown" colspan="2" data-ref="pl-abl-4 pl-abl-4n">IBUS</td><td class="k-ochre" data-ref="pl-abl-5">EBUS</td></tr></tbody></table></div><p class="lock-note" style="text-align:center;margin:6px 0 0;">* le tableau est simplifié et ne tient pas compte des faux imparisyllabiques.</p></div>
+    </div>
+  </details>
+
+  <div class="tabs" role="tablist"><button type="button" class="tab active" role="tab" aria-selected="true">Série 1 <span class="tab-slug">-us et -um</span> <small class="tab-score" id="tabscore-1"></small></button><button type="button" class="tab" role="tab" aria-selected="false">Série 2 <span class="tab-slug">-a et -as</span> <small class="tab-score" id="tabscore-2"></small></button><button type="button" class="tab" role="tab" aria-selected="false">Série 3 <span class="tab-slug">-is, -es et -er</span> <small class="tab-score" id="tabscore-3"></small></button></div>
+  <section class="panel active" id="panel-1">
+    <p class="instructions" style="margin-top:6px;"><span class="hint">Toutes les formes de cette série se terminent par -US ou -UM… mais est-ce la même déclinaison ?</span></p>
+    <div class="table-wrap">
+      <table id="decl-table-1">
+        <thead>
+        <tr class="grp-row">
+          <th rowspan="2"></th>
+          <th rowspan="2" class="grp-meta">Décl.</th>
+          <th rowspan="2" class="grp-meta">N.</th>
+          <th class="grp-sg" colspan="6">Singulier</th>
+          <th class="grp-pl" colspan="6">Pluriel</th>
+        </tr>
+        <tr>
+          <th class="case-sg">Nom</th><th class="case-sg">Voc</th><th class="case-sg">Acc</th><th class="case-sg">Gén</th><th class="case-sg">Dat</th><th class="case-sg">Abl</th>
+          <th class="case-pl">Nom</th><th class="case-pl">Voc</th><th class="case-pl">Acc</th><th class="case-pl">Gén</th><th class="case-pl">Dat</th><th class="case-pl">Abl</th>
+        </tr>
+      </thead>
+        <tbody id="decl-body-1"></tbody>
+      </table>
+    </div>
+    <div class="controls">
+      <button class="action btn-primary verify-all" id="verify-btn-1">Tout vérifier</button>
+      <button class="action btn-secondary" id="reset-btn-1">Réinitialiser cette série</button>
+    </div>
+    <p class="score" id="score-1"></p>
+  </section>
+  <section class="panel" id="panel-2">
+    <p class="instructions" style="margin-top:6px;"><span class="hint">Toutes les formes de cette série se terminent par -A ou -AS : fais bien attention au nombre, au cas et au genre !</span></p>
+    <div class="table-wrap">
+      <table id="decl-table-2">
+        <thead>
+        <tr class="grp-row">
+          <th rowspan="2"></th>
+          <th rowspan="2" class="grp-meta">Décl.</th>
+          <th rowspan="2" class="grp-meta">N.</th>
+          <th class="grp-sg" colspan="6">Singulier</th>
+          <th class="grp-pl" colspan="6">Pluriel</th>
+        </tr>
+        <tr>
+          <th class="case-sg">Nom</th><th class="case-sg">Voc</th><th class="case-sg">Acc</th><th class="case-sg">Gén</th><th class="case-sg">Dat</th><th class="case-sg">Abl</th>
+          <th class="case-pl">Nom</th><th class="case-pl">Voc</th><th class="case-pl">Acc</th><th class="case-pl">Gén</th><th class="case-pl">Dat</th><th class="case-pl">Abl</th>
+        </tr>
+      </thead>
+        <tbody id="decl-body-2"></tbody>
+      </table>
+    </div>
+    <div class="controls">
+      <button class="action btn-primary verify-all" id="verify-btn-2">Tout vérifier</button>
+      <button class="action btn-secondary" id="reset-btn-2">Réinitialiser cette série</button>
+    </div>
+    <p class="score" id="score-2"></p>
+  </section>
+  <section class="panel" id="panel-3">
+    <p class="instructions" style="margin-top:6px;"><span class="hint">Toutes les formes de cette série se terminent par -IS, -ES ou -ER : la déclinaison ne se devine pas à la terminaison !</span></p>
+    <div class="table-wrap">
+      <table id="decl-table-3">
+        <thead>
+        <tr class="grp-row">
+          <th rowspan="2"></th>
+          <th rowspan="2" class="grp-meta">Décl.</th>
+          <th rowspan="2" class="grp-meta">N.</th>
+          <th class="grp-sg" colspan="6">Singulier</th>
+          <th class="grp-pl" colspan="6">Pluriel</th>
+        </tr>
+        <tr>
+          <th class="case-sg">Nom</th><th class="case-sg">Voc</th><th class="case-sg">Acc</th><th class="case-sg">Gén</th><th class="case-sg">Dat</th><th class="case-sg">Abl</th>
+          <th class="case-pl">Nom</th><th class="case-pl">Voc</th><th class="case-pl">Acc</th><th class="case-pl">Gén</th><th class="case-pl">Dat</th><th class="case-pl">Abl</th>
+        </tr>
+      </thead>
+        <tbody id="decl-body-3"></tbody>
+      </table>
+    </div>
+    <div class="controls">
+      <button class="action btn-primary verify-all" id="verify-btn-3">Tout vérifier</button>
+      <button class="action btn-secondary" id="reset-btn-3">Réinitialiser cette série</button>
+    </div>
+    <p class="score" id="score-3"></p>
+  </section>
+
+  <div class="legend" id="legend">
+    <span><span class="swatch sw-correct"></span> réponse correcte</span>
+    <span><span class="swatch sw-wrong"></span> réponse marquée à tort</span>
+    <span><span class="swatch sw-missed"></span> case correcte non marquée</span>
+  </div>
+
+  <footer>Declinationes discere, disciplina est — apprendre les déclinaisons est une discipline.</footer>
+</div>
+
+<div class="mobile-fab" id="mobile-fab" style="display:none;">
+  <button class="action btn-primary" id="verify-btn-fab">Tout vérifier</button>
+</div>
+
+<script>
+
+(function(){
+var SERIES=[[{"form": "mus", "entry": "mus, muris (M)", "decl": 3, "neuter": false, "cells": ["s-nom", "s-voc"], "refs": ["sg-nom-3", "sg-voc-3"], "note": "⚠ mus, muris (m., 3e décl.) : au nominatif et au vocatif singuliers, la terminaison n'a rien de régulier. Dans mon tableau, c'est la case blanche avec - (signifiant qu'on a des terminaisons variées !). Regarde toujours le génitif (muris : en -IS, donc 3e déclinaison).", "after": true}, {"form": "acus", "entry": "acus, eris (N)", "decl": 3, "neuter": true, "cells": ["s-nom", "s-voc", "s-acc"], "refs": ["sg-nom-3n", "sg-voc-3n", "sg-acc-3n"], "note": "⚠ Attention à bien intégrer que la terminaison -US au nominatif singulier ne signifie pas forcément que c'est un nom de la 2e décl. M(F) (type dominus). Vous devez TOUJOURS (et pas seulement ici) regarder quel est son génitif pour savoir à quelle déclinaison il appartient, et ensuite vous regardez dans cette déclinaison où telle ou telle terminaison peut se trouver. Ici c'est bien un mot de la 3e déclinaison (car génitif singulier en -IS), qui plus est un neutre (acus, eris, n., « la balle du grain, l'enveloppe du blé »). Rappel : au neutre, le nominatif, le vocatif et l'accusatif ont toujours la même forme, quelle que soit la déclinaison. Donc « acus » est ici nominatif, vocatif ET accusatif singulier. Dans mon tableau, ce sera la case blanche avec - (signifiant qu'on a des terminaisons variées !). Tu peux retenir qu'il y a pas mal de neutres imparisyllabiques en -US (ex. : corpus, oris = corps ; vulnus, eris = blessure). Attention aussi : il existe d'autres « acus », appartenant à d'autres déclinaisons (tu les rencontreras plus loin !).", "after": true}, {"form": "status", "entry": "status, us (M)", "decl": 4, "neuter": false, "cells": ["s-nom", "s-voc", "s-gen", "p-nom", "p-voc", "p-acc"], "refs": ["sg-nom-4", "sg-voc-4", "sg-gen-4", "pl-nom-4", "pl-voc-4", "pl-acc-4"], "note": "⚠ Rappel : j'ai dit plusieurs fois que la 4e déclinaison était « pleine de -US » : en effet elle comporte à 6 reprises la terminaison -US (nominatif, vocatif et génitif singuliers ; nominatif, vocatif et accusatif pluriels), ce qui ne facilite pas les choses en version. Regarde toujours le génitif : status, us → 4e déclinaison.", "after": true}, {"form": "vulnus", "entry": "vulnus, eris (N)", "decl": 3, "neuter": true, "cells": ["s-nom", "s-voc", "s-acc"], "refs": ["sg-nom-3n", "sg-voc-3n", "sg-acc-3n"], "note": "⚠ Un nouveau neutre imparisyllabique en -US (vulnus, eris = blessure). Rappel : au neutre, le nominatif, le vocatif et l'accusatif ont toujours la même forme, quelle que soit la déclinaison. Ici : nominatif, vocatif ET accusatif singuliers, soit la case blanche avec - (signifiant qu'on a des terminaisons variées !).", "after": true}, {"form": "acus", "entry": "acus, i (M)", "decl": 2, "neuter": false, "cells": ["s-nom"], "refs": ["sg-nom-2"], "note": "⚠ Ouh là là ! Attention : j'ai dit tout à l'heure qu'il y avait des homonymes, il faut s'en méfier ! Ici, acus, i (m., « l'aiguille de mer », un poisson) n'est pas du tout le même mot que acus, eris (n., « la balle du grain ») : ni la même déclinaison, ni le même genre, ni le même sens. En version, il faut donc absolument regarder le numéro de la déclinaison (et le sens !). Et ce n'est pas fini : il y en a encore un troisième…", "after": true}, {"form": "numerus", "entry": "numerus, i (M)", "decl": 2, "neuter": false, "cells": ["s-nom"], "refs": ["sg-nom-2"]}, {"form": "equum", "entry": "equus, i (M)", "decl": 2, "neuter": false, "cells": ["s-acc"], "refs": ["sg-acc-2"], "note": "⚠ Si tu t'es trompé(e) sur « equum », ne serait-ce pas en le confondant avec le génitif pluriel de la 4e déclinaison (-UUM, comme exercituum juste après) ? Pourquoi « equum » finit-il par -UUM tout en étant bien un accusatif singulier de la 2e déclinaison ? Parce que le radical est equ- (le son « qu » s'écrit q + u) : equ- + -UM (accusatif singulier de la 2e décl., comme dominum). Le premier u appartient au radical, pas à la terminaison. Regarde toujours le génitif : equus, i → 2e déclinaison.", "after": true}, {"form": "acus", "entry": "acus, us (F)", "decl": 4, "neuter": false, "cells": ["s-nom", "s-voc", "s-gen", "p-nom", "p-voc", "p-acc"], "refs": ["sg-nom-4", "sg-voc-4", "sg-gen-4", "pl-nom-4", "pl-voc-4", "pl-acc-4"], "note": "⚠ Voici le troisième et dernier « acus » : acus, us (f., « l'aiguille » à coudre, à broder), de la 4e déclinaison. Bilan des trois homonymes : acus, eris (n., 3e décl., « la balle du grain ») ; acus, i (m., 2e décl., « l'aiguille de mer », un poisson) ; acus, us (f., 4e décl., « l'aiguille »). Rappel : j'ai dit plusieurs fois que la 4e déclinaison était « pleine de -US » : en effet elle comporte à 6 reprises la terminaison -US (nominatif, vocatif et génitif singuliers ; nominatif, vocatif et accusatif pluriels), ce qui ne facilite pas les choses en version. Regarde toujours le numéro de la déclinaison et le sens !", "after": true}, {"form": "exercituum", "entry": "exercitus, us (M)", "decl": 4, "neuter": false, "cells": ["p-gen"], "refs": ["pl-gen-4"]}], [{"form": "hasta", "entry": "hasta, ae (F)", "decl": 1, "neuter": false, "cells": ["s-nom", "s-voc", "s-abl"], "refs": ["sg-nom-1", "sg-voc-1", "sg-abl-1"], "note": "⚠ Confusion à éviter : -A au nominatif singulier = 1re déclinaison (hasta, ae), mais -A est aussi la terminaison des neutres au pluriel (2e, 3e, 4e déclinaisons), comme les formes suivantes. Regarde toujours le génitif et le genre.", "after": true}, {"form": "vincula", "entry": "vinculum, i (N)", "decl": 2, "neuter": true, "cells": ["p-nom", "p-voc", "p-acc"], "refs": ["pl-nom-2n", "pl-voc-2n", "pl-acc-2n"], "note": "⚠ Rappel : au neutre, le nominatif, le vocatif et l'accusatif ont toujours la même forme, quelle que soit la déclinaison. Ici vincula (vinculum, i, n., 2e décl.) est un nominatif, vocatif ET accusatif PLURIELS. Ne pas confondre avec -A de la 1re déclinaison (singulier !).", "after": true}, {"form": "amicitia", "entry": "amicitia, ae (F)", "decl": 1, "neuter": false, "cells": ["s-nom", "s-voc", "s-abl"], "refs": ["sg-nom-1", "sg-voc-1", "sg-abl-1"], "note": "⚠ Confusion à éviter : à la 1re déclinaison, -A correspond à 3 cases (nominatif, vocatif ET ablatif singuliers), mais -A, c'est aussi le pluriel neutre des autres déclinaisons. Seul le génitif (amicitiae) et le contexte tranchent.", "after": true}, {"form": "genua", "entry": "genu, us (N)", "decl": 4, "neuter": true, "cells": ["p-nom", "p-voc", "p-acc"], "refs": ["pl-nom-4n", "pl-voc-4n", "pl-acc-4n"], "note": "⚠ Rappel : au neutre, le nominatif, le vocatif et l'accusatif ont toujours la même forme, quelle que soit la déclinaison. Ici genua (genu, us, n., 4e décl.) est un nom., voc. ET acc. pluriel en -UA. Ne pas confondre avec les -A du pluriel neutre de la 2e déclinaison (vincula) ni avec la 3e (-A, -IA).", "after": true}, {"form": "retia", "entry": "rete, is (N)", "decl": 3, "neuter": true, "cells": ["p-nom", "p-voc", "p-acc"], "refs": ["pl-nom-3n", "pl-voc-3n", "pl-acc-3n"], "note": "⚠ Rappel : au neutre, le nominatif, le vocatif et l'accusatif ont toujours la même forme, quelle que soit la déclinaison. Ici retia (rete, is, n., 3e décl.) : pluriel en -IA (case (IA) du tableau). Ne pas confondre avec vincula (2e, -A) ni genua (4e, -UA).", "after": true}, {"form": "vulnera", "entry": "vulnus, eris (N)", "decl": 3, "neuter": true, "cells": ["p-nom", "p-voc", "p-acc"], "refs": ["pl-nom-3n", "pl-voc-3n", "pl-acc-3n"], "note": "⚠ Rappel : au neutre, le nominatif, le vocatif et l'accusatif ont toujours la même forme, quelle que soit la déclinaison. Ici vulnera (vulnus, eris, n., 3e décl.) : nom., voc. ET acc. pluriel en -A. Ne pas confondre avec vincula (2e) : seul le génitif singulier (vulneris) te dit que c'est la 3e déclinaison.", "after": true}, {"form": "ancillas", "entry": "ancilla, ae (F)", "decl": 1, "neuter": false, "cells": ["p-acc"], "refs": ["pl-acc-1"], "note": "⚠ Confusion à éviter : -AS est l'accusatif pluriel de la 1re déclinaison (ancillas), mais -AS peut aussi être la finale d'un nominatif singulier de la 3e déclinaison (calamitas, juste après).", "after": true}, {"form": "calamitas", "entry": "calamitas, atis (F)", "decl": 3, "neuter": false, "cells": ["s-nom", "s-voc"], "refs": ["sg-nom-3", "sg-voc-3"], "note": "⚠ Confusion à éviter : calamitas (calamitas, atis, f., 3e décl.) finit comme ancillas (-AS), mais c'est ici un nominatif/vocatif SINGULIER. Dans mon tableau, c'est la case blanche avec - (signifiant qu'on a des terminaisons variées !). Regarde toujours le génitif (-atis).", "after": true}], [{"form": "sellis", "entry": "sella, ae (F)", "decl": 1, "neuter": false, "cells": ["p-dat", "p-abl"], "refs": ["pl-dat-1", "pl-abl-1"], "note": "⚠ Confusion à éviter : -IS = datif/ablatif pluriels de la 1re (sellis) ET de la 2e (modis) : même forme ! Mais -IS peut aussi être le nominatif singulier (orbis) ou le génitif singulier (nubis) de la 3e déclinaison.", "after": true}, {"form": "modis", "entry": "modus, i (M)", "decl": 2, "neuter": false, "cells": ["p-dat", "p-abl"], "refs": ["pl-dat-2", "pl-abl-2"], "note": "⚠ Confusion à éviter : modis (modus, i, 2e décl.) est identique à sellis (1re) pour -IS au datif/ablatif pluriel. Seul le génitif du dictionnaire (modi / sellae) te dit de quelle déclinaison il s'agit.", "after": true}, {"form": "orbis", "entry": "orbis, is (M)", "decl": 3, "neuter": false, "cells": ["s-nom", "s-voc", "s-gen"], "refs": ["sg-nom-3is", "sg-voc-3is", "sg-gen-3"], "note": "⚠ Confusion à éviter : orbis, is est ici un nominatif/vocatif singulier en -IS (case orange), alors que « nubis » (juste après) est un génitif. Même terminaison, rôle différent.", "after": true}, {"form": "nubis", "entry": "nubes, is (F)", "decl": 3, "neuter": false, "cells": ["s-gen"], "refs": ["sg-gen-3"], "note": "⚠ Confusion à éviter : nubis est ici le génitif de nubes, is (f.), et non un nominatif comme orbis. Regarde toujours le nominatif ET le génitif du dictionnaire.", "after": true}, {"form": "pulvis", "entry": "pulvis, eris (M)", "decl": 3, "neuter": false, "cells": ["s-nom", "s-voc"], "refs": ["sg-nom-3", "sg-voc-3"], "note": "⚠ Confusion à éviter : pulvis, eris : nominatif en -IS mais génitif en -ERIS ; ne pas le ranger avec orbis, is. Dans mon tableau, c'est la case blanche avec - (signifiant qu'on a des terminaisons variées !).", "after": true}, {"form": "clades", "entry": "clades, is (F)", "decl": 3, "neuter": false, "cells": ["s-nom", "s-voc", "p-nom", "p-voc", "p-acc"], "refs": ["sg-nom-3", "sg-voc-3", "pl-nom-3", "pl-voc-3", "pl-acc-3"], "note": "⚠ Confusion à éviter : -ES = nominatif singulier de clades, is (3e ; la case blanche avec - (signifiant qu'on a des terminaisons variées !)) ET nominatif/vocatif/accusatif pluriels. Ne pas confondre avec fides, ei (5e) juste après.", "after": true}, {"form": "fides", "entry": "fides, ei (F)", "decl": 5, "neuter": false, "cells": ["s-nom", "s-voc", "p-nom", "p-voc", "p-acc"], "refs": ["sg-nom-5", "sg-voc-5", "pl-nom-5", "pl-voc-5", "pl-acc-5"], "note": "⚠ Confusion à éviter : fides, ei (5e décl.) a la même forme -ES que clades (3e) au nominatif/vocatif singuliers et pluriels ; seul le génitif tranche (-EI pour la 5e).", "after": true}, {"form": "ager", "entry": "ager, agri (M)", "decl": 2, "neuter": false, "cells": ["s-nom", "s-voc"], "refs": ["sg-nom-2", "sg-voc-2"], "note": "⚠ Confusion à éviter : ager, agri (2e décl.) : nominatif sans -US (case « US (ER/IR) » du tableau). Ne pas le confondre avec imber, imbris (3e) ni avec iter, itineris (3e neutre).", "after": true}, {"form": "iter", "entry": "iter, itineris (N)", "decl": 3, "neuter": true, "cells": ["s-nom", "s-voc", "s-acc"], "refs": ["sg-nom-3n", "sg-voc-3n", "sg-acc-3n"], "note": "⚠ Rappel : au neutre, le nominatif, le vocatif et l'accusatif ont toujours la même forme, quelle que soit la déclinaison. Ici iter, itineris (n., 3e décl.) : nominatif, vocatif ET accusatif singuliers, soit la case blanche avec - (signifiant qu'on a des terminaisons variées !). Ne pas confondre avec ager.", "after": true}, {"form": "imber", "entry": "imber, imbris (M)", "decl": 3, "neuter": false, "cells": ["s-nom", "s-voc"], "refs": ["sg-nom-3", "sg-voc-3"], "note": "⚠ Confusion à éviter : imber, imbris (m., 3e décl.) ressemble à ager, agri (2e) : même finale en -ER, mais pas la même déclinaison. Dans mon tableau, c'est la case blanche avec - (signifiant qu'on a des terminaisons variées !).", "after": true}]];
+var SHORT="⚠ Cette même forme en version pourrait venir d'un nom d'une autre déclinaison et vous faire faire des erreurs !";
+var det=document.getElementById('synth-details');
+var synthBody=document.getElementById('synth-body');
+var panels=[];
+function anyVerified(){return panels.some(function(p){return p.state.some(function(s){return s.verified;});});}
+function init(ROWS,sfx){
+var CASES=['nom','voc','acc','gen','dat','abl'];
+var NC=['Nom','Voc','Acc','Gén','Dat','Abl'];
+var tbody=document.getElementById('decl-body-'+sfx);
+var scoreEl=document.getElementById('score-'+sfx);
+var state=ROWS.map(function(){return {decl:null,neuter:false,marks:{},verified:false,ok:false};});
+var trs=[];
+function mk(tag,cls,html){var e=document.createElement(tag);if(cls)e.className=cls;if(html!==undefined)e.innerHTML=html;return e;}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+
+ROWS.forEach(function(r,i){
+  var tr=mk('tr');
+  var th=mk('th','word-cell');th.setAttribute('data-row',i);
+  th.appendChild(mk('span','lat',esc(r.form)));
+  th.appendChild(mk('span','entry',esc(r.entry)));
+  if(r.note){
+    var n=mk('span','row-note'+(r.after?' after':''),esc(r.after?r.note:SHORT));
+    n.setAttribute('data-full',r.note);n.setAttribute('data-short',r.after?'':SHORT);
+    th.appendChild(n);
+  }
+  var vb=mk('button','row-verify-btn','Vérifier');vb.type='button';
+  vb.addEventListener('click',function(){verifyRow(i,true);});
+  th.appendChild(vb);tr.appendChild(th);
+  // déclinaison
+  var td1=mk('td','meta');td1.setAttribute('data-row',i);
+  var pk=mk('div','decl-picker');
+  [1,2,3,4,5].forEach(function(d){
+    var b=mk('button','decl-btn',String(d));b.type='button';
+    b.addEventListener('click',function(){
+      state[i].decl=(state[i].decl===d)?null:d;
+      Array.prototype.forEach.call(pk.children,function(c){c.classList.toggle('selected',state[i].decl===+c.textContent);});
+      clearFeedback(i);
+    });
+    pk.appendChild(b);
+  });
+  td1.appendChild(pk);tr.appendChild(td1);
+  // neutre
+  var td2=mk('td','meta');td2.setAttribute('data-row',i);
+  var cb=mk('input','neuter-check');cb.type='checkbox';cb.setAttribute('aria-label',r.form+' est neutre');
+  cb.addEventListener('change',function(){state[i].neuter=cb.checked;clearFeedback(i);});
+  td2.appendChild(cb);tr.appendChild(td2);
+  // cases
+  ['s','p'].forEach(function(n){CASES.forEach(function(c){
+    var key=n+'-'+c;
+    var td=mk('td','cell'+(n==='p'?' pl':''));td.setAttribute('data-row',i);td.setAttribute('data-key',key);
+    td.addEventListener('click',function(){
+      if(state[i].marks[key])delete state[i].marks[key];else state[i].marks[key]=true;
+      renderCell(td,i,key);clearFeedback(i);
+    });
+    tr.appendChild(td);
+  });});
+  tbody.appendChild(tr);trs.push(tr);
+});
+
+function renderCell(td,i,key){td.innerHTML=state[i].marks[key]?'<span class="mark">X</span>':'';}
+
+function clearFeedback(i){
+  var tr=trs[i],s=state[i];
+  s.verified=false;s.ok=false;
+  var th=tr.querySelector('th.word-cell');
+  th.classList.remove('row-checked-ok','row-checked-err','active-ref');
+  var st=th.querySelector('.row-status');if(st)st.remove();
+  var metas=tr.querySelectorAll('td.meta');
+  Array.prototype.forEach.call(metas,function(m){
+    m.classList.remove('correct','wrong');
+    Array.prototype.forEach.call(m.querySelectorAll('.meta-icon,.meta-hint'),function(x){x.remove();});
+  });
+  Array.prototype.forEach.call(tr.querySelectorAll('td.cell'),function(td){td.classList.remove('correct','wrong','missed');});
+  var n=th.querySelector('.row-note');
+  if(n){if(n.classList.contains('after')){n.classList.remove('show');}else{n.textContent=n.getAttribute('data-short');}}
+  updateScore();
+}
+
+function verifyRow(i,highlight){
+  var r=ROWS[i],s=state[i],tr=trs[i];
+  clearFeedback(i);
+  s.verified=true;
+  var th=tr.querySelector('th.word-cell');
+  var metas=tr.querySelectorAll('td.meta');
+  var declOk=(s.decl===r.decl),neuOk=(s.neuter===r.neuter);
+  function mark(m,ok,hint){
+    m.classList.add(ok?'correct':'wrong');
+    m.appendChild(mk('span','meta-icon '+(ok?'ok':'ko'),ok?'✓':'✗'));
+    if(!ok)m.appendChild(mk('div','meta-hint',hint));
+  }
+  mark(metas[0],declOk,'→ '+r.decl);
+  mark(metas[1],neuOk,r.neuter?'→ N':'→ pas neutre');
+  var bad=false;
+  Array.prototype.forEach.call(tr.querySelectorAll('td.cell'),function(td){
+    var key=td.getAttribute('data-key'),m=!!s.marks[key],a=r.cells.indexOf(key)>=0;
+    if(m&&a)td.classList.add('correct');
+    else if(m&&!a){td.classList.add('wrong');bad=true;}
+    else if(!m&&a){td.classList.add('missed');bad=true;}
+  });
+  s.ok=declOk&&neuOk&&!bad;
+  th.classList.add(s.ok?'row-checked-ok':'row-checked-err');
+  th.querySelector('.lat').appendChild(mk('span','row-status',s.ok?'✓':'✗'));
+  var n=th.querySelector('.row-note');
+  if(n){if(n.classList.contains('after')){n.classList.add('show');}else{n.textContent=n.getAttribute('data-full');}}
+  // tableau de synthèse
+  det.classList.remove('locked');det.open=true;
+  clearHighlights();
+  if(highlight){
+    th.classList.add('active-ref');
+    r.refs.forEach(function(ref){
+      Array.prototype.forEach.call(synthBody.querySelectorAll('td[data-ref~="'+ref+'"]'),function(td){td.classList.add('ref-highlight');});
+    });
+  }
+  updateScore();
+}
+function clearHighlights(){
+  Array.prototype.forEach.call(document.querySelectorAll('td[data-ref].ref-highlight'),function(td){td.classList.remove('ref-highlight');});
+  Array.prototype.forEach.call(document.querySelectorAll('th.word-cell.active-ref'),function(t){t.classList.remove('active-ref');});
+}
+function updateScore(){
+  var v=0,ok=0;state.forEach(function(s){if(s.verified){v++;if(s.ok)ok++;}});
+  scoreEl.textContent=ok+' / '+v+' formes vérifiées correctes (sur '+ROWS.length+' au total)';
+  var ts=document.getElementById('tabscore-'+sfx);if(ts)ts.textContent=(ok===ROWS.length)?'✓':(v?ok+'/'+ROWS.length:'');
+}
+function verifyAll(){
+  ROWS.forEach(function(_,i){verifyRow(i,false);});
+  clearHighlights();
+}
+function reset(){
+  ROWS.forEach(function(_,i){
+    state[i]={decl:null,neuter:false,marks:{},verified:false,ok:false};
+    var tr=trs[i];
+    Array.prototype.forEach.call(tr.querySelectorAll('.decl-btn'),function(b){b.classList.remove('selected');});
+    tr.querySelector('.neuter-check').checked=false;
+    Array.prototype.forEach.call(tr.querySelectorAll('td.cell'),function(td){td.innerHTML='';});
+    clearFeedback(i);
+  });
+  clearHighlights();
+  if(!anyVerified()){det.classList.add('locked');det.open=false;}
+  updateScore();
+}
+
+  document.getElementById('verify-btn-'+sfx).addEventListener('click',verifyAll);
+  document.getElementById('reset-btn-'+sfx).addEventListener('click',reset);
+  updateScore();
+  panels.push({verifyAll:verifyAll,state:state,sfx:sfx});
+}
+SERIES.forEach(function(rows,k){init(rows,String(k+1));});
+var active=0;
+var tabs=document.querySelectorAll('.tab'),pans=document.querySelectorAll('.panel');
+function show(k){
+  active=k;
+  Array.prototype.forEach.call(tabs,function(t,j){t.classList.toggle('active',j===k);t.setAttribute('aria-selected',j===k?'true':'false');});
+  Array.prototype.forEach.call(pans,function(p,j){p.classList.toggle('active',j===k);});
+}
+Array.prototype.forEach.call(tabs,function(t,j){t.addEventListener('click',function(){show(j);});});
+det.querySelector('summary').addEventListener('click',function(e){if(det.classList.contains('locked'))e.preventDefault();});
+document.getElementById('verify-btn-fab').addEventListener('click',function(){panels[active].verifyAll();});
+function layout(){
+  var mobile=window.matchMedia('(max-width: 700px)').matches;
+  Array.prototype.forEach.call(document.querySelectorAll('.verify-all'),function(b){b.style.display=mobile?'none':'';});
+  document.getElementById('mobile-fab').style.display=mobile?'flex':'none';
+  synthBody.classList.toggle('compact',mobile);
+}
+window.addEventListener('resize',layout);layout();
+det.classList.add('locked');det.open=false;
+show(0);
+})();
+
+</script>
+</body>
+</html>
