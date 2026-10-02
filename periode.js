@@ -18,7 +18,12 @@ const PERIODE = [
           { nom: "Conj 01 — Identification et traduction de formes verbales", url: "exercices-langues/conjugaison/conjugaison_identification-traduction-formes-verbales.html", pictos: ["conj"], periode: "P1" }
         ]
       },
-      { nom: "Déclinaisons", fichiers: [] }
+          {
+        nom: "Déclinaisons",
+        fichiers: [
+          { nom: "Décl 01 — Les pièges des terminaisons", url: "exercices-langues/declinaisons/pieges-terminaisons-onglets.html", pictos: ["decl"], periode: "P1" }
+        ]
+      }
     ]
   },
   { nom: "Vocabulaire", fichiers: [] },
