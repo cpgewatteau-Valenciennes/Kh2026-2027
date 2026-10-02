@@ -21,7 +21,7 @@ const PERIODE = [
           {
         nom: "Déclinaisons",
         fichiers: [
-          { nom: "Décl 01 — Les pièges des terminaisons", url: "exercices-langues/declinaisons/pieges-terminaisons-onglets.html", pictos: ["decl"], periode: "P1" }
+          { nom: "Décl 01 — Les pièges des terminaisons", url: "exercices-langues/pieges-terminaisons-onglets.html", pictos: ["decl"], periode: "P1" }
         ]
       }
     ]
