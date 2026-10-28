@@ -22,7 +22,8 @@ const PERIODE = [
           {
         nom: "Déclinaisons",
         fichiers: [
-          { nom: "Décl 01 — Les pièges des terminaisons", url: "exercices-langues/pieges-terminaisons-onglets.html", pictos: ["decl"], periode: "P1" }
+          { nom: "Décl 01 — Les pièges des terminaisons", url: "exercices-langues/pieges-terminaisons-onglets.html", pictos: ["decl"], periode: "P1"},
+          { nom: "Décl 02 — Identifier les formes des 5 déclinaisons", url: "exercices-langues/declinaisons/declinaisons_02_identifier-formes-5-declinaisons.html", pictos: ["decl"], periode: "P1" }
         ]
       }
     ]
