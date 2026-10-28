@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Conj 02 – Identifier puis traduire ou analyser</title>
+<style>
+:root{--bg:#F1E6CE;--ca:#FBF4E3;--cb:#E6D6B0;--ink:#2C1810;--head:#4A1418;--bur:#6B1E23;--onbur:#F1E6CE;--och:#B9812A;--ol:#D9A94F;--muted:#5a4735;--opt:#fff;--green:#4A6B2A;--gbg:#E4EBD8;--red:#A01D1D;--rbg:#F3D9D9;
+--iabg:#dbe9fb;--iabd:#5b8fd9;--iatx:#1c4e9c;--ipbg:#b9d4f2;--ipbd:#1c4e9c;--iptx:#0f2e57;--sabg:#e3efd6;--sabd:#7fae5b;--satx:#3a5c28;--spbg:#c3ddac;--spbd:#4a7c3f;--sptx:#25401b;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1e1613;--ca:#2b201b;--cb:#241a16;--ink:#efe3cc;--head:#f0c9a8;--bur:#8f323a;--onbur:#fff3e0;--och:#c99a45;--ol:#8a6a2e;--muted:#cdb99c;--opt:#33271f;--green:#a9d08a;--gbg:#2a3a20;--red:#f0a0a0;--rbg:#442424;
+--iabg:#1f3350;--iabd:#5b8fd9;--iatx:#bcd6f7;--ipbg:#27456e;--ipbd:#7fb0ee;--iptx:#d8e8fb;--sabg:#2a3d1f;--sabd:#7fae5b;--satx:#cfe6b8;--spbg:#35502a;--spbd:#8cc56f;--sptx:#dff0cc}}
+:root[data-theme="dark"]{--bg:#1e1613;--ca:#2b201b;--cb:#241a16;--ink:#efe3cc;--head:#f0c9a8;--bur:#8f323a;--onbur:#fff3e0;--och:#c99a45;--ol:#8a6a2e;--muted:#cdb99c;--opt:#33271f;--green:#a9d08a;--gbg:#2a3a20;--red:#f0a0a0;--rbg:#442424;
+--iabg:#1f3350;--iabd:#5b8fd9;--iatx:#bcd6f7;--ipbg:#27456e;--ipbd:#7fb0ee;--iptx:#d8e8fb;--sabg:#2a3d1f;--sabd:#7fae5b;--satx:#cfe6b8;--spbg:#35502a;--spbd:#8cc56f;--sptx:#dff0cc}
+html{scroll-padding-top:env(safe-area-inset-top,0px);color-scheme:light dark}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;padding:0 16px 40px}
+header{max-width:640px;margin:28px auto 16px;text-align:center}
+h1{font-size:clamp(1.2rem,4vw,1.5rem);color:var(--head);margin:0}
+.rappel{max-width:640px;margin:0 auto 14px;background:var(--ca);border-left:3px solid var(--och);border-radius:4px;padding:12px 16px;font-size:.85rem;line-height:1.5;color:var(--muted)}
+.rappel p{margin:0 0 6px}.rappel p:last-child{margin:0}
+.wrap{max-width:640px;margin:0 auto}
+.progress{text-align:center;font-size:.8rem;color:var(--head);margin-bottom:10px}
+.card{background:linear-gradient(180deg,var(--ca),var(--cb));border:1.5px solid var(--ol);border-radius:8px;padding:22px 20px;text-align:center}
+.primitives{font-size:.8rem;color:var(--muted);margin-bottom:14px;font-style:italic}
+.word{font-style:italic;font-weight:700;font-size:1.6rem;color:var(--head);margin-bottom:16px;word-break:break-word}
+.consigne{font-size:1rem;color:var(--head);font-weight:700;margin-bottom:12px}
+.consigne.s{font-size:.9rem}
+.legend{font-size:.78rem;color:var(--muted);margin-bottom:10px}
+.legend b{padding:1px 8px;border-radius:10px;border:1px solid}
+.legend .i{background:var(--iabg);border-color:var(--iabd);color:var(--iatx)}
+.legend .s{background:var(--sabg);border-color:var(--sabd);color:var(--satx)}
+.options{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:6px}
+.options.wide{grid-template-columns:1fr}
+.options.grid3{grid-template-columns:repeat(3,1fr)}
+@media (max-width:480px){.options.grid3{grid-template-columns:repeat(2,1fr);font-size:.78rem}}
+.opt-btn{background:var(--opt);border:1.5px solid var(--ol);border-radius:6px;padding:10px 8px;font-family:inherit;font-size:.85rem;cursor:pointer;color:var(--ink);text-align:left}
+.opt-btn:hover:not(:disabled){border-color:var(--bur)}
+.opt-btn:focus-visible,.btn:focus-visible{outline:2px solid var(--och);outline-offset:2px}
+.opt-btn.ind-actif{background:var(--iabg);border-color:var(--iabd);color:var(--iatx)}
+.opt-btn.ind-passif{background:var(--ipbg);border-color:var(--ipbd);color:var(--iptx)}
+.opt-btn.subj-actif{background:var(--sabg);border-color:var(--sabd);color:var(--satx)}
+.opt-btn.subj-passif{background:var(--spbg);border-color:var(--spbd);color:var(--sptx)}
+.opt-btn.correct{background:var(--gbg)!important;border-color:var(--green)!important;color:var(--green)!important}
+.opt-btn.incorrect{background:var(--rbg)!important;border-color:var(--red)!important;color:var(--red)!important}
+.opt-btn:disabled{cursor:default}
+.btn{background:var(--bur);color:var(--onbur);border:none;border-radius:6px;padding:10px 18px;font-family:inherit;font-size:.88rem;cursor:pointer;font-weight:700}
+.feedback{margin-top:14px;font-size:.85rem;text-align:left;padding:10px 14px;border-radius:4px;display:none;border-left:3px solid var(--och);background:var(--cb);color:var(--head);white-space:pre-line;line-height:1.5}
+.feedback.show{display:block}
+.feedback.ok{border-color:var(--green);background:var(--gbg)}
+.feedback.ko{border-color:var(--red);background:var(--rbg)}
+.feedback.info{border-color:var(--och)}
+#trad{display:none;margin-top:14px}
+.nextwrap{margin-top:14px;display:none}.nextwrap.show{display:block}
+.fin .big{font-size:2rem;color:var(--head);margin:6px 0}
+.fin p{color:var(--muted);font-size:.9rem}
+.btn.secondary{background:var(--opt);color:var(--head);border:1.5px solid var(--bur);margin:0 4px}
+.reveal{display:none;margin-top:12px}.reveal.show{display:block}
+.fin .big{font-size:2rem;color:var(--head);margin:6px 0}
+.fin p{color:var(--muted);font-size:.9rem}
+.nextwrap{margin-top:14px;display:none}.nextwrap.show{display:block}
+.home-fab{position:fixed;top:14px;left:14px;z-index:999;display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,#B9812A,#6B1E23);color:#fff;font-family:'Iowan Old Style','Palatino Linotype',Georgia,serif;font-size:.82rem;font-weight:700;text-decoration:none;padding:8px 14px;border-radius:20px;box-shadow:0 3px 10px rgba(0,0,0,.25);transition:transform .15s,box-shadow .15s}
+.home-fab:hover{transform:translateY(-2px);box-shadow:0 5px 14px rgba(0,0,0,.3)}
+@media (max-width:480px){.home-fab{font-size:.72rem;padding:6px 10px;top:8px;left:8px}}
+header{margin-top:56px!important}
+</style>
+</head>
+<body>
+<a class="home-fab" href="https://cpgewatteau-valenciennes.github.io/Kh2026-2027/index.html">🏠 Accueil du site</a>
+<header><h1>Conj 02 · Identifier, puis traduire ou analyser</h1></header>
+<div class="rappel">
+<p><strong>Verbe SUM</strong> : pas de voix à proprement parler, mais ici « actif » sera accepté pour simplifier le codage !</p>
+<p><strong>Étape 1 :</strong> choisis le mode, le temps et la voix (QCM) : la vérification n’arrive qu’après l’étape 2. <strong>Étape 2 :</strong> si c’est de l’indicatif, traduis en français ; si c’est du subjonctif, tu peux aussi traduire si vraiment tu le souhaites. Pas de saisie : réfléchis, dis ta réponse à voix haute ou sur feuille, puis vérifie.</p>
+<p>Attention : un subjonctif latin ne se traduit pas forcément par un subjonctif français — et cela vaut aussi pour l’indicatif, qui ne correspond pas forcément à un indicatif en français.</p>
+</div>
+<div class="wrap" id="zone">
+<div class="progress" id="prog"></div>
+<div style="text-align:center;margin-bottom:10px"><button class="btn secondary" onclick="skip()">Forme suivante →</button></div>
+<div class="card" id="card">
+<div class="primitives" id="prim"></div>
+<div class="word" id="word"></div>
+<div class="consigne">Quel mode ? Quel temps ? Quelle voix ?</div>
+<div class="legend"><b class="i">bleu = indicatif</b> <b class="s">vert = subjonctif</b></div>
+<div class="options grid3" id="opts"></div>
+<div class="feedback" id="fb"></div>
+<div class="reveal" id="step2">
+<div class="consigne s" id="c2"></div>
+<button class="btn" id="rv" onclick="reveal()">Voir la réponse</button>
+<div class="feedback" id="fb2"></div>
+<div class="nextwrap" id="self"><p id="sq" style="font-size:.85rem;color:var(--head);margin:0 0 8px"></p><button class="btn" onclick="self(1)">✓ Bonne</button><button class="btn secondary" onclick="self(0.5)">± Partiellement exacte</button><button class="btn secondary" onclick="self(0)">✗ Fausse</button></div>
+</div>
+</div>
+</div>
+<script>
+const CH=["Prés. ind. actif","Prés. ind. passif","Impft ind. actif","Impft ind. passif","Pft ind. actif","Pft ind. passif","Plus-que-pft ind. actif","Plus-que-pft ind. passif","Impft subj. actif","Impft subj. passif","Plus-que-pft subj. actif","Plus-que-pft subj. passif"];
+const FORM={
+"Impft ind. actif":"radical du présent + BA (ou EBA) + terminaisons actives.",
+"Impft ind. passif":"radical du présent + BA (ou EBA) + terminaisons passives.",
+"Pft ind. actif":"radical du parfait + terminaisons du parfait actif (-i, -isti, -istis, -erunt…).",
+"Pft ind. passif":"PPP accordé + indicatif présent de esse.",
+"Plus-que-pft ind. actif":"radical du parfait + indicatif imparfait de esse (-eram, -eras…).",
+"Plus-que-pft ind. passif":"PPP accordé + indicatif imparfait de esse.",
+"Impft subj. actif":"infinitif présent (allure d’infinitif juste avant la désinence : un indice qui doit attirer ton attention !) + terminaisons actives.",
+"Plus-que-pft subj. actif":"radical du parfait + ISSE + terminaisons actives.",
+"Plus-que-pft subj. passif":"PPP accordé + subjonctif imparfait de esse (essem, esses, esset…)."
+};
+const MODE={ind:"Indicatif",subj:"Subjonctif"};
+const TPS=a=>a.startsWith("Plus")?"plus-que-parfait":a.startsWith("Impft")?"imparfait":a.startsWith("Pft")?"parfait":"présent";
+const CALQUE=" Au parfait et au plus-que-parfait passifs de l’indicatif, la forme est composée (PPP + présent ou imparfait de SUM).";
+const SUM=" Verbe SUM : pas de voix à proprement parler, ici « actif » a été accepté pour simplifier le codage !";
+// p = temps primitifs ; a = réponse QCM ; pn = personne/nombre ; t = traduction (ind) ; info = rendu français (subj)
+const D=[
+{p:"laudō, laudāre, laudāvī, laudātum",w:"laudābat",m:"ind",a:"Impft ind. actif",pn:"3e sg",t:"« il louait »",n:"L’imparfait latin se rend souvent par un imparfait français, mais peut aussi insister sur une action en cours."},
+{p:"moneō, monēre, monuī, monitum",w:"monuērunt",m:"ind",a:"Pft ind. actif",pn:"3e pl",t:"« ils ont averti / ils avertirent »",n:"-ĒRUNT (comme -ī, -istī, -istis) ne se trouve qu’au parfait actif."},
+{p:"scrībō, scrībere, scripsī, scriptum",w:"scripseram",m:"ind",a:"Plus-que-pft ind. actif",pn:"1re sg",t:"« j’avais écrit »",n:"Radical du parfait (scrips-) + imparfait de SUM (-eram)."},
+{p:"vocō, vocāre, vocāvī, vocātum",w:"vocābantur",m:"ind",a:"Impft ind. passif",pn:"3e pl",t:"« ils étaient appelés »",n:"BĀ + -NTUR (désinence passive, 3e pl)."},
+{p:"mittō, mittere, mīsī, missum",w:"missus est",m:"ind",a:"Pft ind. passif",pn:"3e sg (masc.)",t:"« il a été envoyé / il fut envoyé »",n:"Sujet masculin singulier (missus).",c:1},
+{p:"audiō, audīre, audīvī, audītum",w:"audītae erant",m:"ind",a:"Plus-que-pft ind. passif",pn:"3e pl (fém.)",t:"« elles avaient été entendues »",n:"Sujet féminin pluriel (audītae).",c:1},
+{p:"regō, regere, rēxī, rēctum",w:"regeret",m:"subj",a:"Impft subj. actif",pn:"3e sg",sa:"Subj. 3e sg imparfait actif",info:"qu’il dirigeât",n:"Allure d’infinitif (regere) + -t."},
+{p:"capiō, capere, cēpī, captum",w:"captus essem",m:"subj",a:"Plus-que-pft subj. passif",pn:"1re sg (masc.)",sa:"Subj. 1re sg plus-que-parfait passif",info:"que j’eusse été pris",n:"Piège : essem seul est un imparfait du subjonctif, mais précédé d’un PPP il forme le plus-que-parfait passif."},
+{p:"dūcō, dūcere, dūxī, ductum",w:"duxisset",m:"subj",a:"Plus-que-pft subj. actif",pn:"3e sg",sa:"Subj. 3e sg plus-que-parfait actif",info:"qu’il eût conduit",n:"Suffixe caractéristique ISSE."},
+{p:"mūniō, mūnīre, mūnīvī, mūnītum",w:"mūnītae essent",m:"subj",a:"Plus-que-pft subj. passif",pn:"3e pl (fém.)",sa:"Subj. 3e pl plus-que-parfait passif",info:"qu’elles eussent été fortifiées",n:"Sujet féminin pluriel (mūnītae)."},
+{p:"dēleō, dēlēre, dēlēvī, dēlētum",w:"dēlētī sunt",m:"ind",a:"Pft ind. passif",pn:"3e pl (masc.)",t:"« ils ont été détruits / ils furent détruits »",n:"Sujet masculin pluriel (dēlētī).",c:1},
+{p:"sum, esse, fuī",w:"eram",m:"ind",a:"Impft ind. actif",pn:"1re sg",t:"« j’étais »",sum:1},
+{p:"sum, esse, fuī",w:"fuerat",m:"ind",a:"Plus-que-pft ind. actif",pn:"3e sg",t:"« il avait été »",n:"Radical du parfait fu- + imparfait de esse (-erat).",sum:1},
+{p:"sum, esse, fuī",w:"essent",m:"subj",a:"Impft subj. actif",pn:"3e pl",sa:"Subj. 3e pl imparfait actif",info:"qu’ils fussent",n:"Infinitif esse + -nt.",sum:1},
+{p:"sum, esse, fuī",w:"fuissēmus",m:"subj",a:"Plus-que-pft subj. actif",pn:"1re pl",sa:"Subj. 1re pl plus-que-parfait actif",info:"que nous eussions été",sum:1}
+];
+let q,i,s1,s2,n1,n2,pick,fT;
+const PRE={"Plus-que-pft subj. actif":"On a le suffixe caractéristique ISSE. ","Plus-que-pft ind. actif":"Si on reconnaît à la fin de la forme l’imparfait du verbe SUM, c’est quasiment à coup sûr un plus-que-parfait. "};
+const ACC={"missus est":"sujet masculin singulier (missus) ; si le sujet était féminin : missa est, « elle a été envoyée »","audītae erant":"sujet féminin pluriel (audītae)","captus essem":"sujet masculin singulier (captus) ; au féminin : capta essem","mūnītae essent":"sujet féminin pluriel (mūnītae)","dēlētī sunt":"sujet masculin pluriel (dēlētī)"};
+const REM={
+"laudābat":"Le suffixe (A)BA de l’imparfait de l’indicatif est caractéristique ; le A juste avant BA confirme un verbe de la 1re conjugaison (laud-A-BA-t).",
+"monuērunt":"-ĒRUNT : terminaison caractéristique de la 3e pl du parfait actif ; elle suffit à annoncer un parfait actif. Radical du parfait : monu- (monuī).",
+"scripseram":"Radical du parfait scrips- (scrībō, scrībere, scripsī) + imparfait de SUM (-eram).",
+"vocābantur":"Le suffixe (A)BA de l’imparfait est caractéristique ; A avant BA = 1re conjugaison (voc-A-BA-ntur) ; -NTUR = désinence passive de la 3e pl.",
+"missus est":"Forme composée : PPP (missus) + est, soit le présent de SUM.",
+"audītae erant":"Forme composée : PPP (audītae) + erant, soit l’imparfait de SUM.",
+"regeret":"Allure d’infinitif (regere) + -t : c’est le signal de l’imparfait du subjonctif ; si tu le repères, dis-le !",
+"captus essem":"Piège : essem seul est un imparfait du subjonctif, mais précédé d’un PPP (captus) il forme le plus-que-parfait passif.",
+"duxisset":"Radical du parfait dux- (dūcō, dūcere, dūxī) + ISSE + -t.",
+"mūnītae essent":"Piège : essent est un imparfait du subjonctif de SUM, mais précédé d’un PPP (mūnītae) il forme le plus-que-parfait passif.",
+"dēlētī sunt":"Forme composée : PPP (dēlētī) + sunt, soit le présent de SUM.",
+"eram":"Verbe irrégulier : les formes de SUM (eram, eras, erat…) se savent par cœur, aucune formule ne permet de les retrouver. Le suffixe ER(A) rappelle l’imparfait.",
+"fuerat":"Radical du parfait fu- (sum, esse, fuī) + imparfait de esse (-erat).",
+"essent":"Infinitif esse + -nt : même repère que pour les autres imparfaits du subjonctif (allure d’infinitif).",
+"fuissēmus":"Radical du parfait fu- + ISSE + -mus : plus-que-parfait du subjonctif de SUM."};
+const SENS={"laudō":"louer","moneō":"avertir","scrībō":"écrire","vocō":"appeler","mittō":"envoyer","audiō":"entendre","regō":"diriger","capiō":"prendre","dūcō":"conduire","mūniō":"fortifier","dēleō":"détruire","sum":"être"};
+const $=id=>document.getElementById(id);
+function shuf(a){a=[...a];for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a}
+function start(){q=shuf(D);i=0;s1=0;s2=0;n1=0;n2=0;show()}
+function show(){
+ if(i>=q.length){end();return}
+ const d=q[i];
+ $("prog").textContent="Forme "+(i+1)+" / "+q.length;
+ $("prim").textContent=d.p+" — « "+SENS[d.p.split(",")[0]]+" »";$("word").textContent=d.w;
+ $("fb").className="feedback";$("fb").textContent="";
+ $("fb2").className="feedback";$("fb2").textContent="";
+ $("step2").className="reveal";$("self").className="nextwrap";$("rv").style.display="";
+ const o=$("opts");o.innerHTML="";
+ CH.forEach(c=>{const b=document.createElement("button");b.className="opt-btn "+(c.includes("subj.")?"subj-":"ind-")+(c.includes("passif")?"passif":"actif");b.textContent=c;b.onclick=()=>answer(b,c);o.appendChild(b)});
+}
+function answer(btn,c){
+ pick=[btn,c];$("c2").style.display="";
+ document.querySelectorAll("#opts .opt-btn").forEach(b=>b.disabled=true);
+ btn.style.outline="3px solid var(--bur)";
+ const m=q[i].m;
+ $("c2").textContent="Étape 2 : si c’est, selon toi, une forme de l’indicatif, traduis cette forme en français (à voix haute ou sur feuille), puis clique sur « Voir la réponse » : tout sera vérifié d’un coup. Si c’est un subjonctif, tu peux, si tu le souhaites, traduire aussi. Dans tous les cas, la vérification te donnera la réponse !";
+ $("step2").className="reveal show";
+}
+function idCheck(){
+ const [btn,c]=pick;const d=q[i],ok=c===d.a;btn.style.outline="";
+ n1++;if(ok)s1++;
+ document.querySelectorAll("#opts .opt-btn").forEach(b=>{b.disabled=true;if(b.textContent===d.a)b.classList.add("correct");if(b===btn&&!ok)b.classList.add("incorrect")});
+ let t=(ok?"Exact : ":"Non, c’était : ")+MODE[d.m]+" "+TPS(d.a)+" "+(d.a.includes("passif")?"passif":"actif")+", "+d.pn+". ";
+ let core=(PRE[d.a]||"")+"Formule : "+FORM[d.a];
+ if(ACC[d.w])core+=" → ici, le participe accordé indique un "+ACC[d.w]+".";
+ if(REM[d.w])core+=" "+REM[d.w];
+ if(d.sum)core+=SUM;
+ if(d.c)core+=CALQUE;
+ t+=core;
+ if(d.m==="subj"){fT=core;$("fb").className="feedback";$("fb").textContent=""}
+ else{$("fb").textContent=t;$("fb").className="feedback show "+(ok?"ok":"ko")}
+}
+function reveal(){
+ idCheck();
+ const d=q[i];
+ let t=d.m==="ind"?"Traduction : "+d.t+(d.n&&d.a==="Impft ind. actif"?"\n"+d.n:"")+(d.c?"\n\nAttention en traduction à ne pas calquer sur la formation des passifs en français, ou tu auras une faute de temps !":""):"Analyse : "+d.sa+"\n"+fT+"\n\nPour info, rendu par un subjonctif français : « "+d.info+" ». Mais pas de correspondance automatique entre subjonctif latin et subjonctif français (et inversement !) : tout dépend de la phrase.";
+ if(d.pn==="3e sg"||d.pn==="3e pl")t+="\n\nN.B. : ici, à la 3e personne, on ne peut pas savoir si le sujet est masculin ou féminin : j’ai mis « il(s) » par convention.";
+ $("fb2").textContent=t;$("fb2").className="feedback show info";
+ $("sq").textContent="Ta réponse était bonne ?";
+ $("c2").style.display="none";$("rv").style.display="none";$("self").className="nextwrap show";
+}
+function skip(){i++;show();window.scrollTo(0,0)}
+function self(ok){n2++;s2+=ok;i++;show();window.scrollTo(0,0)}
+function end(){
+ $("zone").innerHTML='<div class="card fin"><div class="consigne">Terminé !</div><div class="big">'+s1+' / '+n1+'</div><p>mode, temps, voix identifiés</p><div class="big">'+s2+' / '+n2+'</div><p>traductions ou analyses réussies (auto-évaluation)</p><button class="btn" onclick="location.reload()">Recommencer</button></div>';
+}
+start();
+</script>
+</body>
+</html>

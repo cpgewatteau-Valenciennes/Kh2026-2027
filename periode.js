@@ -15,7 +15,8 @@ const PERIODE = [
       {
         nom: "Conjugaison",
         fichiers: [
-          { nom: "Conj 01 — Identification et traduction de formes verbales", url: "exercices-langues/conjugaison/conjugaison_identification-traduction-formes-verbales.html", pictos: ["conj"], periode: "P1" }
+          { nom: "Conj 01 — Identification et traduction de formes verbales", url: "exercices-langues/conjugaison/conjugaison_identification-traduction-formes-verbales.html", pictos: ["conj"], periode: "P1" },
+          { nom: "Conj 02 — Identifier (mode, temps, voix), puis traduire", url: "exercices-langues/conjugaison/conjugaison_02_identification-puis-traduction.html", pictos: ["conj"], periode: "P1" }
         ]
       },
           {
